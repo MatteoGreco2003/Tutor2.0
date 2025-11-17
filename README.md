@@ -86,11 +86,3 @@ Autori
 
 - Matteo Greco ([GitHub username])
 - Francesco Merenda ([GitHub username])
-
-fdksjahjkdfbgkhdfkjsbghbdhjfkbghjsdfbghjkdsfbhgdfbksgbsdfj
-fdsfdsjfndjs
-
-fdsfdsfsd
-dsadas
-dasdasdas
-dfsfsdfsd
