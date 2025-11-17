@@ -14,6 +14,13 @@
   </head>
 
   <body>
+    <div class="intro">
+      <h1>Tutor 2.0</h1>
+      <p>
+        L'app che ti aiuta a pianificare il tuo studio e tenere traccia dei tuoi
+        progressi
+      </p>
+    </div>
     <div class="container">
       <!-- Login Form -->
       <div class="form-box login">
@@ -27,7 +34,10 @@
             <input type="password" placeholder="Password" required />
             <i class="fa-solid fa-lock"></i>
           </div>
-          <button type="submit" class="btn">Registrati</button>
+          <div class="forget-link">
+            <a href="#">Hai dimenticato la password?</a>
+          </div>
+          <button type="submit" class="btn">Accedi</button>
         </form>
       </div>
       <!-- Register Form -->
@@ -43,18 +53,21 @@
             <i class="fa-solid fa-lock"></i>
           </div>
           <div class="input-box">
-            <input type="password" placeholder="Password" required />
+            <input type="password" placeholder="Conferma Password" required />
             <i class="fa-solid fa-lock"></i>
           </div>
-          <div class="forget-link">
-            <a href="#">Hai dimenticato la password?</a>
+          <div class="check-box">
+            <input type="checkbox" id="gdprConsent" />
+            <p>
+              Accetto la
+              <a href="privacy.html" target="_blank"
+                >informativa sulla privacy</a
+              >
+              e la
+              <a href="cookie.html" target="_blank">cookie policy</a>.
+            </p>
           </div>
-          <label>
-            <input type="checkbox" id="gdprConsent" />Accetto la
-            <a href="privacy.html" target="_blank">informativa sulla privacy</a>
-            e la <a href="cookie.html" target="_blank">cookie policy</a>.
-          </label>
-          <button type="submit" class="btn">Accedi</button>
+          <button type="submit" class="btn">Registrati</button>
         </form>
       </div>
 
@@ -74,6 +87,9 @@
           <button class="btn login-btn">Accedi</button>
         </div>
       </div>
+    </div>
+    <div class="outro">
+      <p>Powered by <a href="https://www.toptutor.it/">toptutor.it</a></p>
     </div>
   </body>
 

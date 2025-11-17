@@ -13,8 +13,27 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(90deg, #e2e2e2, #c9d6ff);
+}
+
+.intro {
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 14.5px;
+  color: #333;
+}
+
+.intro h1 {
+  font-size: 36px;
+}
+
+.outro {
+  margin-top: 50px;
+  text-align: center;
+  font-size: 14.5px;
+  color: #333;
 }
 
 .container {
@@ -100,11 +119,11 @@ form {
   font-size: 20px;
 }
 
-.forgot-link {
+.forget-link {
   margin: -15px 0 15px;
 }
 
-.forgot-link a {
+.forget-link a {
   font-size: 14.5px;
   color: #333;
 }
@@ -123,13 +142,21 @@ form {
   font-weight: 600;
 }
 
-.toggle-btn {
+.check-box {
+  display: flex;
+  align-items: center;
+  margin: -15px 0 15px;
+  font-size: 14.5px;
+  color: #333;
+}
+
+.toggle-box {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-.toggle-btn::before {
+.toggle-box::before {
   content: "";
   position: absolute;
   left: -250%;
@@ -173,7 +200,7 @@ form {
   transition-delay: 0.6s;
 }
 
-.container.active .toggle-panel.toggle-left {
+.container.active .toggle-panel.toggle-right {
   right: 0;
   transition-delay: 1.2s;
 }
