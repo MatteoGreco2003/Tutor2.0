@@ -14,7 +14,10 @@ app.use(express.json());
 app.use(cors());
 //TODO per le routes app.use('')
 
-app.get("/", (req, res) => res.send("benvenuto nella homepage"));
+//app.get("/", (req, res) => res.send("benvenuto nella homepage"));
+app.get("/", (req, res) => {
+  res.render("registrazione");
+});
 
 mongoose
   .connect(CONNECTION_URL)

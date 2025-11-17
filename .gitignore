@@ -1,17 +1,2 @@
 # Node modules
 node_modules/
-
-# File ambiente e credenziali
-.env
-.env.local
-
-# Dati sensibili
-config/database.js
-
-# Output build e log
-dist/
-build/
-*.log
-
-# File VSCode personali
-.vscode/
