@@ -61,7 +61,7 @@ Tech Stack
 
 Come avviare il progetto
 
-1. Clonazione repository --> git clone https://github.com/[tuo_nome]/Tutor2.0.git
+1. Clonazione repository --> git clone https://github.com/MatteoGreco2003/Tutor2.0.git
 2. Installazione dipendenze (backend) --> cd Tutor2.0/backend
    npm install
 3. Avvio backend --> npm start
@@ -84,5 +84,5 @@ Questo progetto è rilasciato sotto licenza MIT. Vedi file LICENSE per dettagli.
 
 Autori
 
-- Matteo Greco ([GitHub username])
-- Francesco Merenda ([GitHub username])
+- Matteo Greco (MatteoGreco2003)
+- Francesco Merenda (Merendo)
