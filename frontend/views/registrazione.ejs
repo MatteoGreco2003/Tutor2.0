@@ -24,36 +24,70 @@
     <div class="container">
       <!-- Login Form -->
       <div class="form-box login">
-        <form action="#">
+        <form action="#" id="loginForm" novalidate>
           <h1>Accedi</h1>
           <div class="input-box">
-            <input type="email" placeholder="Email" required />
+            <input
+              type="email"
+              id="loginEmail"
+              name="loginEmail"
+              placeholder="Email"
+              required
+            />
             <i class="fa-solid fa-envelope"></i>
           </div>
           <div class="input-box">
-            <input type="password" placeholder="Password" required />
+            <input
+              type="password"
+              id="loginPassword"
+              name="loginPassword"
+              placeholder="Password"
+              required
+            />
             <i class="fa-solid fa-lock"></i>
           </div>
           <div class="forget-link">
-            <a href="#">Hai dimenticato la password?</a>
+            <!-- QUESTO LINK APRE LA MODALE DI RESET -->
+            <a href="#" id="forgotPasswordLink">Hai dimenticato la password?</a>
           </div>
           <button type="submit" class="btn">Accedi</button>
+
+          <!-- Contenitore per errori login -->
+          <div id="loginErrors" class="error-messages"></div>
         </form>
       </div>
       <!-- Register Form -->
       <div class="form-box register">
-        <form action="#">
+        <form action="#" id="registerForm" novalidate>
           <h1>Registrazione</h1>
           <div class="input-box">
-            <input type="email" placeholder="Email" required />
+            <input
+              type="email"
+              id="registerEmail"
+              name="registerEmail"
+              placeholder="Email"
+              required
+            />
             <i class="fa-solid fa-envelope"></i>
           </div>
           <div class="input-box">
-            <input type="password" placeholder="Password" required />
+            <input
+              type="password"
+              id="registerPassword"
+              name="registerPassword"
+              placeholder="Password"
+              required
+            />
             <i class="fa-solid fa-lock"></i>
           </div>
           <div class="input-box">
-            <input type="password" placeholder="Conferma Password" required />
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Conferma Password"
+              required
+            />
             <i class="fa-solid fa-lock"></i>
           </div>
           <div class="check-box">
@@ -68,6 +102,9 @@
             </p>
           </div>
           <button type="submit" class="btn">Registrati</button>
+
+          <!-- Contenitore per errori registrazione -->
+          <div id="registerErrors" class="error-messages"></div>
         </form>
       </div>
 
@@ -89,7 +126,41 @@
       </div>
     </div>
     <div class="outro">
-      <p>Powered by <a href="https://www.toptutor.it/">toptutor.it</a></p>
+      <p>
+        Powered by
+        <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+      </p>
+    </div>
+
+    <!-- Modale Forgot Password (nascosta inizialmente) -->
+    <div id="forgotPasswordModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Recupera la tua password</h2>
+        <p>
+          Inserisci l'email associata al tuo account e ti invieremo un link per
+          reimpostare la password.
+        </p>
+
+        <form id="forgotPasswordForm" novalidate>
+          <div class="input-box">
+            <input
+              type="email"
+              id="forgotEmail"
+              name="forgotEmail"
+              placeholder="Email"
+              required
+            />
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <button type="submit" class="btn">Invia link reset</button>
+          <div id="forgotErrors" class="error-messages"></div>
+          <div id="forgotSuccess" class="success-message" style="display: none">
+            ✅ Se l'email è registrata, riceverai un link per reimpostare la
+            password.
+          </div>
+        </form>
+      </div>
     </div>
   </body>
 
