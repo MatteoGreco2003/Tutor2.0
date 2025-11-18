@@ -5,224 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profilo Studente</title>
     <link rel="stylesheet" href="css/home-studente.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
   </head>
   <body>
     <!-- Header -->
     <div class="header">
       <div class="header-left">
         <div class="user-icon">👤</div>
-        <div class="header-title">Nome e cognome</div>
+        <div class="header-title">Nome e Cognome</div>
       </div>
-      <button class="logout-btn">Esci</button>
+      <button class="logout-btn">Disconnettiti</button>
     </div>
 
     <!-- Main Container -->
     <div class="container">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="sidebar-item active">📊 Profilo</div>
-        <div class="sidebar-item">📚 Materie</div>
-        <div class="sidebar-item">✓ Verifiche</div>
-        <div class="sidebar-divider"></div>
-        <button class="delete-btn">🗑️ Elimina profilo</button>
+        <div class="sidebar-item">👤 Profilo Studente</div>
+        <div class="sidebar-item">➕ Aggiungi Materie</div>
+        <div class="sidebar-item">📚 Media Materie</div>
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+          </div>
+        </div>
       </aside>
 
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Profilo Sezione -->
-        <div class="section">
-          <div class="section-header">
-            <h1 class="section-title">Profilo studente</h1>
-            <button class="edit-btn">✏️ Modifica</button>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Nome e cognome</span>
-              <span class="info-value">Mario Rossi</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Email</span>
-              <span class="info-value">mario.rossi@example.com</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Grado scolastico</span>
-              <span class="info-value">Medie</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Tipo di scuola</span>
-              <span class="info-value">N/A</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Numero di telefono</span>
-              <span class="info-value">+39 320 1234567</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Famiglia Sezione -->
-        <div class="section">
-          <div class="section-header">
-            <h2 class="section-title">Famiglia</h2>
-            <button class="edit-btn">✏️ Modifica</button>
-          </div>
-
-          <div class="famiglia-grid">
-            <div class="parent-card">
-              <div class="parent-title">Genitore 1</div>
-              <div class="info-item">
-                <span class="info-label">Nome e cognome</span>
-                <span class="info-value">Anna Rossi</span>
-              </div>
-              <div class="info-item" style="margin-top: 10px">
-                <span class="info-label">Numero di telefono</span>
-                <span class="info-value">+39 320 9876543</span>
-              </div>
-            </div>
-
-            <div class="parent-card">
-              <div class="parent-title">Genitore 2</div>
-              <div class="info-item">
-                <span class="info-label">Nome e cognome</span>
-                <span class="info-value">Marco Rossi</span>
-              </div>
-              <div class="info-item" style="margin-top: 10px">
-                <span class="info-label">Numero di telefono</span>
-                <span class="info-value">+39 320 5555555</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="info-item" style="margin-top: 20px">
-            <span class="info-label">Email famiglia</span>
-            <span class="info-value">famiglia.rossi@example.com</span>
-          </div>
-        </div>
-
-        <!-- Scuola Sezione -->
-        <div class="section">
-          <div class="section-header">
-            <h2 class="section-title">Scuola</h2>
-            <button class="edit-btn">✏️ Modifica</button>
-          </div>
-
-          <div class="info-item">
-            <span class="info-label">Email professore (max 5 mail)</span>
-            <span class="info-value">prof1@scuola.it, prof2@scuola.it</span>
-          </div>
-        </div>
-
-        <!-- Verifiche Sezione -->
+        <!-- Verifiche Section -->
         <div class="section">
           <div class="section-header">
             <h2 class="section-title">Storico verifiche</h2>
           </div>
 
-          <div class="verifiche-list">
-            <div class="verifica-item">
-              <div class="verifica-info">
-                <div class="verifica-materia">Verifica 1 (giorno) (voto)</div>
-                <div class="verifica-giorno">Matematica - 15/11/2025</div>
-              </div>
-              <div class="verifica-voto">8</div>
-            </div>
-
-            <div class="verifica-item">
-              <div class="verifica-info">
-                <div class="verifica-materia">Verifica 2 (giorno) (voto)</div>
-                <div class="verifica-giorno">Italiano - 18/11/2025</div>
-              </div>
-              <div class="verifica-voto">7.5</div>
-            </div>
-
-            <div class="verifica-item">
-              <div class="verifica-info">
-                <div class="verifica-materia">Verifica 3 (giorno) (voto)</div>
-                <div class="verifica-giorno">Inglese - 20/11/2025</div>
-              </div>
-              <div class="verifica-voto future">Da fare</div>
+          <div class="verifiche-list" id="verificheList">
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>Nessuna verifica registrata</p>
             </div>
           </div>
 
-          <button class="add-btn">➕ Inserisci una verifica</button>
+          <button class="add-btn" id="addVerificaBtn">
+            <i class="fas fa-plus"></i> Inserisci una verifica
+          </button>
         </div>
 
-        <!-- Calendario -->
-        <div class="calendar-container">
+        <!-- Calendario Section -->
+        <div class="calendar-section">
           <div class="calendar-header">
             <h3 class="section-title">Calendario verifiche</h3>
             <div class="calendar-nav">
-              <button>&lt;</button>
-              <span
-                style="font-weight: 500; min-width: 120px; text-align: center"
-                >Novembre 2025</span
-              >
-              <button>&gt;</button>
+              <button id="prevMonthBtn" aria-label="Mese precedente">
+                &lt;
+              </button>
+              <span id="currentMonth" class="current-month">NOVEMBRE 2025</span>
+              <button id="nextMonthBtn" aria-label="Mese successivo">
+                &gt;
+              </button>
             </div>
           </div>
 
-          <table class="calendar">
-            <thead>
-              <tr>
-                <th>S</th>
-                <th>M</th>
-                <th>T</th>
-                <th>W</th>
-                <th>T</th>
-                <th>F</th>
-                <th>S</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td>1</td>
-                <td>2</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>4</td>
-                <td class="selected">11</td>
-                <td>12</td>
-                <td>13</td>
-                <td>14</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <td>16</td>
-                <td>17</td>
-                <td>18</td>
-                <td>19</td>
-                <td>20</td>
-                <td>21</td>
-                <td>22</td>
-              </tr>
-              <tr>
-                <td>23</td>
-                <td>24</td>
-                <td>25</td>
-                <td>26</td>
-                <td>27</td>
-                <td>28</td>
-                <td>29</td>
-              </tr>
-              <tr>
-                <td>30</td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-                <td class="empty"></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="calendar-wrapper">
+            <table class="calendar" id="calendarTable">
+              <!-- Generato da JavaScript -->
+            </table>
+          </div>
         </div>
       </main>
     </div>
   </body>
+
+  <script src="js/calendario.js"></script>
+  <script src="js/home-studente.js"></script>
 </html>
