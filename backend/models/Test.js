@@ -6,13 +6,13 @@ const verificheSchema = mongoose.Schema(
 
     studenteID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Studenti",
+      ref: "Student",
       required: [true, "ID studente obbligatorio"],
     },
 
     materialID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Materie",
+      ref: "Subject",
       required: [true, "ID materia obbligatorio"],
     },
 
@@ -52,5 +52,5 @@ verificheSchema.pre("save", function (next) {
   next();
 });
 
-const Verifiche = mongoose.model("Verifiche", verificheSchema);
+const Verifiche = mongoose.model("Test", verificheSchema, "Test");
 export default Verifiche;

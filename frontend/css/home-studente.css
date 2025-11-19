@@ -444,3 +444,250 @@ body {
   cursor: default;
   border: none;
 }
+
+/* Modale Elimina Profilo */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none; /* Nascosta di default */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 40px; /* ← aumenta da 30px a 40px (più spazio interno) */
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px; /* ← aumenta da 400px a 500px (più larghezza) */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 24px; /* ← aggiungi questa riga per titolo più grande */
+  margin-bottom: 15px; /* ← aggiungi spazio dopo titolo */
+}
+
+.modal-content p {
+  font-size: 16px; /* ← aggiungi per testo più leggibile */
+  line-height: 1.5; /* ← aggiungi per spaziatura linee */
+  margin-bottom: 20px; /* ← aggiungi spazio tra paragrafi */
+}
+
+.close {
+  height: 35px;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #999;
+}
+
+.close:hover {
+  color: #000;
+}
+
+.btn-annulla {
+  background: none;
+  color: #333;
+  border: 1.5px solid #adb5bd;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+}
+
+.btn-annulla:hover {
+  background: #f4f4f9;
+  border-color: #888;
+}
+
+.delete-btn {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background-color: #cc0000;
+  border-color: #f87171;
+}
+
+.plan-btn {
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 314.09px; /* larghezza minima ampia */
+}
+.plan-btn:hover {
+  background: #7e32ca;
+}
+
+.modal form label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.modal form input[type="text"],
+.modal form select,
+.modal form textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #eee;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 0px;
+  box-sizing: border-box;
+}
+.modal form textarea {
+  resize: vertical;
+}
+
+.modal form input[type="checkbox"] {
+  accent-color: #116dff;
+  margin-right: 4px;
+}
+
+/* Flatpickr custom styling - CENTRATO */
+.flatpickr-calendar {
+  width: 420px !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 40px 0 rgba(90, 24, 154, 0.14),
+    0 1.5px 8px 0 rgba(90, 24, 154, 0.1) !important;
+  font-family: "Poppins", sans-serif;
+  border: none;
+  margin-top: 8px !important;
+}
+
+.flatpickr-innerContainer {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.flatpickr-rContainer {
+  width: 100% !important;
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important ;
+}
+
+.flatpickr-month,
+.flatpickr-weekdays,
+.flatpickr-day {
+  font-family: "Poppins", sans-serif;
+}
+
+.flatpickr-current-month {
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.flatpickr-months {
+  padding: 12px 8px !important;
+}
+
+.flatpickr-weekdays {
+  width: 307.88px !important;
+  background: transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.flatpickr-weekday {
+  flex: 1 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 0 4px !important;
+}
+
+.flatpickr-days {
+  width: 420px !important;
+  padding: 0 8px !important; /* ← CAMBIA da 8px a 0 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important; /* ← CAMBIA da 8px a 0 */
+}
+
+.flatpickr-day {
+  width: 57.72px !important;
+  max-width: 57.72px !important;
+  height: 50px !important; /* ← CAMBIA da 50px a 57.72px per quadrato perfetto */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+}
+
+.dayContainer {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Colori personalizzati Tutor2.0 */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.selected:hover {
+  background: #a259ff !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 10px rgba(162, 89, 255, 0.15) !important;
+}
+
+.flatpickr-day.today {
+  border: 2px solid #a259ff !important;
+  color: #a259ff !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-day:hover:not(.disabled) {
+  background: #efe3fd !important;
+  color: #a259ff !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: #a259ff !important;
+  transition: color 0.2s;
+}
+
+.flatpickr-input[readonly] {
+  background: #fff;
+  cursor: pointer;
+}

@@ -6,7 +6,7 @@ const materieSchema = mongoose.Schema(
 
     studenteId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Student",
       required: [true, "ID studente obbligatorio"],
     },
 
@@ -31,5 +31,5 @@ materieSchema.pre("save", async function (next) {
   next();
 });
 
-const Materie = mongoose.model("Materie", materieSchema);
+const Materie = mongoose.model("Subject", materieSchema, "Subject");
 export default Materie;

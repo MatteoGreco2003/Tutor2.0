@@ -1,9 +1,10 @@
-import Studente from "../models/Studenti.js";
+import Studenti from "../models/Student.js";
 import Tutor from "../models/Tutor.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
-// ===== LOGIN =====
+//===== LOGIN =====
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -14,25 +15,32 @@ export const login = async (req, res) => {
       });
     }
 
-    // Cerca prima nella collezione STUDENTE
-    let user = await Studente.findOne({ email }).select("+password");
+    // Rimuovi spazi iniziali e finali
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
+    // Cerca in Studenti
+    let user = await Studenti.findOne({ email: cleanEmail });
     let userType = "studente";
 
-    // Se non trovato, cerca nella collezione TUTOR
+    // Se non trovato, cerca in Tutor
     if (!user) {
-      user = await Tutor.findOne({ email }).select("+password");
+      user = await Tutor.findOne({ email: cleanEmail });
       userType = "tutor";
     }
 
-    // Se non trovato in nessuna delle due collezioni
+    // Se non trovato
     if (!user) {
       return res.status(401).json({
         message: "Email o password non valide",
       });
     }
 
-    // Controlla che la password corrisponda
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // Controlla password
+    const passwordMatch = await bcrypt.compare(
+      cleanPassword,
+      user.password.trim()
+    );
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -40,7 +48,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // Se tutto OK, genera JWT token
+    // Genera token
     const token = jwt.sign(
       { userId: user._id, email: user.email, tipo: userType },
       process.env.JWT_SECRET || "your-secret-key-change-this",
@@ -64,6 +72,22 @@ export const login = async (req, res) => {
   }
 };
 
+//===== LOGOUT =====
+export const logout = async (req, res) => {
+  try {
+    // Con JWT, il logout è lato client (cancella il token)
+    // Lato server semplicemente reindirigiamo
+    res.clearCookie("token"); // Se il token è salvato in cookie
+    res.status(200).json({
+      message: "Logout avvenuto con successo",
+    });
+  } catch (error) {
+    console.error("Errore logout:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+//TODO IL NOME STUDENTE DEVE ESSERE STUDENTI
 // // ===== REGISTRAZIONE COMPLETA (per studente) =====
 // export const registerComplete = async (req, res) => {
 //   try {

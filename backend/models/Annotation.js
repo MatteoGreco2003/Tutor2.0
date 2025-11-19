@@ -12,7 +12,7 @@ const annotazioniSchema = mongoose.Schema(
 
     studenteID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Studenti",
+      ref: "Student",
       required: [true, "ID studente obbligatorio"],
     },
 
@@ -30,5 +30,9 @@ const annotazioniSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Annotazioni = mongoose.model("Annotazioni", annotazioniSchema);
+const Annotazioni = mongoose.model(
+  "Annotation",
+  annotazioniSchema,
+  "Annotation"
+);
 export default Annotazioni;

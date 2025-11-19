@@ -9,13 +9,27 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
   </head>
   <body>
     <!-- Header -->
     <div class="header">
       <div class="header-left">
-        <div class="user-icon">👤</div>
-        <div class="header-title">Nome e Cognome</div>
+        <a
+          href="/home-studenti"
+          class="user-icon"
+          style="text-decoration: none; color: inherit"
+          >👤</a
+        >
+        <a
+          href="/home-studenti"
+          class="header-title"
+          style="text-decoration: none; color: inherit"
+          >Nome e Cognome</a
+        >
       </div>
       <button class="logout-btn">Disconnettiti</button>
     </div>
@@ -87,7 +101,117 @@
         </div>
       </main>
     </div>
+
+    <!-- Modale Elimina Profilo (nascosta inizialmente) -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare il tuo storico verifiche e le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Inserisci Verifica -->
+    <div id="insertVerificaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeInsertVerifica">&times;</span>
+        <h2>Inserisci una verifica</h2>
+        <form id="insertVerificaForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="verificaData">Giorno</label>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <input
+                type="text"
+                id="verificaData"
+                name="verificaData"
+                required
+                autocomplete="off"
+                readonly
+                style="flex: 1"
+              />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="materia">Materia</label>
+            <select id="materia" name="materia" required>
+              <option value="" selected disabled>Seleziona la materia</option>
+              <option value="Matematica">Matematica</option>
+              <option value="Italiano">Italiano</option>
+              <option value="Inglese">Inglese</option>
+              <option value="Fisica">Fisica</option>
+              <option value="Latino">Latino</option>
+              <!-- Altre materie qui -->
+            </select>
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="argomento"
+              >Descrivi l'argomento (max 500 caratteri)</label
+            >
+            <textarea
+              id="argomento"
+              name="argomento"
+              maxlength="500"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div style="margin-bottom: 12px">
+            <label for="valutazione" style="font-size: 15px; font-weight: 500"
+              >Valutazione</label
+            >
+            <select id="valutazione" name="valutazione">
+              <option value="" selected disabled>Seleziona il voto</option>
+              <option value="10">10</option>
+              <option value="9">9</option>
+              <option value="8">8</option>
+              <option value="7">7</option>
+              <option value="6">6</option>
+              <option value="5">5</option>
+              <option value="4">4</option>
+              <option value="4">3</option>
+              <option value="4">2</option>
+              <option value="4">1</option>
+              <option value="4">0</option>
+            </select>
+            <div style="margin-top: 8px">
+              <input type="checkbox" id="previsto" name="previsto" />
+              <label for="previsto" style="font-size: 14px">
+                Non ho ancora il voto
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Pianifica
+            </button>
+            <button type="button" class="btn-annulla" id="annullaVerifica">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
 
   <script src="js/calendario.js"></script>
   <script src="js/home-studente.js"></script>

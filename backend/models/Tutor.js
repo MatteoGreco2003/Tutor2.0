@@ -15,7 +15,6 @@ const tutorSchema = mongoose.Schema(
       type: String,
       required: [true, "Password obbligatoria"],
       minlength: [8, "Minimo 8 caratteri"],
-      select: false,
     },
     nome: {
       type: String,
@@ -30,7 +29,7 @@ const tutorSchema = mongoose.Schema(
     studentiAssociati: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Studente",
+        ref: "Student",
       },
     ],
 
@@ -53,5 +52,5 @@ tutorSchema.pre("save", async function (next) {
   }
 });
 
-const Tutor = mongoose.model("Tutor", tutorSchema);
+const Tutor = mongoose.model("Tutor", tutorSchema, "Tutor");
 export default Tutor;

@@ -138,5 +138,5 @@ studentiSchema.pre("save", function (next) {
   next();
 });
 
-const Studente = mongoose.model("Studente", studentiSchema);
-export default Studente;
+const Studenti = mongoose.model("Student", studentiSchema, "Student");
+export default Studenti;
