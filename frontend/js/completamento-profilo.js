@@ -225,31 +225,31 @@ function validateForm() {
     return errors;
   }
 
-  // ===== GENITORE 2 (OBBLIGATORIO) =====
-  const genitore2Nome = document.getElementById("genitore2Nome").value.trim();
-  if (!genitore2Nome || genitore2Nome.length < 2) {
-    errors.push("Nome Genitore 2 deve contenere almeno 2 caratteri");
-    addInputError("genitore2Nome");
-    return errors;
-  }
+  //! // ===== GENITORE 2 (OBBLIGATORIO) =====
+  //! const genitore2Nome = document.getElementById("genitore2Nome").value.trim();
+  // if (!genitore2Nome || genitore2Nome.length < 2) {
+  //   errors.push("Nome Genitore 2 deve contenere almeno 2 caratteri");
+  //   addInputError("genitore2Nome");
+  //   return errors;
+  // }
 
-  const genitore2Cognome = document
-    .getElementById("genitore2Cognome")
-    .value.trim();
-  if (!genitore2Cognome || genitore2Cognome.length < 2) {
-    errors.push("Cognome Genitore 2 deve contenere almeno 2 caratteri");
-    addInputError("genitore2Cognome");
-    return errors;
-  }
+  // const genitore2Cognome = document
+  //   .getElementById("genitore2Cognome")
+  //   .value.trim();
+  // if (!genitore2Cognome || genitore2Cognome.length < 2) {
+  //   errors.push("Cognome Genitore 2 deve contenere almeno 2 caratteri");
+  //   addInputError("genitore2Cognome");
+  //   return errors;
+  // }
 
-  const genitore2Telefono = document
-    .getElementById("genitore2Telefono")
-    .value.trim();
-  if (!isValidPhone(genitore2Telefono)) {
-    errors.push("Telefono Genitore 2 non valido (es: 3331234567)");
-    addInputError("genitore2Telefono");
-    return errors;
-  }
+  // const genitore2Telefono = document
+  //   .getElementById("genitore2Telefono")
+  //   .value.trim();
+  // if (!isValidPhone(genitore2Telefono)) {
+  //   errors.push("Telefono Genitore 2 non valido (es: 3331234567)");
+  //   addInputError("genitore2Telefono");
+  //!   return errors;
+  //! }
 
   // 6. Email Famiglia (OBBLIGATORIA)
   const emailFamiglia = document.getElementById("emailFamiglia").value.trim();
@@ -439,7 +439,7 @@ async function submitProfile() {
       alert("Profilo completato con successo!");
 
       // Reindirizza alla home studente
-      window.location.href = "/home-studente";
+      window.location.href = "/home-studenti";
     } else {
       showErrors([data.message || "Errore nel completamento del profilo"]);
     }

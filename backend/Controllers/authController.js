@@ -87,77 +87,129 @@ export const logout = async (req, res) => {
   }
 };
 
-//TODO IL NOME STUDENTE DEVE ESSERE STUDENTI
-// // ===== REGISTRAZIONE COMPLETA (per studente) =====
-// export const registerComplete = async (req, res) => {
-//   try {
-//     const {
-//       email,
-//       password,
-//       consentGDPR,
-//       consentGDPRDate,
-//       nome,
-//       cognome,
-//       telefono,
-//       gradoScolastico,
-//       indirizzoScolastico,
-//       famiglia,
-//       scuola,
-//     } = req.body;
+//===== COMPLETA REGISTRAZIONE =====
+export const registerComplete = async (req, res) => {
+  try {
+    const {
+      email,
+      password,
+      nome,
+      cognome,
+      telefono,
+      gradoScolastico,
+      indirizzoScolastico,
+      famiglia,
+      scuola,
+      consentGDPR,
+      consentGDPRDate,
+    } = req.body;
 
-//     // Controlla se l'email esiste già
-//     const studenteEsiste = await Studente.findOne({ email });
-//     const tutorEsiste = await Tutor.findOne({ email });
+    // ===== VALIDAZIONE =====
+    if (!email || !password || !nome || !cognome) {
+      return res.status(400).json({
+        message: "Email, password, nome e cognome sono obbligatori",
+      });
+    }
 
-//     if (studenteEsiste || tutorEsiste) {
-//       return res.status(400).json({
-//         message: "Email già registrata",
-//       });
-//     }
+    if (!telefono || !gradoScolastico) {
+      return res.status(400).json({
+        message: "Telefono e grado scolastico sono obbligatori",
+      });
+    }
 
-//     // Crea il nuovo studente
-//     const nuovoStudente = new Studente({
-//       email,
-//       password, // Il middleware pre("save") farà l'hash automaticamente
-//       nome,
-//       cognome,
-//       telefono,
-//       gradoScolastico,
-//       indirizzoScolastico: indirizzoScolastico || null,
-//       consentiGDPR: consentGDPR,
-//       GDPRdata: consentGDPRDate,
-//       genitore1: famiglia.genitore1,
-//       genitore2: famiglia.genitore2 || {},
-//       emailFamiglia: famiglia.email,
-//       emailInsegnanti: scuola.emailProfessori || [],
-//     });
+    if (!famiglia?.genitore1?.nome || !famiglia?.genitore1?.cognome) {
+      return res.status(400).json({
+        message: "Dati genitore1 sono obbligatori",
+      });
+    }
 
-//     // Salva nel DB
-//     await nuovoStudente.save();
+    if (!famiglia?.email) {
+      return res.status(400).json({
+        message: "Email famiglia è obbligatoria",
+      });
+    }
 
-//     // Genera JWT token
-//     const token = jwt.sign(
-//       { userId: nuovoStudente._id, email: nuovoStudente.email, tipo: "studente" },
-//       process.env.JWT_SECRET || "your-secret-key-change-this",
-//       { expiresIn: "7d" }
-//     );
+    // Controlla se lo studente esiste già
+    const studenteEsistente = await Studenti.findOne({ email });
+    if (studenteEsistente) {
+      return res.status(400).json({
+        message: "Email già registrata",
+      });
+    }
 
-//     res.status(201).json({
-//       message: "Registrazione completata con successo",
-//       token: token,
-//       user: {
-//         id: nuovoStudente._id,
-//         email: nuovoStudente.email,
-//         tipo: "studente",
-//         nome: nuovoStudente.nome,
-//         cognome: nuovoStudente.cognome,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Errore registrazione:", error);
-//     res.status(500).json({
-//       message: "Errore del server",
-//       dettagli: error.message,
-//     });
-//   }
-// };
+    // ===== CREA NUOVO STUDENTE =====
+    const nuovoStudente = new Studenti({
+      // Dati di registrazione
+      email: email.toLowerCase().trim(),
+      password, // Lo schema farà l'hash automaticamente nel pre-save hook
+      nome,
+      cognome,
+      consentiGDPR: consentGDPR || true,
+      GDPRdata: consentGDPRDate ? new Date(consentGDPRDate) : new Date(),
+
+      // Dati personali
+      telefono,
+      gradoScolastico,
+      indirizzoScolastico: indirizzoScolastico || null,
+
+      // Dati famiglia
+      genitore1: {
+        nome: famiglia.genitore1.nome,
+        cognome: famiglia.genitore1.cognome,
+        telefono: famiglia.genitore1.telefono,
+      },
+      genitore2: famiglia.genitore2?.nome
+        ? {
+            nome: famiglia.genitore2.nome,
+            cognome: famiglia.genitore2.cognome,
+            telefono: famiglia.genitore2.telefono,
+          }
+        : undefined,
+
+      emailFamiglia: famiglia.email.toLowerCase().trim(),
+      emailInsegnanti: scuola?.emailProfessori || [],
+    });
+
+    // Salva nel database (lo schema valida e hashizza la password)
+    await nuovoStudente.save();
+
+    // ===== GENERA TOKEN =====
+    const token = jwt.sign(
+      {
+        userId: nuovoStudente._id,
+        email: nuovoStudente.email,
+        tipo: "studente",
+      },
+      process.env.JWT_SECRET || "your-secret-key-change-this",
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      message: "Registrazione completata con successo",
+      token: token,
+      user: {
+        id: nuovoStudente._id,
+        email: nuovoStudente.email,
+        nome: nuovoStudente.nome,
+        cognome: nuovoStudente.cognome,
+      },
+    });
+  } catch (error) {
+    console.error("Errore registrazione:", error);
+
+    // Gestione errori di validazione Mongoose
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({ message: messages[0] });
+    }
+
+    // Errore di email duplicata
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Email già registrata",
+      });
+    }
+
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
