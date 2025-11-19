@@ -6,6 +6,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database.js";
 import authRoutes from "./routes/auth.js";
+import pageRoutes from "./routes/pageRoutes.js";
 
 dotenv.config();
 
@@ -16,28 +17,16 @@ const CONNECTION_URL = process.env.CONNECTION_URL;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+//Middleware
 app.use(express.json());
 app.use(cors());
-
 app.use(express.static(path.join(__dirname, "../frontend")));
 app.set("view engine", "ejs");
 app.set("views", "../frontend/views");
 
-// ===== ROUTE =====
-app.get("/", (req, res) => {
-  res.render("registrazione"); // render il file registrazione.ejs
-});
-
-app.get("/complete-profile", (req, res) => {
-  res.render("completamento-profilo");
-});
-
-app.get("/home-studenti", (req, res) => {
-  res.render("home-studente");
-});
-
 // ===== ROUTES =====
-app.use("/auth", authRoutes);
+app.use("/", pageRoutes); // ← Pagine (pubbliche e protette)
+app.use("/auth", authRoutes); // ← Autenticazione
 
 connectDB(CONNECTION_URL) // ← CHIAMA DA QUI
   .then(() => {

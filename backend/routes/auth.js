@@ -3,7 +3,9 @@ import {
   login,
   logout,
   registerComplete,
-} from "../controllers/authController.js";
+  verifyHomeStudenti,
+} from "../Controllers/authController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -15,5 +17,8 @@ router.post("/register-complete", registerComplete);
 
 // GET auth/logout
 router.get("/logout", logout);
+
+// ===== ROTTE PROTETTE PER VERIFICA ACCESSO =====
+router.get("/home-studenti", verifyToken, verifyHomeStudenti);
 
 export default router;

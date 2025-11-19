@@ -28,7 +28,6 @@ const studentiSchema = mongoose.Schema(
       type: String,
       required: [true, "Password obbligatoria"],
       minlength: [8, "Minimo 8 caratteri"],
-      select: false,
     },
     consentiGDPR: {
       type: Boolean,

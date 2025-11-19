@@ -1,5 +1,26 @@
 // ===== ATTENDI IL CARICAMENTO DEL DOM =====
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // ===== VERIFICA TOKEN ALL'INIZIO =====
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "/login";
+    return;
+  }
+
+  try {
+    const response = await apiCall("/auth/home-studenti");
+    if (!response || !response.ok) {
+      window.location.href = "/login";
+      return;
+    }
+    console.log("Autorizzato!");
+  } catch (error) {
+    console.error("Errore verifica token:", error);
+    window.location.href = "/login";
+    return;
+  }
+
   // ===== PULSANTE DISCONNETTITI =====
   document
     .querySelector(".logout-btn")

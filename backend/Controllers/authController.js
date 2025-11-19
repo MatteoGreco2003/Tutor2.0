@@ -36,7 +36,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Controlla password
     const passwordMatch = await bcrypt.compare(
       cleanPassword,
       user.password.trim()
@@ -51,8 +50,8 @@ export const login = async (req, res) => {
     // Genera token
     const token = jwt.sign(
       { userId: user._id, email: user.email, tipo: userType },
-      process.env.JWT_SECRET || "your-secret-key-change-this",
-      { expiresIn: "7d" }
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({
@@ -210,6 +209,26 @@ export const registerComplete = async (req, res) => {
       });
     }
 
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+// ===== VERIFICA ACCESSO HOME STUDENTI =====
+export const verifyHomeStudenti = async (req, res) => {
+  try {
+    // req.user viene riempito dal middleware verifyToken
+    if (req.user.tipo !== "studente") {
+      return res.status(403).json({
+        message: "Accesso solo per studenti",
+      });
+    }
+
+    res.status(200).json({
+      message: "Accesso autorizzato",
+      user: req.user,
+    });
+  } catch (error) {
+    console.error("Errore verifica accesso:", error);
     res.status(500).json({ message: "Errore del server" });
   }
 };
