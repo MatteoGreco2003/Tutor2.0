@@ -2,6 +2,10 @@ import express from "express";
 import {
   getStudentData,
   deleteStudentProfile,
+  updateStudentPersonalData,
+  updateStudentPassword,
+  updateStudentFamilyData,
+  updateStudentSchoolData,
 } from "../controllers/studentController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
@@ -13,6 +17,14 @@ router.get("/data", verifyToken, getStudentData);
 
 // DELETE /student/profile - Elimina profilo (protetta)
 router.delete("/profile", verifyToken, deleteStudentProfile);
+
+router.patch("/personal", verifyToken, updateStudentPersonalData);
+
+router.patch("/password", verifyToken, updateStudentPassword);
+
+router.patch("/family", verifyToken, updateStudentFamilyData);
+
+router.patch("/school", verifyToken, updateStudentSchoolData);
 
 // Aggiungi altre rotte qui:
 // router.get("/verifiche", verifyToken, getStudentVerifiche);

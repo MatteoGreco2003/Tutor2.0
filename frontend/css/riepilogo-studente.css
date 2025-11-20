@@ -18,6 +18,9 @@
   --success-green: #10b981;
   --warning-orange: #f59e0b;
   --border-color: #e8e8f0;
+  --error-color: #ff4444;
+  --error-bg: #ffe6e6;
+  --error-dark: #cc0000;
 }
 
 html {
@@ -426,9 +429,9 @@ body {
 }
 
 .modal-content p {
-  font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: #555;
 }
 
 .close {
@@ -438,7 +441,6 @@ body {
   font-weight: bold;
   cursor: pointer;
   color: #999;
-  transition: 0.3s;
 }
 
 .close:hover {
@@ -460,4 +462,181 @@ body {
 .btn-annulla:hover {
   background: #f4f4f9;
   border-color: #888;
+}
+
+.btn-save {
+  background: var(--primary-purple);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0;
+  flex: 1;
+}
+
+.btn-save:hover {
+  background: #7e32ca;
+}
+
+/* ===== FORM MODALE GENERICO ===== */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark-text);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #eee;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 2px rgba(158, 63, 253, 0.15);
+}
+
+/* Errori modale */
+.error-messages {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
+  border-radius: 5px;
+  display: none;
+  text-align: center;
+  color: var(--error-dark);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-messages:not(:empty) {
+  display: block;
+}
+
+.password-input-box {
+  position: relative;
+}
+
+.password-input-box input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #bbb;
+  cursor: pointer;
+  transition: color 0.25s, transform 0.2s;
+  user-select: none;
+}
+
+/* Input con errore */
+.input-error {
+  border: 2px solid var(--error-color) !important;
+  background-color: #fff5f5 !important;
+}
+
+/* ===== SEZIONI FAMIGLIA MODALE ===== */
+.family-section-edit {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.family-section-edit:last-of-type {
+  border-bottom: none;
+}
+
+.family-section-edit h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-purple);
+  margin-bottom: 12px;
+}
+
+/* ===== EMAIL PROFESSORI MODALE ===== */
+.email-school-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.email-school-group .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.email-school-group .btn-remove-email {
+  background: #ff4444;
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.email-school-group .btn-remove-email:hover {
+  background: #dd0000;
+  transform: translateY(-2px);
+}
+
+.email-school-group .btn-remove-email:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #7e32ca;
+  transform: translateY(-2px);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

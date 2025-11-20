@@ -32,6 +32,13 @@ loginBtn.addEventListener("click", () => {
  */
 function resetLoginForm() {
   loginForm.reset();
+
+  document.getElementById("loginPassword").type = "password";
+  document.querySelectorAll(".login .toggle-password").forEach((icon) => {
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-lock");
+  });
+
   clearErrors("login");
   clearInputErrors("login");
 }
@@ -41,6 +48,14 @@ function resetLoginForm() {
  */
 function resetRegisterForm() {
   registerForm.reset();
+
+  document.getElementById("registerPassword").type = "password";
+  document.getElementById("confirmPassword").type = "password";
+  document.querySelectorAll(".register .toggle-password").forEach((icon) => {
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-lock");
+  });
+
   clearErrors("register");
   clearInputErrors("register");
 }

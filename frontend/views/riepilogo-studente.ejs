@@ -207,6 +207,327 @@
       </div>
     </div>
 
-    <script src="/js/riepilogo-studente.js"></script>
+    <!-- Modale Modifica Dati Personali -->
+    <div id="editPersonalModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditPersonal">&times;</span>
+        <h2>Modifica dati personali</h2>
+        <p>
+          Aggiorna i tuoi dati personali. <br />
+          Le modifiche avranno effetto sul tuo account.
+        </p>
+
+        <form id="editPersonalForm" novalidate>
+          <!-- Nome e Cognome -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editNome">Nome</label>
+              <input
+                type="text"
+                id="editNome"
+                name="editNome"
+                placeholder="Nome"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="editCognome">Cognome</label>
+              <input
+                type="text"
+                id="editCognome"
+                name="editCognome"
+                placeholder="Cognome"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Telefono -->
+          <div class="form-group">
+            <label for="editTelefono">Numero di telefono</label>
+            <input
+              type="tel"
+              id="editTelefono"
+              name="editTelefono"
+              placeholder="Telefono"
+              required
+            />
+          </div>
+
+          <!-- Grado e indirizzo -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editGradoScolastico">Grado scolastico</label>
+              <select
+                id="editGradoScolastico"
+                name="editGradoScolastico"
+                required
+              >
+                <option value="">Seleziona...</option>
+                <option value="Elementari">Elementari</option>
+                <option value="Medie">Medie</option>
+                <option value="Superiori">Superiori</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editIndirizzoScolastico">Indirizzo scolastico</label>
+              <select
+                id="editIndirizzoScolastico"
+                name="editIndirizzoScolastico"
+              >
+                <option value="">Seleziona...</option>
+                <option value="Liceo">Liceo</option>
+                <option value="Tecnico">Tecnico</option>
+                <option value="Professionale">Professionale</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Errori -->
+          <div id="editPersonalErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="btn-save">Salva modifiche</button>
+            <button type="button" class="btn-annulla" id="cancelEditPersonal">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Password -->
+    <div id="editPasswordModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditPassword">&times;</span>
+        <h2>Modifica password</h2>
+        <p>
+          Inserisci la tua password attuale e la nuova password che desideri
+          impostare.
+        </p>
+
+        <form id="editPasswordForm" novalidate>
+          <div class="form-group">
+            <label for="oldPassword">Password attuale</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="oldPassword"
+                name="oldPassword"
+                autocomplete="current-password"
+                placeholder="Password Attuale"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="oldPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Nuova password</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                autocomplete="new-password"
+                placeholder="Nuova Password"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="newPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmNewPassword">Conferma nuova password</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                autocomplete="new-password"
+                placeholder="Conferma Nuova Password"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="confirmNewPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div id="editPasswordErrors" class="error-messages"></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 24px">
+            <button type="submit" class="btn-save">Salva nuova password</button>
+            <button type="button" class="btn-annulla" id="cancelEditPassword">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Dati Famiglia -->
+    <div id="editFamilyModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditFamily">&times;</span>
+        <h2>Modifica dati famiglia</h2>
+        <p>
+          Aggiorna i contatti dei tuoi genitori e l'email della famiglia.
+          <br />Le modifiche avranno effetto sul tuo account.
+        </p>
+
+        <form id="editFamilyForm" novalidate>
+          <!-- GENITORE 1 -->
+          <div class="family-section-edit">
+            <h3>Genitore 1</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editGen1Nome">Nome</label>
+                <input
+                  type="text"
+                  id="editGen1Nome"
+                  name="editGen1Nome"
+                  placeholder="Nome"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="editGen1Cognome">Cognome</label>
+                <input
+                  type="text"
+                  id="editGen1Cognome"
+                  name="editGen1Cognome"
+                  placeholder="Cognome"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editGen1Telefono">Telefono</label>
+              <input
+                type="tel"
+                id="editGen1Telefono"
+                name="editGen1Telefono"
+                placeholder="Telefono"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- GENITORE 2 (OPZIONALE) -->
+          <div class="family-section-edit">
+            <h3>
+              Genitore 2
+              <span style="font-size: 12px; font-weight: 400; color: #999"
+                >(Opzionale)</span
+              >
+            </h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editGen2Nome">Nome</label>
+                <input
+                  type="text"
+                  id="editGen2Nome"
+                  name="editGen2Nome"
+                  placeholder="Nome"
+                />
+              </div>
+              <div class="form-group">
+                <label for="editGen2Cognome">Cognome</label>
+                <input
+                  type="text"
+                  id="editGen2Cognome"
+                  name="editGen2Cognome"
+                  placeholder="Cognome"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editGen2Telefono">Telefono</label>
+              <input
+                type="tel"
+                id="editGen2Telefono"
+                name="editGen2Telefono"
+                placeholder="Telefono"
+              />
+            </div>
+          </div>
+
+          <!-- EMAIL FAMIGLIA -->
+          <div class="family-section-edit">
+            <h3>Email Famiglia</h3>
+            <div class="form-group">
+              <label for="editEmailFamiglia">Email</label>
+              <input
+                type="email"
+                id="editEmailFamiglia"
+                name="editEmailFamiglia"
+                placeholder="Email Famiglia"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Errori -->
+          <div id="editFamilyErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 24px">
+            <button type="submit" class="btn-save">Salva modifiche</button>
+            <button type="button" class="btn-annulla" id="cancelEditFamily">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Email Professori -->
+    <div id="editSchoolModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditSchool">&times;</span>
+        <h2>Modifica Dati Professori</h2>
+        <p>
+          Aggiungi, aggiorna o rimuovi le email dei tuoi insegnanti.<br />Le
+          modifiche avranno effetto sul tuo account.<br />Puoi aggiungere fino a
+          5 email di insegnanti
+        </p>
+
+        <form id="editSchoolForm" novalidate>
+          <!-- Container email professori -->
+          <div id="emailSchoolContainer"></div>
+
+          <!-- Bottone aggiungi -->
+          <button
+            type="button"
+            id="addSchoolEmailBtn"
+            class="btn-secondary"
+            style="margin-top: 10px"
+          >
+            Aggiungi Email
+          </button>
+
+          <!-- Errori -->
+          <div id="editSchoolErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 24px">
+            <button type="submit" class="btn-save">Salva modifiche</button>
+            <button type="button" class="btn-annulla" id="cancelEditSchool">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
+  <script src="/js/riepilogo-studente.js"></script>
 </html>
