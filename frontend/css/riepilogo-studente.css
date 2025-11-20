@@ -318,6 +318,47 @@ body {
   border: 1px solid var(--border-color);
 }
 
+.modifyPassword {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.modifyPassword h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-purple);
+  margin-bottom: 15px;
+}
+
+.modifyPassword button {
+  text-align: center;
+}
+
+.email {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.email .info-label {
+  text-align: center;
+}
+
+#personalEmail {
+  width: auto;
+  padding: 10px 30px;
+  text-align: center;
+}
+
 /* ==========================================
    FAMILY SECTIONS
    ========================================== */
@@ -339,6 +380,15 @@ body {
   font-weight: 600;
   color: var(--primary-purple);
   margin-bottom: 15px;
+}
+
+/* ==========================================
+   SCHOOL SECTIONS
+   ========================================== */
+
+/* ===== AGGIORNA QUESTO SELETTORE =====*/
+#schoolEmails .info-value:not(:last-child) {
+  margin-bottom: 12px; /* o il valore che preferisci */
 }
 
 /* ==========================================
