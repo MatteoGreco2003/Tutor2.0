@@ -18,7 +18,9 @@ router.post("/register-complete", registerComplete);
 // GET auth/logout
 router.get("/logout", logout);
 
-// ===== ROTTE PROTETTE PER VERIFICA ACCESSO =====
-router.get("/home-studenti", verifyToken, verifyHomeStudenti);
+// ===== ROTTE API PROTETTE PER VERIFICA ACCESSO =====
+// Queste controllano il token e restituiscono i dati
+router.get("/verify-home-studenti", verifyToken, verifyHomeStudenti);
+//router.get("/verify-home-tutor", verifyToken, verifyHomeTutor);
 
 export default router;

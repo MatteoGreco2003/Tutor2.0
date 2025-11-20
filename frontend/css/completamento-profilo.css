@@ -1,0 +1,391 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* ==========================================
+   RESET E VARIABILI GLOBALI
+   ========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  text-decoration: none;
+  list-style: none;
+}
+
+/* ===== COLORI ===== */
+:root {
+  --primary-purple: #9e3ffd;
+  --primary-dark: #7c3aed;
+  --light-bg: #f0e6ff;
+  --white: #fff;
+  --dark-text: #333;
+  --light-text: #888;
+  --border-light: #ddd;
+  --error-bg: #ffe6e6;
+  --error-color: #ff4444;
+  --error-dark: #cc0000;
+  --success-bg: #e6ffe6;
+  --success-color: #44dd44;
+  --success-dark: #00aa00;
+  --disabled-bg: #f0f0f0;
+}
+
+/* ===== BODY ===== */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #f0e6ff 0%,
+    #e8d5ff 15%,
+    #d4b0f5 30%,
+    #c080e8 50%,
+    #a855f7 70%,
+    #9d4edd 85%,
+    #7c3aed 100%
+  );
+  background-attachment: fixed;
+}
+
+/* ==========================================
+   HEADER E FOOTER
+   ========================================== */
+
+.profile-header {
+  margin-bottom: 30px;
+  text-align: center;
+  color: var(--dark-text);
+}
+
+.profile-header h1 {
+  font-size: 40px;
+  margin-bottom: 5px;
+}
+
+.profile-header h2 {
+  font-size: 25px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.profile-header p {
+  font-size: 14.5px;
+}
+
+.outro {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--white);
+}
+
+.outro a {
+  color: var(--white);
+  transition: 0.3s;
+}
+
+.outro a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   CONTAINER PRINCIPALE
+   ========================================== */
+
+.profile-container {
+  padding: 40px 20px;
+}
+
+.profile-form-wrapper {
+  background: var(--white);
+  padding: 40px;
+  border-radius: 30px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  width: 950px;
+  overflow: hidden;
+}
+
+/* ==========================================
+   SEZIONI FORM
+   ========================================== */
+
+.form-section {
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.form-section h2 {
+  font-size: 20px;
+  color: var(--dark-text);
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.section-note {
+  font-size: 13px;
+  color: var(--light-text);
+  margin: -10px 0 15px 0;
+  font-style: italic;
+}
+
+/* ==========================================
+   FORM GROUPS
+   ========================================== */
+
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark-text);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--dark-text);
+  transition: all 0.3s ease;
+}
+
+.form-group input::placeholder,
+.form-group select {
+  color: var(--light-text);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
+}
+
+/* Input con errore */
+.form-group input.input-error,
+.form-group select.input-error {
+  border: 2px solid var(--error-color);
+  background-color: #fff5f5;
+}
+
+.form-group input.input-error:focus,
+.form-group select.input-error:focus {
+  border: 2px solid var(--error-color);
+  box-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
+}
+
+/* ===== FORM ROW (Layout a colonne) ===== */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+}
+
+#rowSchool {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ===== SELECT DISABILITATA ===== */
+select:disabled {
+  background-color: var(--disabled-bg);
+  color: var(--light-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+select:disabled:hover {
+  border-color: var(--border-light);
+  box-shadow: none;
+}
+
+/* ==========================================
+   FAMIGLIA GROUPS
+   ========================================== */
+
+.family-group {
+  padding-bottom: 10px;
+}
+
+.family-group h3 {
+  font-size: 16px;
+  color: var(--dark-text);
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+
+.optional {
+  font-size: 13px;
+  color: var(--light-text);
+  font-weight: 400;
+  font-style: italic;
+}
+
+#emailFamigliaH3 {
+  font-size: 16px;
+  color: var(--dark-text);
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+
+/* ==========================================
+   EMAIL PROFESSORI
+   ========================================== */
+
+.email-professor-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.email-professor-group .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.email-professor-group .btn-remove-prof {
+  background: var(--error-color);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 22px;
+  white-space: nowrap;
+}
+
+.email-professor-group .btn-remove-prof:hover {
+  background: #dd0000;
+  transform: translateY(-2px);
+}
+
+.email-professor-group .btn-remove-prof:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   BOTTONI
+   ========================================== */
+
+.btn-secondary {
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== BUTTON GROUP ===== */
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: var(--primary-purple);
+  color: var(--white);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-cancel {
+  background: var(--white);
+  color: var(--dark-text);
+  border: 1px solid var(--error-color);
+  box-shadow: none;
+}
+
+.btn-cancel:hover {
+  background: #fff5f5;
+  border-color: var(--error-color);
+  color: var(--error-color);
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   MESSAGGI DI ERRORE
+   ========================================== */
+
+#profileErrors {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
+  border-radius: 8px;
+  text-align: center;
+  display: none;
+}
+
+#profileErrors:not(:empty) {
+  display: block;
+}
+
+.error-message {
+  color: var(--error-dark);
+  font-size: 14px;
+  font-weight: 500;
+  margin: 5px 0;
+}

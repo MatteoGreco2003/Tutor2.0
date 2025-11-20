@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profilo Studente</title>
+    <link rel="stylesheet" href="css/riepilogo-studente.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <a
+          href="/home-studenti"
+          class="user-icon"
+          style="text-decoration: none; color: inherit"
+          >👤</a
+        >
+        <a
+          href="/home-studenti"
+          class="header-title"
+          style="text-decoration: none; color: inherit"
+          >Nome e Cognome</a
+        >
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a href="/home-studenti" class="sidebar-item" data-page="home"
+          >🏠 Home</a
+        >
+        <a
+          href="/profilo-studente"
+          class="sidebar-item active"
+          data-page="profilo"
+          >👤 Profilo Studente</a
+        >
+        <div class="sidebar-item">➕ Aggiungi Materie</div>
+        <div class="sidebar-item">📚 Media Materie</div>
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- DATI PERSONALI -->
+        <div class="profile-card">
+          <div class="card-header">
+            <h2 class="card-title">📋 Profilo Studente</h2>
+            <button class="edit-btn" id="editPersonalBtn">
+              <i class="fas fa-pen"></i> Modifica
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <label class="info-label">Nome e Cognome</label>
+                <p class="info-value" id="personalNomeCognome">-</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">Email</label>
+                <p class="info-value" id="personalEmail">-</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">Grado Scolastico</label>
+                <p class="info-value" id="personalGrado">-</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">Indirizzo Scolastico</label>
+                <p class="info-value" id="personalIndirizzo">-</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">Telefono</label>
+                <p class="info-value" id="personalTelefono">-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATI FAMIGLIA -->
+        <div class="profile-card">
+          <div class="card-header">
+            <h2 class="card-title">👨‍👩‍👧 Famiglia</h2>
+            <button class="edit-btn" id="editFamilyBtn">
+              <i class="fas fa-pen"></i> Modifica
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class="family-section">
+              <h3 class="family-title">Genitore 1</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label class="info-label">Nome e Cognome</label>
+                  <p class="info-value" id="familyGen1Nome">-</p>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">Numero di Telefono</label>
+                  <p class="info-value" id="familyGen1Tel">-</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="family-section">
+              <h3 class="family-title">Genitore 2</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label class="info-label">Nome e Cognome</label>
+                  <p class="info-value" id="familyGen2Nome">-</p>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">Numero di Telefono</label>
+                  <p class="info-value" id="familyGen2Tel">-</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="family-section">
+              <h3 class="family-title">Email Famiglia</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label class="info-label">Email</label>
+                  <p class="info-value" id="familyEmail">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATI SCUOLA -->
+        <div class="profile-card">
+          <div class="card-header">
+            <h2 class="card-title">🏫 Scuola</h2>
+            <button class="edit-btn" id="editSchoolBtn">
+              <i class="fas fa-pen"></i> Modifica
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <label class="info-label">Email Professori</label>
+                <div id="schoolEmails">
+                  <p class="info-value">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modale Elimina Profilo -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare il tuo storico verifiche e le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/riepilogo-studente.js"></script>
+  </body>
+</html>

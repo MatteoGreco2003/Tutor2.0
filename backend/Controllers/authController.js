@@ -4,79 +4,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-//===== LOGIN =====
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email e password sono richieste",
-      });
-    }
-
-    // Rimuovi spazi iniziali e finali
-    const cleanEmail = email.trim();
-    const cleanPassword = password.trim();
-
-    // Cerca in Studenti
-    let user = await Studenti.findOne({ email: cleanEmail });
-    let userType = "studente";
-
-    // Se non trovato, cerca in Tutor
-    if (!user) {
-      user = await Tutor.findOne({ email: cleanEmail });
-      userType = "tutor";
-    }
-
-    // Se non trovato
-    if (!user) {
-      return res.status(401).json({
-        message: "Email o password non valide",
-      });
-    }
-
-    const passwordMatch = await bcrypt.compare(
-      cleanPassword,
-      user.password.trim()
-    );
-
-    if (!passwordMatch) {
-      return res.status(401).json({
-        message: "Email o password non valide",
-      });
-    }
-
-    // Genera token
-    const token = jwt.sign(
-      { userId: user._id, email: user.email, tipo: userType },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    res.status(200).json({
-      message: "Login avvenuto con successo",
-      token: token,
-      user: {
-        id: user._id,
-        email: user.email,
-        tipo: userType,
-        nome: user.nome,
-        cognome: user.cognome,
-      },
-    });
-  } catch (error) {
-    console.error("Errore login:", error);
-    res.status(500).json({ message: "Errore del server" });
-  }
-};
-
 //===== LOGOUT =====
 export const logout = async (req, res) => {
   try {
-    // Con JWT, il logout è lato client (cancella il token)
-    // Lato server semplicemente reindirigiamo
-    res.clearCookie("token"); // Se il token è salvato in cookie
+    // Con JWT salvato in localStorage, il logout è principalmente lato client
+    // Il server semplicemente conferma il logout
+    // (Opzionale: potresti aggiungere il token a una blacklist se necessario)
+
     res.status(200).json({
       message: "Logout avvenuto con successo",
     });
@@ -213,6 +147,69 @@ export const registerComplete = async (req, res) => {
   }
 };
 
+//===== LOGIN =====
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email e password sono richieste",
+      });
+    }
+
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
+    let user = await Studenti.findOne({ email: cleanEmail });
+    let userType = "studente";
+
+    if (!user) {
+      user = await Tutor.findOne({ email: cleanEmail });
+      userType = "tutor";
+    }
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Email o password non valide",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      cleanPassword,
+      user.password.trim()
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Email o password non valide",
+      });
+    }
+
+    // Genera token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, tipo: userType },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+      message: "Login avvenuto con successo",
+      token: token,
+      user: {
+        id: user._id,
+        email: user.email,
+        tipo: userType,
+        nome: user.nome,
+        cognome: user.cognome,
+      },
+    });
+  } catch (error) {
+    console.error("Errore login:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
 // ===== VERIFICA ACCESSO HOME STUDENTI =====
 export const verifyHomeStudenti = async (req, res) => {
   try {
@@ -220,6 +217,25 @@ export const verifyHomeStudenti = async (req, res) => {
     if (req.user.tipo !== "studente") {
       return res.status(403).json({
         message: "Accesso solo per studenti",
+      });
+    }
+
+    res.status(200).json({
+      message: "Accesso autorizzato",
+      user: req.user,
+    });
+  } catch (error) {
+    console.error("Errore verifica accesso:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+// ===== VERIFICA ACCESSO HOME TUTOR =====
+export const verifyHomeTutor = async (req, res) => {
+  try {
+    if (req.user.tipo !== "tutor") {
+      return res.status(403).json({
+        message: "Accesso solo per tutor",
       });
     }
 

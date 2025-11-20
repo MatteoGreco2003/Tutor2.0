@@ -119,6 +119,7 @@ body {
   color: var(--light-text);
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  text-decoration: none;
 }
 
 .sidebar-item:hover {

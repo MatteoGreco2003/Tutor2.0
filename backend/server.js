@@ -6,7 +6,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database.js";
 import authRoutes from "./routes/auth.js";
+import studentRoutes from "./routes/student.js";
 import pageRoutes from "./routes/pageRoutes.js";
+import materieRoutes from "./routes/materieRoutes.js";
 
 dotenv.config();
 
@@ -27,6 +29,8 @@ app.set("views", "../frontend/views");
 // ===== ROUTES =====
 app.use("/", pageRoutes); // ← Pagine (pubbliche e protette)
 app.use("/auth", authRoutes); // ← Autenticazione
+app.use("/student", studentRoutes);
+//app.use("/materie", materieRoutes);
 
 connectDB(CONNECTION_URL) // ← CHIAMA DA QUI
   .then(() => {

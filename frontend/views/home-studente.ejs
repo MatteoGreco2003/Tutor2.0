@@ -38,7 +38,10 @@
     <div class="container">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="sidebar-item">👤 Profilo Studente</div>
+        <a href="/home-studenti" class="sidebar-item active" data-page="home"
+          >🏠 Home</a
+        >
+        <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
         <div class="sidebar-item">➕ Aggiungi Materie</div>
         <div class="sidebar-item">📚 Media Materie</div>
         <div class="sidebar-footer">
@@ -210,11 +213,11 @@
     </div>
   </body>
 
+  <script src="/js/api.js"></script>
+  <!--? serve per mandare il jwt -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/it.js"></script>
 
-  <script src="js/calendario.js"></script>
-  <script src="/js/api.js"></script>
-  <!--? serve per mandare il jwt -->
-  <script src="js/home-studente.js"></script>
+  <script src="/js/home-studente.js"></script>
+  <script src="/js/calendario.js"></script>
 </html>

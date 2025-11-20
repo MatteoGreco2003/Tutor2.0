@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Completa Profilo - Tutor2.0</title>
-    <link rel="stylesheet" href="css/authStyle.css" />
-    <link rel="stylesheet" href="css/profiloStyle.css" />
+    <title>Completa Profilo - Tutor 2.0</title>
+    <link rel="stylesheet" href="css/completamento-profilo.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -14,43 +13,36 @@
 
   <body>
     <div class="profile-container">
+      <!-- Header -->
       <div class="profile-header">
         <h1>Tutor 2.0</h1>
         <h2>COMPLETA IL TUO PROFILO</h2>
         <p>Inserisci i tuoi dati personali per completare la registrazione</p>
       </div>
 
+      <!-- Form Container -->
       <div class="profile-form-wrapper">
         <form id="profileForm" novalidate>
-          <!-- ===== SEZIONE 1: DATI PERSONALI ===== -->
+          <!-- SEZIONE 1: DATI PERSONALI -->
           <div class="form-section">
             <h2>Dati Personali</h2>
 
             <div class="form-row">
               <div class="form-group">
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  placeholder="Nome"
-                  required
-                />
+                <input type="text" id="nome" placeholder="Nome" required />
               </div>
               <div class="form-group">
                 <input
                   type="text"
                   id="cognome"
-                  name="cognome"
                   placeholder="Cognome"
                   required
                 />
               </div>
-
               <div class="form-group">
                 <input
                   type="tel"
                   id="telefono"
-                  name="telefono"
                   placeholder="Telefono"
                   required
                 />
@@ -58,13 +50,13 @@
             </div>
           </div>
 
-          <!-- ===== SEZIONE 2: DATI SCUOLA ===== -->
+          <!-- SEZIONE 2: DATI SCUOLA -->
           <div class="form-section">
             <h2>Dati Scuola</h2>
 
             <div class="form-row" id="rowSchool">
               <div class="form-group">
-                <select id="gradoScolastico" name="gradoScolastico" required>
+                <select id="gradoScolastico" required>
                   <option value="">Grado Scolastico</option>
                   <option value="Elementari">Elementari</option>
                   <option value="Medie">Medie</option>
@@ -72,13 +64,8 @@
                 </select>
               </div>
 
-              <!-- SEMPRE VISIBILE, MA DISABLED FINO A CHE NON SELEZIONI "SUPERIORI" -->
               <div class="form-group" id="indirizzoScolasticoGroup">
-                <select
-                  id="indirizzoScolastico"
-                  name="indirizzoScolastico"
-                  disabled
-                >
+                <select id="indirizzoScolastico" disabled>
                   <option value="">Indirizzo Scolastico</option>
                   <option value="Liceo">Liceo</option>
                   <option value="Tecnico">Tecnico</option>
@@ -88,20 +75,18 @@
             </div>
           </div>
 
-          <!-- ===== SEZIONE 3: DATI FAMIGLIA ===== -->
+          <!-- SEZIONE 3: DATI FAMIGLIA -->
           <div class="form-section">
             <h2>Dati Famiglia</h2>
 
             <!-- Genitore 1 -->
             <div class="family-group">
               <h3>Genitore 1</h3>
-
               <div class="form-row">
                 <div class="form-group">
                   <input
                     type="text"
                     id="genitore1Nome"
-                    name="genitore1Nome"
                     placeholder="Nome"
                     required
                   />
@@ -110,7 +95,6 @@
                   <input
                     type="text"
                     id="genitore1Cognome"
-                    name="genitore1Cognome"
                     placeholder="Cognome"
                     required
                   />
@@ -119,7 +103,6 @@
                   <input
                     type="tel"
                     id="genitore1Telefono"
-                    name="genitore1Telefono"
                     placeholder="Telefono"
                     required
                   />
@@ -127,35 +110,25 @@
               </div>
             </div>
 
-            <!-- Genitore 2 -->
+            <!-- Genitore 2 (Opzionale) -->
             <div class="family-group">
-              <h3>Genitore 2</h3>
+              <h3>Genitore 2 <span class="optional">(Opzionale)</span></h3>
               <div class="form-row">
                 <div class="form-group">
-                  <input
-                    type="text"
-                    id="genitore2Nome"
-                    name="genitore2Nome"
-                    placeholder="Nome"
-                    required
-                  />
+                  <input type="text" id="genitore2Nome" placeholder="Nome" />
                 </div>
                 <div class="form-group">
                   <input
                     type="text"
                     id="genitore2Cognome"
-                    name="genitore2Cognome"
                     placeholder="Cognome"
-                    required
                   />
                 </div>
                 <div class="form-group">
                   <input
                     type="tel"
                     id="genitore2Telefono"
-                    name="genitore2Telefono"
                     placeholder="Telefono"
-                    required
                   />
                 </div>
               </div>
@@ -167,24 +140,20 @@
               <input
                 type="email"
                 id="emailFamiglia"
-                name="emailFamiglia"
                 placeholder="Email Famiglia"
                 required
               />
             </div>
           </div>
 
-          <!-- ===== SEZIONE 4: EMAIL PROFESSORI ===== -->
+          <!-- SEZIONE 4: EMAIL PROFESSORI -->
           <div class="form-section">
             <h2>Dati Professori</h2>
             <p class="section-note">
               Puoi aggiungere fino a 5 email di insegnanti
             </p>
 
-            <!-- Contenitore email professori (inizialmente vuoto) -->
-            <div id="emailProfessoriContainer">
-              <!-- Gli input verranno generati via JavaScript -->
-            </div>
+            <div id="emailProfessoriContainer"></div>
 
             <button
               type="button"
@@ -196,10 +165,10 @@
             </button>
           </div>
 
-          <!-- ===== SEZIONE 5: ERRORI ===== -->
+          <!-- MESSAGGI DI ERRORE -->
           <div id="profileErrors" class="error-messages"></div>
 
-          <!-- ===== BOTTONI ===== -->
+          <!-- BOTTONI -->
           <div class="button-group">
             <button type="button" id="cancelBtn" class="btn btn-cancel">
               Annulla
@@ -210,6 +179,8 @@
           </div>
         </form>
       </div>
+
+      <!-- Footer -->
       <div class="outro">
         <p>
           Powered by
@@ -217,6 +188,7 @@
         </p>
       </div>
     </div>
+
+    <script src="js/completamento-profilo.js"></script>
   </body>
-  <script src="js/completamento-profilo.js"></script>
 </html>

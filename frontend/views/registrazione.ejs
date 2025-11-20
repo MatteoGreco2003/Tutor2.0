@@ -1,12 +1,10 @@
-<% let pagina = 'registrazione' %>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accedi/Registrati</title>
-    <link rel="stylesheet" href="css/authStyle.css" />
+    <title>Accedi/Registrati - Tutor 2.0</title>
+    <link rel="stylesheet" href="css/registrazione.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -14,6 +12,7 @@
   </head>
 
   <body>
+    <!-- Sezione introduttiva -->
     <div class="intro">
       <h1>Tutor 2.0</h1>
       <p>
@@ -21,22 +20,20 @@
         progressi
       </p>
     </div>
+
+    <!-- Container principale con toggle login/registrazione -->
     <div class="container">
-      <!-- Login Form -->
+      <!-- Form Login -->
       <div class="form-box login">
-        <form action="#" id="loginForm" novalidate>
+        <form id="loginForm" novalidate>
           <h1>Accedi</h1>
+
           <div class="input-box">
-            <input
-              type="email"
-              id="loginEmail"
-              name="loginEmail"
-              placeholder="Email"
-              required
-            />
+            <input type="email" id="loginEmail" placeholder="Email" required />
             <i class="fa-solid fa-envelope"></i>
           </div>
-          <div class="input-box">
+
+          <div class="input-box password-input-box">
             <input
               type="password"
               id="loginPassword"
@@ -44,52 +41,62 @@
               placeholder="Password"
               required
             />
-            <i class="fa-solid fa-lock"></i>
+            <i
+              class="fa-solid fa-lock toggle-password"
+              data-input="loginPassword"
+            ></i>
           </div>
+
           <div class="forget-link">
-            <!-- QUESTO LINK APRE LA MODALE DI RESET -->
             <a href="#" id="forgotPasswordLink">Hai dimenticato la password?</a>
           </div>
-          <button type="submit" class="btn">Accedi</button>
 
-          <!-- Contenitore per errori login -->
           <div id="loginErrors" class="error-messages"></div>
+          <button type="submit" class="btn">Accedi</button>
         </form>
       </div>
-      <!-- Register Form -->
+
+      <!-- Form Registrazione -->
       <div class="form-box register">
-        <form action="#" id="registerForm" novalidate>
+        <form id="registerForm" novalidate>
           <h1>Registrazione</h1>
+
           <div class="input-box">
             <input
               type="email"
               id="registerEmail"
-              name="registerEmail"
               placeholder="Email"
               required
             />
             <i class="fa-solid fa-envelope"></i>
           </div>
-          <div class="input-box">
+
+          <div class="input-box password-input-box">
             <input
               type="password"
               id="registerPassword"
-              name="registerPassword"
               placeholder="Password"
               required
             />
-            <i class="fa-solid fa-lock"></i>
+            <i
+              class="fa-solid fa-lock toggle-password"
+              data-input="registerPassword"
+            ></i>
           </div>
-          <div class="input-box">
+
+          <div class="input-box password-input-box">
             <input
               type="password"
               id="confirmPassword"
-              name="confirmPassword"
               placeholder="Conferma Password"
               required
             />
-            <i class="fa-solid fa-lock"></i>
+            <i
+              class="fa-solid fa-lock toggle-password"
+              data-input="confirmPassword"
+            ></i>
           </div>
+
           <div class="check-box">
             <input type="checkbox" id="gdprConsent" />
             <p>
@@ -101,23 +108,20 @@
               <a href="cookie.html" target="_blank">cookie policy</a>.
             </p>
           </div>
-          <button type="submit" class="btn">Registrati</button>
 
-          <!-- Contenitore per errori registrazione -->
           <div id="registerErrors" class="error-messages"></div>
+          <button type="submit" class="btn">Registrati</button>
         </form>
       </div>
 
-      <!-- Toggle Box -->
+      <!-- Toggle Panel (da login a registrazione) -->
       <div class="toggle-box">
-        <!-- Toggle Box Left -->
         <div class="toggle-panel toggle-left">
           <h1>Ciao, Benvenuto!</h1>
           <p>Non hai un account?</p>
           <button class="btn register-btn">Registrati</button>
         </div>
 
-        <!-- Toggle Box Right -->
         <div class="toggle-panel toggle-right">
           <h1>Bentornato!</h1>
           <p>Hai già un account?</p>
@@ -125,6 +129,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
     <div class="outro">
       <p>
         Powered by
@@ -132,7 +138,7 @@
       </p>
     </div>
 
-    <!-- Modale Forgot Password (nascosta inizialmente) -->
+    <!-- Modale Recupero Password -->
     <div id="forgotPasswordModal" class="modal" style="display: none">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -144,25 +150,31 @@
 
         <form id="forgotPasswordForm" novalidate>
           <div class="input-box">
-            <input
-              type="email"
-              id="forgotEmail"
-              name="forgotEmail"
-              placeholder="Email"
-              required
-            />
+            <input type="email" id="forgotEmail" placeholder="Email" required />
             <i class="fa-solid fa-envelope"></i>
           </div>
-          <button type="submit" class="btn">Invia link reset</button>
           <div id="forgotErrors" class="error-messages"></div>
+
           <div id="forgotSuccess" class="success-message" style="display: none">
             ✅ Se l'email è registrata, riceverai un link per reimpostare la
             password.
           </div>
+
+          <!-- CONTAINER BOTTONI -->
+          <div class="modal-button-group">
+            <button
+              type="button"
+              id="closeForgotBtn"
+              class="btn btn-modal-cancel"
+            >
+              Annulla
+            </button>
+            <button type="submit" class="btn">Invia link reset</button>
+          </div>
         </form>
       </div>
     </div>
-  </body>
 
-  <script src="js/auth.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
 </html>

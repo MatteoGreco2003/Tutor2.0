@@ -1,40 +1,106 @@
-// ===== ATTENDI IL CARICAMENTO DEL DOM =====
+// ==========================================
+// HOME STUDENTE - TUTOR 2.0
+// ==========================================
+
+// ===== DISABILITA BACK DOPO LOGOUT E CONTROLLA TOKEN =====
+window.addEventListener("pageshow", (event) => {
+  const token = localStorage.getItem("token");
+
+  // Se il token non esiste, torna a login
+  if (!token) {
+    window.location.href = "/";
+    return;
+  }
+
+  console.log("✅ Token trovato, pagina caricata");
+});
+
+// Disabilita il back button tramite history
+window.history.pushState(null, null, window.location.href);
+window.addEventListener("popstate", function (event) {
+  // Non permettere di tornare indietro
+  window.history.pushState(null, null, window.location.href);
+});
+
+// ==========================================
+// CARICAMENTO PAGINA
+// ==========================================
+
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== VERIFICA TOKEN ALL'INIZIO =====
   const token = localStorage.getItem("token");
+  console.log("Token:", token);
 
   if (!token) {
-    window.location.href = "/login";
+    window.location.href = "/";
     return;
   }
 
+  // ===== CARICA DATI STUDENTE NELL'HEADER =====
   try {
-    const response = await apiCall("/auth/home-studenti");
-    if (!response || !response.ok) {
-      window.location.href = "/login";
-      return;
+    const response = await fetch("/student/data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.data) {
+      // Aggiorna header con nome e cognome
+      const headerTitle = document.querySelector(".header-title");
+      headerTitle.textContent = `${data.data.nome} ${data.data.cognome}`;
+
+      // Aggiorna icon con prima lettera
+      const userIcon = document.querySelector(".user-icon");
+      userIcon.textContent = data.data.nome.charAt(0).toUpperCase();
+      userIcon.style.backgroundColor = "#9e3ffd";
+    } else {
+      console.error("Errore nel caricamento dati:", data.message);
+      window.location.href = "/";
     }
-    console.log("Autorizzato!");
   } catch (error) {
-    console.error("Errore verifica token:", error);
-    window.location.href = "/login";
-    return;
+    console.error("Errore caricamento studente:", error);
+    window.location.href = "/";
   }
 
-  // ===== PULSANTE DISCONNETTITI =====
+  // ===== VERIFICA ACCESSO PAGINA =====
+  try {
+    const response = await fetch("/auth/verify-home-studenti", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Risposta status:", response.status);
+    const data = await response.json();
+    console.log("Data:", data);
+  } catch (error) {
+    console.error("Errore:", error);
+  }
+
+  // ==========================================
+  // PULSANTE DISCONNETTITI
+  // ==========================================
+
   document
     .querySelector(".logout-btn")
     .addEventListener("click", async function () {
       try {
         const response = await fetch("/auth/logout", {
           method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (response.ok) {
-          // Cancella il token da localStorage
+          // Cancella token
           localStorage.removeItem("token");
-
-          // Reindirizza al login
+          // Reindirizza a login
           window.location.href = "/";
         } else {
           alert("Errore durante il logout");
@@ -45,31 +111,81 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-  // ===== MODALE ELIMINA PROFILO =====
-  document.querySelector(".delete-btn").addEventListener("click", function (e) {
-    document.getElementById("deleteProfileModal").style.display = "flex";
+  // ==========================================
+  // MODALE ELIMINA PROFILO
+  // ==========================================
+
+  const deleteProfileModal = document.getElementById("deleteProfileModal");
+
+  // Apri modale
+  document.querySelector(".delete-btn").addEventListener("click", function () {
+    deleteProfileModal.style.display = "flex";
   });
 
+  // Chiudi modale (X)
   document
     .getElementById("closeDeleteProfile")
     .addEventListener("click", function () {
-      document.getElementById("deleteProfileModal").style.display = "none";
+      deleteProfileModal.style.display = "none";
     });
 
+  // Chiudi modale (Annulla)
   document
     .getElementById("cancelDeleteProfile")
     .addEventListener("click", function () {
-      document.getElementById("deleteProfileModal").style.display = "none";
+      deleteProfileModal.style.display = "none";
     });
 
+  // Chiudi modale (click fuori)
   window.addEventListener("click", function (event) {
-    const modal = document.getElementById("deleteProfileModal");
-    if (event.target === modal) {
-      modal.style.display = "none";
+    if (event.target === deleteProfileModal) {
+      deleteProfileModal.style.display = "none";
     }
   });
 
-  // ===== MODALE INSERISCI VERIFICA =====
+  // ===== BOTTONE "ELIMINA COMUNQUE" - ELIMINA IL PROFILO =====
+  /**
+   * Elimina il profilo dello studente dal database
+   * Chiama DELETE /student/profile
+   */
+  document
+    .getElementById("confirmDeleteProfile")
+    .addEventListener("click", async function () {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch("/student/profile", {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Elimina token
+          localStorage.removeItem("token");
+
+          // Alert di successo
+          alert("Profilo eliminato con successo");
+
+          // Reindirizza al login
+          window.location.href = "/";
+        } else {
+          alert(data.message || "Errore nell'eliminazione del profilo");
+        }
+      } catch (error) {
+        console.error("Errore eliminazione profilo:", error);
+        alert("Errore di connessione al server");
+      }
+    });
+
+  // ==========================================
+  // MODALE INSERISCI VERIFICA
+  // ==========================================
+
   const modal = document.getElementById("insertVerificaModal");
   const form = document.getElementById("insertVerificaForm");
   const materiaSelect = document.getElementById("materia");
@@ -78,7 +194,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const selectValutazione = document.getElementById("valutazione");
   const dataInput = document.getElementById("verificaData");
 
-  // Funzione per resettare il form
+  /**
+   * Resetta il form della modale verifiche
+   */
   function resetInsertVerificaForm() {
     form.reset();
     materiaSelect.selectedIndex = 0;
@@ -88,13 +206,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     argomentoTextarea.style.height = "";
   }
 
-  // Quando apri la modale
+  // Apri modale
   document.getElementById("addVerificaBtn").addEventListener("click", () => {
     resetInsertVerificaForm();
     modal.style.display = "flex";
   });
 
-  // Quando chiudi la modale (X)
+  // Chiudi modale (X)
   document
     .getElementById("closeInsertVerifica")
     .addEventListener("click", () => {
@@ -102,13 +220,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       resetInsertVerificaForm();
     });
 
-  // Quando chiudi la modale (Annulla)
+  // Chiudi modale (Annulla)
   document.getElementById("annullaVerifica").addEventListener("click", () => {
     modal.style.display = "none";
     resetInsertVerificaForm();
   });
 
-  // Quando chiudi cliccando fuori
+  // Chiudi modale (click fuori)
   window.addEventListener("click", function (event) {
     if (event.target === modal) {
       modal.style.display = "none";
@@ -126,14 +244,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ===== FLATPICKR DATE PICKER =====
+  // ==========================================
+  // FLATPICKR DATE PICKER
+  // ==========================================
+
   flatpickr(dataInput, {
     locale: "it",
     dateFormat: "d/m/Y",
     allowInput: false,
     disableMobile: true,
     onOpen: function (selectedDates, dateStr, instance) {
-      // Centra il calendario rispetto all'input
+      // Centra il calendario
       const inputRect = dataInput.getBoundingClientRect();
       const inputWidth = dataInput.offsetWidth;
       const calendarWidth = instance.calendarContainer.offsetWidth;
@@ -152,22 +273,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (selected > today) {
         checkboxPrevisto.checked = true;
-        checkboxPrevisto.disabled = true; /* ← AGGIUNGI QUESTA RIGA */
+        checkboxPrevisto.disabled = true;
         selectValutazione.disabled = true;
         selectValutazione.value = "";
       } else {
         checkboxPrevisto.checked = false;
-        checkboxPrevisto.disabled = false; /* ← AGGIUNGI QUESTA RIGA */
+        checkboxPrevisto.disabled = false;
         selectValutazione.disabled = false;
       }
     },
   });
 
-  // ===== SUBMIT FORM =====
+  // ==========================================
+  // SUBMIT FORM VERIFICA
+  // ==========================================
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     alert("Funzione di salvataggio verifica in sviluppo!");
     modal.style.display = "none";
     resetInsertVerificaForm();
   });
-});
+}); // ← CHIUSURA DOMContentLoaded

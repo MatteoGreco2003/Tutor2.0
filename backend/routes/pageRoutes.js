@@ -12,14 +12,14 @@ router.get("/complete-profile", (req, res) => {
   res.render("completamento-profilo");
 });
 
-// ===== PAGINE PROTETTE =====
-router.get("/home-studenti", verifyToken, (req, res) => {
-  // Verifica che sia uno studente
-  if (req.user.tipo !== "studente") {
-    return res
-      .status(403)
-      .render("errore", { message: "Accesso solo per studenti" });
-  }
+router.get("/profilo-studente", (req, res) => {
+  res.render("riepilogo-studente");
+});
+
+// ===== PAGINE PROTETTE → SERVITE COME PUBBLICHE =====
+// Ora sono pubbliche, il controllo accesso avviene via API
+router.get("/home-studenti", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
   res.render("home-studente");
 });
 
@@ -30,6 +30,7 @@ router.get("/home-tutor", verifyToken, (req, res) => {
       .status(403)
       .render("errore", { message: "Accesso solo per tutor" });
   }
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
   res.render("home-tutor");
 });
 
