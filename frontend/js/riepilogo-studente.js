@@ -2,23 +2,9 @@
 // RIEPILOGO PROFILO STUDENTE - TUTOR 2.0
 // ==========================================
 
-// ===== DISABILITA BACK DOPO LOGOUT E CONTROLLA TOKEN =====
-window.addEventListener("pageshow", (event) => {
-  const token = localStorage.getItem("token");
-
-  // Se il token non esiste, torna a login
-  if (!token) {
-    window.location.href = "/";
-    return;
-  }
-
-  console.log("✅ Token trovato, pagina caricata");
-});
-
-// Disabilita il back button tramite history
+// ===== DISABILITA BACK BUTTON =====
 window.history.pushState(null, null, window.location.href);
-window.addEventListener("popstate", function (event) {
-  // Non permettere di tornare indietro
+window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
@@ -34,6 +20,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     window.location.href = "/";
     return;
   }
+
+  console.log("✅ Token trovato");
 
   // ===== CARICA DATI STUDENTE =====
   try {
@@ -177,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async function () {
  * @param {object} studentData - Dati dello studente dal backend
  */
 function populateProfileData(studentData) {
-  // DATI PERSONALI
+  // ===== DATI PERSONALI =====
   document.getElementById("personalNomeCognome").textContent =
     `${studentData.nome} ${studentData.cognome}` || "-";
   document.getElementById("personalEmail").textContent =
@@ -189,36 +177,37 @@ function populateProfileData(studentData) {
   document.getElementById("personalTelefono").textContent =
     studentData.telefono || "-";
 
-  // DATI FAMIGLIA
-  if (studentData.famiglia) {
-    // Genitore 1
+  // ===== DATI FAMIGLIA =====
+
+  // Genitore 1
+  if (studentData.genitore1) {
     document.getElementById("familyGen1Nome").textContent =
-      `${studentData.famiglia.genitore1?.nome || ""} ${
-        studentData.famiglia.genitore1?.cognome || ""
+      `${studentData.genitore1.nome || ""} ${
+        studentData.genitore1.cognome || ""
       }`.trim() || "-";
     document.getElementById("familyGen1Tel").textContent =
-      studentData.famiglia.genitore1?.telefono || "-";
-
-    // Genitore 2
-    document.getElementById("familyGen2Nome").textContent =
-      `${studentData.famiglia.genitore2?.nome || ""} ${
-        studentData.famiglia.genitore2?.cognome || ""
-      }`.trim() || "-";
-    document.getElementById("familyGen2Tel").textContent =
-      studentData.famiglia.genitore2?.telefono || "-";
-
-    // Email Famiglia
-    document.getElementById("familyEmail").textContent =
-      studentData.famiglia.email || "-";
+      studentData.genitore1.telefono || "-";
   }
 
-  // DATI SCUOLA
-  if (
-    studentData.scuola?.emailProfessori &&
-    studentData.scuola.emailProfessori.length > 0
-  ) {
+  // Genitore 2
+  if (studentData.genitore2) {
+    document.getElementById("familyGen2Nome").textContent =
+      `${studentData.genitore2.nome || ""} ${
+        studentData.genitore2.cognome || ""
+      }`.trim() || "-";
+    document.getElementById("familyGen2Tel").textContent =
+      studentData.genitore2.telefono || "-";
+  }
+
+  // Email Famiglia
+  document.getElementById("familyEmail").textContent =
+    studentData.emailFamiglia || "-";
+
+  // ===== DATI SCUOLA =====
+
+  if (studentData.emailInsegnanti && studentData.emailInsegnanti.length > 0) {
     const emailsContainer = document.getElementById("schoolEmails");
-    emailsContainer.innerHTML = studentData.scuola.emailProfessori
+    emailsContainer.innerHTML = studentData.emailInsegnanti
       .map((email) => `<p class="info-value">${email}</p>`)
       .join("");
   } else {

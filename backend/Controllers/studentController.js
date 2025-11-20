@@ -13,10 +13,8 @@ export const getStudentData = async (req, res) => {
   try {
     const studentId = req.user.userId;
 
-    // Cerca lo studente per ID
-    const student = await Studenti.findById(studentId).select(
-      "nome cognome email telefono gradoScolastico"
-    );
+    // Cerca lo studente per ID - prende TUTTI i campi
+    const student = await Studenti.findById(studentId);
 
     if (!student) {
       return res.status(404).json({
@@ -26,14 +24,7 @@ export const getStudentData = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: {
-        id: student._id,
-        nome: student.nome,
-        cognome: student.cognome,
-        email: student.email,
-        telefono: student.telefono,
-        gradoScolastico: student.gradoScolastico,
-      },
+      data: student,
     });
   } catch (error) {
     console.error("Errore nel recupero dati studente:", error);

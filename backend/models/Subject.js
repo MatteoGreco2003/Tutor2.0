@@ -2,11 +2,9 @@ import mongoose from "mongoose";
 
 const materieSchema = mongoose.Schema(
   {
-    // L'_id viene generato automaticamente da MongoDB
-
     studenteId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+      ref: "Studenti",
       required: [true, "ID studente obbligatorio"],
     },
 
@@ -19,16 +17,21 @@ const materieSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// Validazione: max 15 materie per studente
+// ===== VALIDAZIONE: MAX 15 MATERIE PER STUDENTE =====
 materieSchema.pre("save", async function (next) {
-  const countMaterie = await mongoose.model("Materie").countDocuments({
-    studenteId: this.studenteId,
-  });
+  try {
+    // Usa 'this.model()' invece di mongoose.model()
+    const countMaterie = await this.model("Subject").countDocuments({
+      studenteId: this.studenteId,
+    });
 
-  if (countMaterie >= 15) {
-    return next(new Error("Uno studente può avere massimo 15 materie"));
+    if (countMaterie >= 15) {
+      return next(new Error("Uno studente può avere massimo 15 materie"));
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 });
 
 const Materie = mongoose.model("Subject", materieSchema, "Subject");

@@ -30,7 +30,8 @@ app.set("views", "../frontend/views");
 app.use("/", pageRoutes); // ← Pagine (pubbliche e protette)
 app.use("/auth", authRoutes); // ← Autenticazione
 app.use("/student", studentRoutes);
-//app.use("/materie", materieRoutes);
+
+app.use("/materie", materieRoutes);
 
 connectDB(CONNECTION_URL) // ← CHIAMA DA QUI
   .then(() => {
