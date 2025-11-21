@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.js";
 import studentRoutes from "./routes/student.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import materieRoutes from "./routes/materieRoutes.js";
+import verificheRoutes from "./routes/verificheRoutes.js";
 
 dotenv.config();
 
@@ -30,8 +31,8 @@ app.set("views", "../frontend/views");
 app.use("/", pageRoutes); // ← Pagine (pubbliche e protette)
 app.use("/auth", authRoutes); // ← Autenticazione
 app.use("/student", studentRoutes);
-
-app.use("/materie", materieRoutes);
+app.use("/subject", materieRoutes);
+app.use("/test", verificheRoutes);
 
 connectDB(CONNECTION_URL) // ← CHIAMA DA QUI
   .then(() => {

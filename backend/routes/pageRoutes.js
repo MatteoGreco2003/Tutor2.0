@@ -12,10 +12,6 @@ router.get("/complete-profile", (req, res) => {
   res.render("completamento-profilo");
 });
 
-router.get("/profilo-studente", (req, res) => {
-  res.render("riepilogo-studente");
-});
-
 // ===== PAGINE PROTETTE → SERVITE COME PUBBLICHE =====
 // Ora sono pubbliche, il controllo accesso avviene via API
 router.get("/home-studenti", (req, res) => {
@@ -32,6 +28,16 @@ router.get("/home-tutor", verifyToken, (req, res) => {
   }
   res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
   res.render("home-tutor");
+});
+
+router.get("/profilo-studente", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
+  res.render("riepilogo-studente");
+});
+
+router.get("/subject", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
+  res.render("materie");
 });
 
 export default router;

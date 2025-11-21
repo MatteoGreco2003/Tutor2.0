@@ -4,7 +4,7 @@ import {
   getMaterieStudente,
   deleteMateria,
   updateMateria,
-} from "../Controllers/materieController.js";
+} from "../controllers/subjectController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const router = express.Router();
 router.post("/", verifyToken, createMateria);
 
 // GET /api/materie - Leggi tutte le materie dello studente
-router.get("/", verifyToken, getMaterieStudente);
+router.get("/data", verifyToken, getMaterieStudente);
 
 // DELETE /api/materie/:materiaId - Elimina una materia
 router.delete("/:materiaId", verifyToken, deleteMateria);

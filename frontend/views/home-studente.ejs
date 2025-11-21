@@ -42,7 +42,7 @@
           >🏠 Home</a
         >
         <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
-        <div class="sidebar-item">➕ Aggiungi Materie</div>
+        <a href="/subject" class="sidebar-item">➕ Aggiungi Materie</a>
         <div class="sidebar-item">📚 Media Materie</div>
         <div class="sidebar-footer">
           <div class="sidebar-button">
@@ -151,15 +151,7 @@
 
           <div style="margin-bottom: 16px">
             <label for="materia">Materia</label>
-            <select id="materia" name="materia" required>
-              <option value="" selected disabled>Seleziona la materia</option>
-              <option value="Matematica">Matematica</option>
-              <option value="Italiano">Italiano</option>
-              <option value="Inglese">Inglese</option>
-              <option value="Fisica">Fisica</option>
-              <option value="Latino">Latino</option>
-              <!-- Altre materie qui -->
-            </select>
+            <select id="materia" name="materia" size="4" required></select>
           </div>
 
           <div style="margin-bottom: 16px">
@@ -180,17 +172,17 @@
             >
             <select id="valutazione" name="valutazione">
               <option value="" selected disabled>Seleziona il voto</option>
-              <option value="10">10</option>
-              <option value="9">9</option>
-              <option value="8">8</option>
-              <option value="7">7</option>
-              <option value="6">6</option>
+              <option value="10">0</option>
+              <option value="9">1</option>
+              <option value="8">2</option>
+              <option value="7">3</option>
+              <option value="6">4</option>
               <option value="5">5</option>
-              <option value="4">4</option>
-              <option value="4">3</option>
-              <option value="4">2</option>
-              <option value="4">1</option>
-              <option value="4">0</option>
+              <option value="4">6</option>
+              <option value="4">7</option>
+              <option value="4">8</option>
+              <option value="4">9</option>
+              <option value="4">10</option>
             </select>
             <div style="margin-top: 8px">
               <input type="checkbox" id="previsto" name="previsto" />

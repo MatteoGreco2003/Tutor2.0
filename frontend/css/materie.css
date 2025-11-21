@@ -1,0 +1,805 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap");
+
+/* ========== PALETTE E VARIABILI ========== */
+:root {
+  --primary-purple: #9e3ffd;
+  --secondary-pink: #ffd7ef;
+  --light-bg: #f8f0ff;
+  --white: #ffffff;
+  --dark-text: #16163f;
+  --light-text: #73738c;
+  --danger: #ff4444;
+  --blue-accent: #116dff;
+  --border-radius: 8px;
+}
+
+/* ========== RESET BASE ========== */
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ========== HEADER ========== */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: var(--white);
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(158, 63, 253, 0.08);
+  border-bottom: 2px solid var(--primary-purple);
+  z-index: 1000;
+}
+
+.header a {
+  text-decoration: none;
+  color: var(--dark-text);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--white);
+  font-weight: 600;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.logout-btn {
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #7e32ca;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  position: fixed;
+  top: 75px;
+  left: 0;
+  width: 280px;
+  height: calc(100vh - 75px);
+  background-color: var(--white);
+  padding: 24px 0;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+  border-right: 2px solid var(--primary-purple);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-item {
+  padding: 12px 20px;
+  margin: 0 12px 4px 12px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--light-text);
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sidebar-item:hover {
+  background-color: var(--light-bg);
+  color: var(--primary-purple);
+  border-left-color: var(--primary-purple);
+}
+
+.sidebar-item.active {
+  background-color: var(--secondary-pink);
+  color: var(--primary-purple);
+  font-weight: 600;
+  border-left-color: var(--primary-purple);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px 12px 0 12px;
+  border-top: 2px solid var(--light-bg);
+}
+
+.delete-btn {
+  background-color: var(--danger);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.delete-btn:hover {
+  background-color: #cc0000;
+}
+
+.outro {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--dark-text);
+}
+
+.outro a {
+  color: var(--dark-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sidebar-socials {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.sidebar-socials a {
+  color: var(--light-text);
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-socials a:hover {
+  color: var(--dark-text);
+  transform: scale(1.2);
+}
+
+/* ========== CONTAINER E MAIN CONTENT ========== */
+body {
+  background-color: var(--light-bg);
+  color: var(--dark-text);
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  gap: 0;
+  margin-top: 75px;
+}
+
+.main-content {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* ========== SEZIONE MATERIE ========== */
+.section {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.section-note {
+  font-size: 14px;
+  color: #8585a2;
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+#materieList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.materia-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.materia-input {
+  flex: 1;
+  padding: 10px 20px;
+  font-size: 15px;
+  border: 1.5px solid #eee;
+  border-radius: var(--border-radius);
+  background: #fafafe;
+  color: var(--dark-text);
+  transition: border-color 0.2s;
+}
+
+.materia-input:focus {
+  border-color: var(--primary-purple);
+}
+
+.btn-materia {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-modifica,
+.btn-rimuovi {
+  border: none;
+  background: var(--primary-purple);
+  color: var(--white);
+  font-size: 14px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  padding: 8px 14px;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.btn-rimuovi {
+  background: var(--danger);
+}
+
+.btn-modifica:hover {
+  background: #7e32ca;
+}
+.btn-rimuovi:hover {
+  background: #cc0000;
+}
+
+.btn-add-materia {
+  border: none;
+  background: var(--primary-purple);
+  color: var(--white);
+  font-size: 14px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  padding: 8px 20px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.btn-add-materia:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-add-materia:hover:not(:disabled) {
+  background: #7e32ca;
+}
+
+/* ========== MODALE ELIMINA PROFILO ========== */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.modal-content {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: var(--dark-text);
+}
+
+.close {
+  height: 35px;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #999;
+}
+
+.close:hover {
+  color: #000;
+}
+
+.btn-annulla {
+  background: none;
+  color: #333;
+  border: 1.5px solid #adb5bd;
+  padding: 10px 18px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+}
+
+.btn-annulla:hover {
+  background: #f4f4f9;
+  border-color: #888;
+}
+
+/* ========== BOTTONE ADD MATERIA (SISTEMATO) ========== */
+.btn-add-materia {
+  border: none;
+  background: var(--primary-purple);
+  color: var(--white);
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  padding: 10px 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.btn-add-materia:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-add-materia:hover:not(:disabled) {
+  background: #7e32ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(158, 63, 253, 0.3);
+}
+
+.btn-add-materia:active {
+  transform: translateY(0);
+}
+
+/* ========== MODALE ADD MATERIA ========== */
+#addMateriaModal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#addMateriaModal.show {
+  display: flex;
+}
+
+#addMateriaModal .modal-content {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+#addMateriaModal h2 {
+  margin-top: 0;
+  color: var(--dark-text);
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#addMateriaModal label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark-text);
+  display: block;
+  margin-bottom: 8px;
+}
+
+#addMateriaModal input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #eee;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+#addMateriaModal input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
+}
+
+#addMateriaModal input[type="text"].input-error {
+  border: 2px solid var(--danger);
+  background-color: #fff5f5;
+}
+
+/* ========== MESSAGGI ERRORE ========== */
+.error-messages {
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border: 1px solid var(--danger);
+  border-radius: var(--border-radius);
+  display: none;
+  text-align: center;
+}
+
+.error-messages:not(:empty) {
+  display: block;
+}
+
+.error-message {
+  color: #cc0000;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 5px 0;
+}
+
+/* ========== BOTTONI MODALE ========== */
+.btn-aggiungi {
+  flex: 1;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-aggiungi:hover {
+  background: #7e32ca;
+}
+
+.btn-aggiungi:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-annulla {
+  background: none;
+  color: var(--dark-text);
+  border: 1.5px solid #adb5bd;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-annulla:hover {
+  background: #f4f4f9;
+  border-color: #888;
+}
+
+#addMateriaModal .close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+#addMateriaModal .close:hover {
+  color: #000;
+}
+
+/* ========== BOTTONI MODIFICA E RIMUOVI ========== */
+.btn-materia {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-modifica,
+.btn-rimuovi {
+  border: none;
+  color: var(--white);
+  font-size: 14px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  padding: 10px 16px;
+  transition: all 0.2s;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.btn-modifica {
+  background: var(--primary-purple);
+}
+
+.btn-modifica:hover {
+  background: #7e32ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(158, 63, 253, 0.3);
+}
+
+.btn-modifica:active {
+  transform: translateY(0);
+}
+
+.btn-rimuovi {
+  background: var(--danger);
+}
+
+.btn-rimuovi:hover {
+  background: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 68, 68, 0.3);
+}
+
+.btn-rimuovi:active {
+  transform: translateY(0);
+}
+
+/* ========== MODALE MODIFICA MATERIA ========== */
+#editMateriaModal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+#editMateriaModal.show {
+  display: flex;
+}
+
+#editMateriaModal .modal-content {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+#editMateriaModal h2 {
+  margin-top: 0;
+  color: var(--dark-text);
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#editMateriaModal label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--dark-text);
+  display: block;
+  margin-bottom: 8px;
+}
+
+#editMateriaModal input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #eee;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+#editMateriaModal input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
+}
+
+#editMateriaModal input[type="text"].input-error {
+  border: 2px solid var(--danger);
+  background-color: #fff5f5;
+}
+
+.btn-modifica-submit {
+  flex: 1;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-modifica-submit:hover {
+  background: #7e32ca;
+}
+
+.btn-modifica-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#editMateriaModal .close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+#editMateriaModal .close:hover {
+  color: #000;
+}
+
+/* ========== MODALE ELIMINA MATERIA ========== */
+#deleteMateriaModal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+#deleteMateriaModal.show {
+  display: flex;
+}
+
+#deleteMateriaModal .modal-content {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
+}
+
+#deleteMateriaModal h2 {
+  margin-top: 0;
+  color: var(--dark-text);
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#deleteMateriaModal p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--dark-text);
+  margin-bottom: 20px;
+}
+
+#deleteMateriaModal .close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+#deleteMateriaModal .close:hover {
+  color: #000;
+}
+
+#deleteMateriaModal .delete-btn {
+  flex: 1;
+  background-color: var(--danger);
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+#deleteMateriaModal .delete-btn:hover {
+  background-color: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 68, 68, 0.3);
+}
+
+#deleteMateriaModal .delete-btn:active {
+  transform: translateY(0);
+}

@@ -2,7 +2,7 @@
 // RIEPILOGO PROFILO STUDENTE - TUTOR 2.0
 // ==========================================
 
-// ===== DISABILITA BACK BUTTON =====
+// ===== DISABILITA BACK BUTTON ALL'INIZIO =====
 window.history.pushState(null, null, window.location.href);
 window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
@@ -21,7 +21,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  console.log("✅ Token trovato");
+  // ===== CONTROLLA TOKEN QUANDO PAGINA RITORNA VISIBILE =====
+  window.addEventListener("pageshow", (event) => {
+    const checkToken = localStorage.getItem("token");
+
+    // Se il token non esiste, torna a login
+    if (!checkToken) {
+      window.location.href = "/";
+      return;
+    }
+  });
 
   // ===== CARICA DATI STUDENTE =====
   try {

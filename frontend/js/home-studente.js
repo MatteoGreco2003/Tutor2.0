@@ -11,8 +11,6 @@ window.addEventListener("pageshow", (event) => {
     window.location.href = "/";
     return;
   }
-
-  console.log("✅ Token trovato, pagina caricata");
 });
 
 // Disabilita il back button tramite history
@@ -80,6 +78,132 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     console.error("Errore:", error);
   }
+
+  // ==========================================
+  // CARICAMENTO VERIFICHE
+  // ==========================================
+
+  /**
+   * Carica le verifiche dello studente
+   */
+  async function loadVerifiche() {
+    try {
+      const token = localStorage.getItem("token");
+      const verificheList = document.getElementById("verificheList");
+
+      const response = await fetch("/test/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && Array.isArray(data.verifiche)) {
+        if (data.verifiche.length === 0) {
+          verificheList.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>Nessuna verifica registrata</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Renderizza le verifiche
+        verificheList.innerHTML = "";
+        data.verifiche.forEach((verifica) => {
+          const card = renderVerificaCard(verifica);
+          verificheList.appendChild(card);
+        });
+      } else {
+        console.error("Errore nel caricamento verifiche:", data.message);
+      }
+    } catch (error) {
+      console.error("Errore caricamento verifiche:", error);
+    }
+  }
+
+  /**
+   * Renderizza una singola card verifica
+   */
+  function renderVerificaCard(verifica) {
+    const div = document.createElement("div");
+    div.className = "verifica-item";
+    div.setAttribute("data-verifica-id", verifica._id);
+
+    // Formatta data
+    const dataObj = new Date(verifica.data);
+    const dataFormattata = dataObj.toLocaleDateString("it-IT", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    // Estrai nome materia
+    const nomeMateria = verifica.materialID?.nome || "Materia sconosciuta";
+
+    // Determina se è futura o passata
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const verificaDate = new Date(verifica.data);
+    verificaDate.setHours(0, 0, 0, 0);
+    const isFutura = verificaDate > today;
+
+    // Crea il voto HTML
+    let votoHTML = "";
+    if (verifica.votoFuturo || isFutura) {
+      votoHTML = `<span class="verifica-voto future">Non ancora voto</span>`;
+    } else {
+      votoHTML = `<span class="verifica-voto">${verifica.voto}</span>`;
+    }
+
+    div.innerHTML = `
+    <div class="verifica-info">
+      <div class="verifica-materia">${nomeMateria}</div>
+      <div class="verifica-giorno">${dataFormattata}</div>
+      ${
+        verifica.argomento
+          ? `<div class="verifica-argomento">${verifica.argomento}</div>`
+          : ""
+      }
+    </div>
+    <div class="verifica-actions">
+      ${votoHTML}
+      <div class="verifica-buttons">
+        <button class="btn-view" title="Visualizza" data-id="${verifica._id}">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="btn-edit" title="Modifica" data-id="${verifica._id}">
+          <i class="fas fa-pen"></i>
+        </button>
+        <button class="btn-delete" title="Elimina" data-id="${verifica._id}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `;
+
+    // Aggiungi event listeners (implementaremo dopo)
+    div.querySelector(".btn-view").addEventListener("click", function () {
+      console.log("Visualizza verifica:", verifica._id);
+    });
+
+    div.querySelector(".btn-edit").addEventListener("click", function () {
+      console.log("Modifica verifica:", verifica._id);
+    });
+
+    div.querySelector(".btn-delete").addEventListener("click", function () {
+      console.log("Elimina verifica:", verifica._id);
+    });
+
+    return div;
+  }
+
+  // Carica le verifiche all'inizio
+  await loadVerifiche();
 
   // ==========================================
   // PULSANTE DISCONNETTITI
@@ -206,11 +330,58 @@ document.addEventListener("DOMContentLoaded", async function () {
     argomentoTextarea.style.height = "";
   }
 
+  /**
+   * Carica le materie dello studente nella select
+   */
+  async function loadMaterie() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("/subject/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && Array.isArray(data.materie)) {
+        // Pulisci le opzioni precedenti
+        materiaSelect.innerHTML =
+          '<option value="" selected disabled>Seleziona la materia</option>';
+
+        // Aggiungi le materie dal DB
+        data.materie.forEach((materia) => {
+          const option = document.createElement("option");
+          option.value = materia.nome;
+          option.textContent = materia.nome;
+          materiaSelect.appendChild(option);
+        });
+
+        // Se ci sono materie, il select scrollerà automaticamente
+        console.log(`✅ ${data.materie.length} materie caricate`);
+      } else {
+        console.error("Errore nel caricamento materie:", data.message);
+        materiaSelect.innerHTML =
+          '<option value="" disabled>Errore nel caricamento</option>';
+      }
+    } catch (error) {
+      console.error("Errore caricamento materie:", error);
+      materiaSelect.innerHTML =
+        '<option value="" disabled>Errore di connessione</option>';
+    }
+  }
+
   // Apri modale
-  document.getElementById("addVerificaBtn").addEventListener("click", () => {
-    resetInsertVerificaForm();
-    modal.style.display = "flex";
-  });
+  document
+    .getElementById("addVerificaBtn")
+    .addEventListener("click", async () => {
+      resetInsertVerificaForm();
+      await loadMaterie(); // ← CARICA LE MATERIE PRIMA DI APRIRE LA MODALE
+      modal.style.display = "flex";
+    });
 
   // Chiudi modale (X)
   document

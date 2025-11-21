@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Le tue materie | Tutor2.0</title>
+    <link rel="stylesheet" href="css/home-studente.css" />
+    <link rel="stylesheet" href="css/materie.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header e Sidebar identici alle altre pagine -->
+    <div class="header">
+      <div class="header-left">
+        <a href="/home-studenti" class="user-icon">👤</a>
+        <a href="/home-studenti" class="header-title">Nome Cognome</a>
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <div class="container">
+      <aside class="sidebar">
+        <a href="/home-studenti" class="sidebar-item">🏠 Home</a>
+        <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
+        <a href="/materie" class="sidebar-item active">📑 Materie</a>
+        <a href="/media-materie" class="sidebar-item">📚 Media Materie</a>
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="section" id="materieSection">
+          <div class="section-header">
+            <h2 class="section-title">Le tue materie</h2>
+            <button id="addMateriaBtn" class="btn-add-materia">
+              <i class="fas fa-plus"></i> Aggiungi materia
+            </button>
+          </div>
+          <p class="section-note">Max 15 materie attive</p>
+          <div id="materieList"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modale Aggiungi Materia -->
+    <div id="addMateriaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeAddMateria">&times;</span>
+        <h2>Aggiungi una materia</h2>
+
+        <form id="addMateriaForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="materiaNome">Nome materia</label>
+            <input
+              type="text"
+              id="materiaNome"
+              name="materiaNome"
+              placeholder="Materia"
+              required
+              maxlength="50"
+            />
+          </div>
+
+          <!-- Messaggi di errore -->
+          <div id="addMateriaErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="btn-aggiungi">Aggiungi Materia</button>
+            <button type="button" id="annullaAddMateria" class="btn-annulla">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Materia -->
+    <div id="editMateriaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditMateria">&times;</span>
+        <h2>Modifica materia</h2>
+
+        <form id="editMateriaForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="materiaNomeEdit">Nome materia</label>
+            <input
+              type="text"
+              id="materiaNomeEdit"
+              name="materiaNomeEdit"
+              placeholder="Materia"
+              required
+              maxlength="50"
+            />
+          </div>
+
+          <!-- Messaggi di errore -->
+          <div id="editMateriaErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="btn-modifica-submit">
+              Modifica Materia
+            </button>
+            <button type="button" id="annullaEditMateria" class="btn-annulla">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Elimina Materia (Conferma) -->
+    <div id="deleteMateriaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteMateria">&times;</span>
+        <h2>Elimina materia</h2>
+
+        <p>
+          Sei sicuro di eliminare la materia
+          <strong id="materiaNomeDelete"></strong>?<br />
+          <span>
+            Questo comporterà anche l'eliminazione di tutte le tue verifiche
+            associate a questa materia.
+          </span>
+        </p>
+
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button id="confirmDeleteMateria" class="delete-btn">
+            Elimina Materia
+          </button>
+          <button id="cancelDeleteMateria" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Elimina Profilo (nascosta inizialmente) -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare il tuo storico verifiche e le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="/js/materie.js"></script>
+</html>
