@@ -173,9 +173,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     <div class="verifica-actions">
       ${votoHTML}
       <div class="verifica-buttons">
-        <button class="btn-view" title="Visualizza" data-id="${verifica._id}">
-          <i class="fas fa-eye"></i>
-        </button>
         <button class="btn-edit" title="Modifica" data-id="${verifica._id}">
           <i class="fas fa-pen"></i>
         </button>
@@ -187,10 +184,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   `;
 
     // Aggiungi event listeners (implementaremo dopo)
-    div.querySelector(".btn-view").addEventListener("click", function () {
-      console.log("Visualizza verifica:", verifica._id);
-    });
-
     div.querySelector(".btn-edit").addEventListener("click", function () {
       console.log("Modifica verifica:", verifica._id);
     });
@@ -336,7 +329,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function loadMaterie() {
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch("/subject/data", {
         method: "GET",
         headers: {
@@ -348,27 +340,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.json();
 
       if (response.ok && Array.isArray(data.materie)) {
-        // Pulisci le opzioni precedenti
         materiaSelect.innerHTML =
           '<option value="" selected disabled>Seleziona la materia</option>';
-
-        // Aggiungi le materie dal DB
         data.materie.forEach((materia) => {
           const option = document.createElement("option");
-          option.value = materia.nome;
+          option.value = materia._id; // <-- Salva sempre l'id!
           option.textContent = materia.nome;
           materiaSelect.appendChild(option);
         });
-
-        // Se ci sono materie, il select scrollerà automaticamente
-        console.log(`✅ ${data.materie.length} materie caricate`);
       } else {
-        console.error("Errore nel caricamento materie:", data.message);
         materiaSelect.innerHTML =
           '<option value="" disabled>Errore nel caricamento</option>';
       }
     } catch (error) {
-      console.error("Errore caricamento materie:", error);
       materiaSelect.innerHTML =
         '<option value="" disabled>Errore di connessione</option>';
     }
@@ -459,10 +443,95 @@ document.addEventListener("DOMContentLoaded", async function () {
   // SUBMIT FORM VERIFICA
   // ==========================================
 
-  form.addEventListener("submit", function (e) {
+  form.addEventListener("submit", async function (e) {
     e.preventDefault();
-    alert("Funzione di salvataggio verifica in sviluppo!");
-    modal.style.display = "none";
-    resetInsertVerificaForm();
+
+    // Pulizia errori precedenti
+    document.getElementById("verificaError").style.display = "none";
+    document.getElementById("verificaError").textContent = "";
+    materiaSelect.classList.remove("input-error");
+    dataInput.classList.remove("input-error");
+    argomentoTextarea.classList.remove("input-error");
+    selectValutazione.classList.remove("input-error");
+
+    // Recupera valori dal form
+    const materialID = materiaSelect.value;
+    const dataVerifica = dataInput.value.trim();
+    const argomento = argomentoTextarea.value.trim();
+    const voto = selectValutazione.value
+      ? parseInt(selectValutazione.value)
+      : null;
+    const votoFuturo = checkboxPrevisto.checked;
+
+    let firstError = "";
+
+    // Validazione frontend
+    if (!dataVerifica) {
+      dataInput.classList.add("input-error");
+      firstError ||= "⚠️ Seleziona la data";
+    }
+    if (!materialID) {
+      materiaSelect.classList.add("input-error");
+      firstError ||= "⚠️ Scegli una materia";
+    }
+
+    if (!argomento || argomento.length < 3) {
+      argomentoTextarea.classList.add("input-error");
+      firstError ||= "⚠️ L'argomento deve avere minimo 3 caratteri";
+    }
+    if (votoFuturo === false && (!voto || voto < 0 || voto > 10)) {
+      selectValutazione.classList.add("input-error");
+      firstError ||= "⚠️ Inserisci un voto valido (1-10)";
+    }
+
+    if (firstError) {
+      document.getElementById("verificaError").style.display = "block";
+      document.getElementById("verificaError").textContent = firstError;
+      return;
+    }
+
+    // Invio al backend
+    try {
+      const res = await fetch("/test", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          materialID,
+          data: dataVerifica,
+          argomento,
+          voto: votoFuturo ? null : voto,
+          votoFuturo: votoFuturo,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        modal.style.display = "none";
+        resetInsertVerificaForm();
+        await loadVerifiche(); // Aggiorna subito la lista verifiche
+      } else {
+        // Se c'è un errore backend, mostra solo primo errore
+        document.getElementById("verificaError").style.display = "block";
+        document.getElementById("verificaError").textContent =
+          result.message || "Errore nel salvataggio";
+        // Evidenzia il campo sbagliato se il messaggio contiene "materia"/"data"/"argomento"/"voto"
+        if (result.message?.toLowerCase().includes("materia"))
+          materiaSelect.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("data"))
+          dataInput.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("argomento"))
+          argomentoTextarea.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("voto"))
+          selectValutazione.classList.add("input-error");
+      }
+    } catch (error) {
+      document.getElementById("verificaError").style.display = "block";
+      document.getElementById("verificaError").textContent =
+        "Errore di connessione al server";
+    }
   });
 }); // ← CHIUSURA DOMContentLoaded

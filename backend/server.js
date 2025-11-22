@@ -10,6 +10,8 @@ import studentRoutes from "./routes/student.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import materieRoutes from "./routes/materieRoutes.js";
 import verificheRoutes from "./routes/verificheRoutes.js";
+import adminTutorRoutes from "./routes/adminTutorRoutes.js.js";
+import adminStudentRoutes from "./routes/adminStudentRoutes.js";
 
 dotenv.config();
 
@@ -33,6 +35,8 @@ app.use("/auth", authRoutes); // ← Autenticazione
 app.use("/student", studentRoutes);
 app.use("/subject", materieRoutes);
 app.use("/test", verificheRoutes);
+app.use("/admin/tutor", adminTutorRoutes);
+app.use("/admin/student", adminStudentRoutes);
 
 connectDB(CONNECTION_URL) // ← CHIAMA DA QUI
   .then(() => {

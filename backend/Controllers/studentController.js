@@ -75,27 +75,6 @@ export const deleteStudentProfile = async (req, res) => {
   }
 };
 
-/**
- * [TODO] Ottieni tutte le verifiche dello studente
- */
-// export const getStudentVerifiche = async (req, res) => {
-//   // ...
-// };
-
-/**
- * [TODO] Crea una nuova verifica
- */
-// export const createVerifica = async (req, res) => {
-//   // ...
-// };
-
-/**
- * [TODO] Elimina una verifica
- */
-// export const deleteVerifica = async (req, res) => {
-//   // ...
-// };
-
 // PATCH /student/personal
 export const updateStudentPersonalData = async (req, res) => {
   try {

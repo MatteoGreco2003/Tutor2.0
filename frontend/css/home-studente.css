@@ -12,6 +12,9 @@
   --secondary-pink: #ffd7ef;
   --light-bg: #f8f0ff;
   --white: #ffffff;
+  --error-bg: #ffe6e6;
+  --error-color: #ff4444;
+  --error-dark: #cc0000;
   --dark-text: #16163f;
   --light-text: #73738c;
   --blue-accent: #116dff;
@@ -247,7 +250,7 @@ body {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
-  max-height: 450px;
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 8px;
   /* Scrollbar personalizzata */
@@ -322,6 +325,8 @@ body {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  word-break: break-word; /* <<< AGGIUNGI QUESTO */
+  overflow-wrap: anywhere; /* <<< E ANCHE QUESTO */
 }
 
 /* Actions Section */
@@ -810,4 +815,28 @@ body {
 .flatpickr-input[readonly] {
   background: #fff;
   cursor: pointer;
+}
+
+#verificaError {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-color);
+  border-radius: 8px;
+  text-align: center;
+  display: none;
+}
+
+.error-msg {
+  color: var(--error-dark);
+  font-size: 14px;
+  font-weight: 500;
+  margin: 5px 0;
+}
+
+/* Input con errore */
+.input-error {
+  border: 2px solid var(--error-color);
+  background-color: #fff5f5;
 }
