@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     editMateriaErrors.innerHTML = "";
     materiaNomeEditInput.classList.remove("input-error");
     editMateriaModal.classList.add("show");
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   }
 
   // ===== APRI MODALE ELIMINA =====
@@ -161,23 +162,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     materiaInEliminazione = materia;
     materiaNomeDelete.textContent = materia.nome;
     deleteMateriaModal.classList.add("show");
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   }
 
   // ===== MODALE AGGIUNGI: APRI =====
   addBtn.addEventListener("click", () => {
     resetAddMateriaForm();
     addMateriaModal.classList.add("show");
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   });
 
   // ===== MODALE AGGIUNGI: CHIUDI (X) =====
   closeAddMateria.addEventListener("click", () => {
     addMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     resetAddMateriaForm();
   });
 
   // ===== MODALE AGGIUNGI: CHIUDI (Annulla) =====
   annullaAddMateria.addEventListener("click", () => {
     addMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     resetAddMateriaForm();
   });
 
@@ -185,6 +190,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.addEventListener("click", (event) => {
     if (event.target === addMateriaModal) {
       addMateriaModal.classList.remove("show");
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       resetAddMateriaForm();
     }
   });
@@ -192,12 +198,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ===== MODALE MODIFICA: CHIUDI (X) =====
   closeEditMateria.addEventListener("click", () => {
     editMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     resetEditMateriaForm();
   });
 
   // ===== MODALE MODIFICA: CHIUDI (Annulla) =====
   annullaEditMateria.addEventListener("click", () => {
     editMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     resetEditMateriaForm();
   });
 
@@ -205,6 +213,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.addEventListener("click", (event) => {
     if (event.target === editMateriaModal) {
       editMateriaModal.classList.remove("show");
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       resetEditMateriaForm();
     }
   });
@@ -212,12 +221,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ===== MODALE ELIMINA: CHIUDI (X) =====
   closeDeleteMateria.addEventListener("click", () => {
     deleteMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     materiaInEliminazione = null;
   });
 
   // ===== MODALE ELIMINA: CHIUDI (Annulla) =====
   cancelDeleteMateria.addEventListener("click", () => {
     deleteMateriaModal.classList.remove("show");
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     materiaInEliminazione = null;
   });
 
@@ -225,6 +236,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.addEventListener("click", (event) => {
     if (event.target === deleteMateriaModal) {
       deleteMateriaModal.classList.remove("show");
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       materiaInEliminazione = null;
     }
   });
@@ -293,6 +305,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (res.ok) {
         addMateriaModal.classList.remove("show");
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
         resetAddMateriaForm();
         await fetchMaterie();
       } else {
@@ -366,6 +379,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (res.ok) {
         editMateriaModal.classList.remove("show");
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
         resetEditMateriaForm();
         await fetchMaterie();
       } else {
@@ -405,6 +419,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (res.ok) {
         deleteMateriaModal.classList.remove("show");
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
         materiaInEliminazione = null;
         await fetchMaterie();
       } else {
@@ -439,20 +454,24 @@ document.addEventListener("DOMContentLoaded", async function () {
   const deleteProfileModal = document.getElementById("deleteProfileModal");
   document.querySelector(".delete-btn").addEventListener("click", () => {
     deleteProfileModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   });
   document
     .getElementById("closeDeleteProfile")
     .addEventListener("click", () => {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
   document
     .getElementById("cancelDeleteProfile")
     .addEventListener("click", () => {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
   window.addEventListener("click", (event) => {
     if (event.target === deleteProfileModal) {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
   document

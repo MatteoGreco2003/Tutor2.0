@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Materie</title>
+    <link rel="stylesheet" href="css/medie-materie.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <a href="/home-studenti" class="user-icon">👤</a>
+        <a href="/home-studenti" class="header-title">Nome Cognome</a>
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a href="/home-studenti" class="sidebar-item">🏠 Home</a>
+        <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
+        <a href="/subject" class="sidebar-item">📑 Materie</a>
+        <a href="/avg-materie" class="sidebar-item active">📚 Media Materie</a>
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">La media delle tue materie</h2>
+          </div>
+
+          <div id="mediaList" class="media-list">
+            <!-- Caricato dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Statistiche Generali -->
+        <div class="stats-section">
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+              <p class="stat-label">Media Generale delle Materie Inserite</p>
+              <p class="stat-value" id="mediaGenerale">0.00</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <p class="stat-label">Materie Sufficienti</p>
+              <p class="stat-value" id="materieSufficienti">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+              <p class="stat-label">Materie Insufficienti</p>
+              <p class="stat-value" id="materieInsufficenti">0</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modale Elimina Profilo -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare il tuo storico verifiche e le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Visualizza Verifiche -->
+    <div id="visualizzaVerificheModal" class="modal">
+      <div class="modal-content modal-verifiche-content">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h2 id="modalVerificheTitle" style="margin: 0">
+            Verifiche di Materia
+          </h2>
+          <span class="close" id="closeVisualizzaVerifiche">&times;</span>
+        </div>
+
+        <div class="verifiche-list-modal" id="verificheListModal">
+          <!-- Caricato dinamicamente -->
+        </div>
+
+        <div
+          style="
+            display: flex;
+            gap: 14px;
+            margin-top: 20px;
+            justify-content: flex-end;
+          "
+        >
+          <button
+            type="button"
+            id="chiudiVisualizzaVerifiche"
+            class="btn-annulla"
+          >
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="/js/medie-materie.js"></script>
+</html>

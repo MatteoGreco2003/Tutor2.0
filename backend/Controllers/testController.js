@@ -148,7 +148,7 @@ export const updateVerifica = async (req, res) => {
     if (argomento) updateData.argomento = argomento.trim();
     if (voto !== undefined) updateData.voto = voto;
     if (votoFuturo !== undefined) updateData.votoFuturo = votoFuturo;
-
+    if (req.body.materialID) updateData.materialID = req.body.materialID;
     if (votoFuturo === false && (!voto || voto === null)) {
       return res.status(400).json({
         message: "Se la verifica non è futura, il voto è obbligatorio",
@@ -218,32 +218,31 @@ export const deleteVerifica = async (req, res) => {
   }
 };
 
-// ===== LEGGI MATERIE CON MEDIA VERIFICHE =====
 export const getMaterieConMedia = async (req, res) => {
   try {
     const studenteID = req.user.userId;
 
-    // Leggi tutte le materie dello studente
     const materie = await Materie.find({ studenteId: studenteID });
 
-    // Per ogni materia, calcola la media delle verifiche
+    if (materie.length === 0) {
+      return res.json({ materieConMedia: [] });
+    }
+
     const materieConMedia = await Promise.all(
       materie.map(async (materia) => {
-        // Trova tutte le verifiche completate (con voto) per questa materia
+        // ✅ CORRETTO: materialID (con la "l")
         const verifiche = await Verifiche.find({
           studenteID: studenteID,
-          materialID: materia._id,
-          voto: { $ne: null }, // Solo verifiche con voto
+          materialID: materia._id, // ← CAMBIATO da materiaID a materialID
+          voto: { $ne: null },
         });
 
-        // Calcola la media
         let media = 0;
         if (verifiche.length > 0) {
           const sommaVoti = verifiche.reduce((acc, v) => acc + v.voto, 0);
           media = (sommaVoti / verifiche.length).toFixed(2);
         }
 
-        // Determina se è sufficiente (>= 6) o insufficiente (< 6)
         const sufficienza = media >= 6 ? "Sufficiente" : "Insufficiente";
 
         return {
@@ -256,15 +255,33 @@ export const getMaterieConMedia = async (req, res) => {
       })
     );
 
-    res.status(200).json({
-      message: "Materie con media recuperate con successo",
-      count: materieConMedia.length,
-      materie: materieConMedia,
-    });
+    res.json({ materieConMedia });
   } catch (error) {
-    console.error("Errore lettura materie con media:", error);
-    res.status(500).json({
-      message: "Errore del server",
+    console.error("❌ Errore getMaterieConMedia:", error);
+    res.status(500).json({ message: "Errore nel calcolo delle medie" });
+  }
+};
+
+export const getVerifichePerMateria = async (req, res) => {
+  try {
+    const studenteID = req.user.userId;
+    const { materiaId } = req.params;
+
+    const verifiche = await Verifiche.find({
+      studenteID: studenteID,
+      materialID: materiaId,
+    })
+      .populate("materialID", "nome")
+      .sort({ data: -1 });
+
+    // ✅ ASSICURATI DI RESTITUIRE 200 (OK)
+    return res.status(200).json({ verifiche });
+  } catch (error) {
+    console.error("❌ ERRORE getVerifichePerMateria:", error.message);
+    console.error("❌ Stack:", error.stack);
+    return res.status(500).json({
+      message: "Errore nel caricamento delle verifiche",
+      error: error.message,
     });
   }
 };

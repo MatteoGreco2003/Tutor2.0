@@ -333,27 +333,33 @@ body {
 .verifica-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: 20px;
+  min-width: 160px;
 }
-
+.verifica-voto-wrapper {
+  min-width: 150px; /* o 100px, scegli tu la larghezza fissa */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .verifica-voto {
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--blue-accent);
   text-align: center;
-  min-width: 50px;
-  padding: 8px 12px;
+  padding: 8px 0; /* padding solo verticale */
   background-color: rgba(17, 109, 255, 0.1);
   border-radius: 8px;
+  width: 50%; /* occupa tutta la larghezza della wrapper */
 }
-
 .verifica-voto.future {
-  color: var(--light-text);
-  font-size: 12px;
+  color: var(--blue-accent);
   background-color: transparent;
-  min-width: auto;
-  padding: 4px 8px;
+  padding: 8px 0;
+  width: 100%;
+  background-color: rgba(17, 109, 255, 0.1);
+  font-size: 14px;
 }
 
 /* Buttons Group */
@@ -568,6 +574,141 @@ body {
   background-color: transparent;
   cursor: default;
   border: none;
+}
+
+/* ===== BADGE VERIFICHE NEL CALENDARIO ===== */
+.calendar-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.calendar-badge:hover {
+  transform: scale(1.2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.calendar-badge.badge-high {
+  background-color: #10b981;
+}
+
+.calendar-badge.badge-medium {
+  background-color: #f59e0b;
+}
+
+.calendar-badge.badge-low {
+  background-color: #ef4444;
+}
+
+.calendar-badge.badge-pending {
+  background-color: #9ca3af;
+}
+
+/* Contenitore legenda */
+.calendar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--light-bg);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--light-text);
+  font-weight: 500;
+}
+
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+/* Modifica cell calendario per permettere positioning */
+.calendar td {
+  position: relative;
+}
+
+/* Stili lista verifiche nel modal giorno */
+.day-verifiche-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 16px;
+}
+
+.day-verifica-item {
+  background: linear-gradient(
+    135deg,
+    var(--light-bg),
+    rgba(158, 63, 253, 0.05)
+  );
+  padding: 14px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-purple);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.day-verifica-info h4 {
+  font-size: 15px;
+  margin: 0 0 6px 0;
+  color: var(--primary-purple);
+}
+
+.day-verifica-info p {
+  font-size: 13px;
+  margin: 3px 0;
+  color: var(--light-text);
+}
+
+.day-verifica-voto {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--blue-accent);
+  padding: 6px 10px;
+  background-color: rgba(17, 109, 255, 0.1);
+  border-radius: 6px;
+  text-align: center;
+  min-width: 50px;
+}
+
+.day-verifica-voto.pending {
+  color: var(--light-text);
+  background-color: transparent;
+}
+
+.day-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--light-text);
+}
+
+.day-empty i {
+  font-size: 32px;
+  margin-bottom: 10px;
+  opacity: 0.3;
 }
 
 /* Modale Elimina Profilo */
@@ -837,6 +978,27 @@ body {
 
 /* Input con errore */
 .input-error {
-  border: 2px solid var(--error-color);
-  background-color: #fff5f5;
+  border: 2px solid var(--error-color) !important;
+  background-color: #fff5f5 !important;
+}
+
+.input-voto-flex {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+.input-voto {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1.5px solid #eee;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 0px;
+  box-sizing: border-box;
+}
+
+body.modal-open {
+  overflow: hidden;
 }

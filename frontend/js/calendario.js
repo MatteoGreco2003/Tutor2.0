@@ -152,3 +152,35 @@ document.addEventListener("DOMContentLoaded", () => {
     "currentMonth"
   );
 });
+
+// Aggiungi questa funzione in home-studente.js DOPO addBadgesToCalendar()
+
+function addCalendarLegend() {
+  const calendarWrapper = document.querySelector(".calendar-wrapper");
+
+  // Controlla se legenda esiste già
+  if (document.querySelector(".calendar-legend")) return;
+
+  const legend = document.createElement("div");
+  legend.className = "calendar-legend";
+  legend.innerHTML = `
+    <div class="legend-item">
+      <div class="legend-dot" style="background-color: #10b981;"></div>
+      <span>Voti alti (8-10)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background-color: #f59e0b;"></div>
+      <span>Voti medi (6-7)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background-color: #ef4444;"></div>
+      <span>Voti bassi (&lt;6)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background-color: #9ca3af;"></div>
+      <span>Non votato</span>
+    </div>
+  `;
+
+  calendarWrapper.parentNode.insertBefore(legend, calendarWrapper.nextSibling);
+}

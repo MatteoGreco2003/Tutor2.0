@@ -640,3 +640,7 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+body.modal-open {
+  overflow: hidden;
+}

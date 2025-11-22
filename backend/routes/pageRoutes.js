@@ -40,4 +40,9 @@ router.get("/subject", (req, res) => {
   res.render("materie");
 });
 
+router.get("/avg-materie", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
+  res.render("medie-materie");
+});
+
 export default router;

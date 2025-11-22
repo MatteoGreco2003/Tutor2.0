@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", async function () {
           const card = renderVerificaCard(verifica);
           verificheList.appendChild(card);
         });
+
+        addBadgesToCalendar();
       } else {
         console.error("Errore nel caricamento verifiche:", data.message);
       }
@@ -152,51 +154,257 @@ document.addEventListener("DOMContentLoaded", async function () {
     verificaDate.setHours(0, 0, 0, 0);
     const isFutura = verificaDate > today;
 
-    // Crea il voto HTML
-    let votoHTML = "";
-    if (verifica.votoFuturo || isFutura) {
-      votoHTML = `<span class="verifica-voto future">Non ancora voto</span>`;
-    } else {
-      votoHTML = `<span class="verifica-voto">${verifica.voto}</span>`;
-    }
-
     div.innerHTML = `
-    <div class="verifica-info">
-      <div class="verifica-materia">${nomeMateria}</div>
-      <div class="verifica-giorno">${dataFormattata}</div>
-      ${
-        verifica.argomento
-          ? `<div class="verifica-argomento">${verifica.argomento}</div>`
-          : ""
-      }
+  <div class="verifica-info">
+    <div class="verifica-materia">${nomeMateria}</div>
+    <div class="verifica-giorno">${dataFormattata}</div>
+    ${
+      verifica.argomento
+        ? `<div class="verifica-argomento">${verifica.argomento}</div>`
+        : ""
+    }
+  </div>
+  <div class="verifica-actions">
+    <!-- Wrapper a larghezza fissa -->
+    ${
+      verifica.votoFuturo || isFutura
+        ? `<div class="verifica-voto-wrapper"><span class="verifica-voto future">Non ancora voto</span></div>`
+        : `<div class="verifica-voto-wrapper"><span class="verifica-voto">${verifica.voto}</span></div>`
+    }
+    <div class="verifica-buttons">
+      <button class="btn-edit" title="Modifica" data-id="${verifica._id}">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="btn-delete" title="Elimina" data-id="${verifica._id}">
+        <i class="fas fa-trash"></i>
+      </button>
     </div>
-    <div class="verifica-actions">
-      ${votoHTML}
-      <div class="verifica-buttons">
-        <button class="btn-edit" title="Modifica" data-id="${verifica._id}">
-          <i class="fas fa-pen"></i>
-        </button>
-        <button class="btn-delete" title="Elimina" data-id="${verifica._id}">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  `;
+  </div>
+`;
 
     // Aggiungi event listeners (implementaremo dopo)
     div.querySelector(".btn-edit").addEventListener("click", function () {
-      console.log("Modifica verifica:", verifica._id);
+      openEditVerifica(verifica._id);
     });
 
+    const deleteVerificaModal = document.getElementById("deleteVerificaModal");
+    let verificaToDeleteID = null;
+
     div.querySelector(".btn-delete").addEventListener("click", function () {
-      console.log("Elimina verifica:", verifica._id);
+      verificaToDeleteID = verifica._id;
+      deleteVerificaModal.style.display = "flex";
+      document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
     });
+
+    document
+      .getElementById("closeDeleteVerifica")
+      .addEventListener("click", function () {
+        deleteVerificaModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      });
+
+    document
+      .getElementById("cancelDeleteVerifica")
+      .addEventListener("click", function () {
+        deleteVerificaModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      });
+
+    window.addEventListener("click", function (event) {
+      if (event.target === deleteVerificaModal) {
+        deleteVerificaModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      }
+    });
+
+    document
+      .getElementById("confirmDeleteVerifica")
+      .addEventListener("click", async function () {
+        if (!verificaToDeleteID) return;
+        const token = localStorage.getItem("token");
+        try {
+          const response = await fetch(`/test/${verificaToDeleteID}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          if (response.ok) {
+            deleteVerificaModal.style.display = "none";
+            verificaToDeleteID = null;
+            await loadVerifiche(); // Aggiorna la lista
+            document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+          } else {
+            alert(data.message || "Errore nell'eliminazione");
+          }
+        } catch (error) {
+          alert("Errore di connessione al server");
+        }
+      });
 
     return div;
   }
 
+  /**
+   * Aggiunge i badge (pallini) al calendario
+   */
+  function addBadgesToCalendar() {
+    const token = localStorage.getItem("token");
+
+    // Carica le verifiche prima di aggiungerle al calendario
+    fetch("/test/data", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (!Array.isArray(data.verifiche)) return;
+
+        const cells = document.querySelectorAll(".calendar td:not(.empty)");
+
+        cells.forEach((cell) => {
+          // Rimuovi badge vecchi
+          const oldBadge = cell.querySelector(".calendar-badge");
+          if (oldBadge) oldBadge.remove();
+
+          // Estrai data dalla cella
+          const dayText = cell.textContent.trim();
+          if (!dayText || isNaN(dayText)) return;
+
+          const day = parseInt(dayText);
+
+          // Prendi il mese/anno dal calendario
+          const currentMonthText = document
+            .getElementById("currentMonth")
+            .textContent.trim();
+          const monthNames = [
+            "GENNAIO",
+            "FEBBRAIO",
+            "MARZO",
+            "APRILE",
+            "MAGGIO",
+            "GIUGNO",
+            "LUGLIO",
+            "AGOSTO",
+            "SETTEMBRE",
+            "OTTOBRE",
+            "NOVEMBRE",
+            "DICEMBRE",
+          ];
+          const [monthName, year] = currentMonthText.split(" ");
+          const month = monthNames.indexOf(monthName) + 1;
+
+          // Ricerca verifiche di quel giorno
+          const verificheDelGiorno = data.verifiche.filter((v) => {
+            const vDate = new Date(v.data);
+            return (
+              vDate.getDate() === day &&
+              vDate.getMonth() === month - 1 &&
+              vDate.getFullYear() === parseInt(year)
+            );
+          });
+
+          if (verificheDelGiorno.length === 0) return;
+
+          // Calcola media voti
+          const conVoto = verificheDelGiorno.filter(
+            (v) => v.voto !== null && v.voto !== undefined
+          );
+          let badgeClass = "badge-pending";
+
+          if (conVoto.length > 0) {
+            const media =
+              conVoto.reduce((sum, v) => sum + v.voto, 0) / conVoto.length;
+            if (media >= 8) badgeClass = "badge-high";
+            else if (media >= 6) badgeClass = "badge-medium";
+            else badgeClass = "badge-low";
+          }
+
+          // Crea badge
+          const badge = document.createElement("span");
+          badge.className = `calendar-badge ${badgeClass}`;
+          badge.textContent = verificheDelGiorno.length;
+          badge.setAttribute("data-day", day);
+          badge.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openDayVerificheModal(day, verificheDelGiorno);
+          });
+
+          cell.appendChild(badge);
+        });
+      })
+      .catch((error) => console.error("Errore caricamento badges:", error));
+  }
+
+  /**
+   * Apre il modal con le verifiche di un giorno specifico
+   */
+  function openDayVerificheModal(day, verifiche) {
+    const modal = document.getElementById("dayVerificheModal");
+    const title = document.getElementById("dayVerificheTitle");
+    const list = document.getElementById("dayVerificheList");
+
+    const today = new Date();
+    const dataFormattata = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      day
+    ).toLocaleDateString("it-IT", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    title.textContent = `Verifiche del ${dataFormattata}`;
+
+    list.innerHTML = "";
+    verifiche.forEach((v) => {
+      const item = document.createElement("div");
+      item.className = "day-verifica-item";
+
+      const nomeMateria = v.materialID?.nome || "Materia sconosciuta";
+      const votoDisplay =
+        v.voto !== null && v.voto !== undefined
+          ? `<div class="day-verifica-voto">${v.voto}</div>`
+          : `<div class="day-verifica-voto pending">Non ancora</div>`;
+
+      item.innerHTML = `
+        <div class="day-verifica-info">
+          <h4>${nomeMateria}</h4>
+          <p>${v.argomento || "Senza argomento"}</p>
+        </div>
+        ${votoDisplay}
+      `;
+
+      list.appendChild(item);
+    });
+
+    modal.style.display = "flex";
+    document.body.classList.add("modal-open");
+  }
+
+  // Listener per chiudere il modal
+  document.getElementById("closeDayVerifiche").addEventListener("click", () => {
+    document.getElementById("dayVerificheModal").style.display = "none";
+    document.body.classList.remove("modal-open");
+  });
+
+  window.addEventListener("click", (event) => {
+    const modal = document.getElementById("dayVerificheModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
+  });
+
   // Carica le verifiche all'inizio
   await loadVerifiche();
+  addCalendarLegend();
 
   // ==========================================
   // PULSANTE DISCONNETTITI
@@ -234,29 +442,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const deleteProfileModal = document.getElementById("deleteProfileModal");
 
-  // Apri modale
   document.querySelector(".delete-btn").addEventListener("click", function () {
     deleteProfileModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   });
 
-  // Chiudi modale (X)
   document
     .getElementById("closeDeleteProfile")
     .addEventListener("click", function () {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
-  // Chiudi modale (Annulla)
   document
     .getElementById("cancelDeleteProfile")
     .addEventListener("click", function () {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
-  // Chiudi modale (click fuori)
   window.addEventListener("click", function (event) {
     if (event.target === deleteProfileModal) {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -321,6 +529,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     selectValutazione.disabled = false;
     checkboxPrevisto.checked = false;
     argomentoTextarea.style.height = "";
+
+    // Rimuove la classe bordo rosso da tutti i campi
+    materiaSelect.classList.remove("input-error");
+    dataInput.classList.remove("input-error");
+    argomentoTextarea.classList.remove("input-error");
+    selectValutazione.classList.remove("input-error");
+
+    // Nasconde e svuota il messaggio di errore
+    const erroreMsg = document.getElementById("verificaError");
+    if (erroreMsg) {
+      erroreMsg.style.display = "none";
+      erroreMsg.textContent = "";
+    }
   }
 
   /**
@@ -358,34 +579,32 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Apri modale
+  // ===== MODALE INSERISCI VERIFICA =====
   document
     .getElementById("addVerificaBtn")
     .addEventListener("click", async () => {
       resetInsertVerificaForm();
-      await loadMaterie(); // ← CARICA LE MATERIE PRIMA DI APRIRE LA MODALE
+      await loadMaterie();
       modal.style.display = "flex";
+      document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
     });
 
-  // Chiudi modale (X)
   document
     .getElementById("closeInsertVerifica")
     .addEventListener("click", () => {
       modal.style.display = "none";
-      resetInsertVerificaForm();
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
-  // Chiudi modale (Annulla)
   document.getElementById("annullaVerifica").addEventListener("click", () => {
     modal.style.display = "none";
-    resetInsertVerificaForm();
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
-  // Chiudi modale (click fuori)
   window.addEventListener("click", function (event) {
     if (event.target === modal) {
       modal.style.display = "none";
-      resetInsertVerificaForm();
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -396,6 +615,320 @@ document.addEventListener("DOMContentLoaded", async function () {
       selectValutazione.value = "";
     } else {
       selectValutazione.disabled = false;
+    }
+  });
+
+  const editVerificaModal = document.getElementById("editVerificaModal");
+  const editVerificaForm = document.getElementById("editVerificaForm");
+  const editVerificaError = document.getElementById("editVerificaError");
+  const editVerificaData = document.getElementById("editVerificaData");
+  const editMateria = document.getElementById("editMateria");
+  const editArgomento = document.getElementById("editArgomento");
+  const editValutazione = document.getElementById("editValutazione");
+  const editPrevisto = document.getElementById("editPrevisto");
+
+  let verificaToEditID = null;
+
+  flatpickr(editVerificaData, {
+    locale: "it",
+    dateFormat: "d/m/Y",
+    allowInput: false,
+    disableMobile: true,
+  });
+
+  async function loadMaterieEdit() {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/subject/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok && Array.isArray(data.materie)) {
+        editMateria.innerHTML =
+          '<option value="" selected disabled>Seleziona la materia</option>';
+        data.materie.forEach((materia) => {
+          const option = document.createElement("option");
+          option.value = materia._id;
+          option.textContent = materia.nome;
+          editMateria.appendChild(option);
+        });
+      }
+    } catch (error) {
+      editMateria.innerHTML =
+        '<option value="" disabled>Errore nel caricamento</option>';
+    }
+  }
+
+  // ===== LISTENER PER CAMBIO DATA IN TEMPO REALE =====
+  // Questo fa sì che quando cambi la data, voto e checkbox si aggiornino dinamicamente
+  editVerificaData.addEventListener("change", function () {
+    const dataFormattata = editVerificaData.value.trim();
+
+    if (!dataFormattata) return; // Se il campo è vuoto, non fare nulla
+
+    // Converti la data da formato IT (d/m/Y) a Date
+    const dateParts = dataFormattata.split("/");
+    if (dateParts.length !== 3) return;
+
+    const selectedDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    // Confronta con oggi
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const isFutura = selectedDate > today;
+
+    // LOGICA: Se futura → blocca voto e checkbox, altrimenti sblocca
+    if (isFutura) {
+      // Data è FUTURA
+      editValutazione.value = "";
+      editValutazione.disabled = true;
+      editPrevisto.checked = true;
+      editPrevisto.disabled = true;
+    } else {
+      // Data è PASSATA O OGGI
+      editPrevisto.disabled = false;
+
+      // Se c'è già un voto, blocca il checkbox
+      if (editValutazione.value && !isNaN(parseFloat(editValutazione.value))) {
+        editPrevisto.disabled = true;
+      } else {
+        editValutazione.disabled = false;
+      }
+    }
+  });
+
+  async function openEditVerifica(verificaID) {
+    verificaToEditID = verificaID;
+    editVerificaError.style.display = "none";
+    editVerificaError.textContent = "";
+    editMateria.classList.remove("input-error");
+    editVerificaData.classList.remove("input-error");
+    editArgomento.classList.remove("input-error");
+    editValutazione.classList.remove("input-error");
+
+    await loadMaterieEdit();
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/test/${verificaID}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.verifica) {
+        // Determina se è futura o passata
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const verificaDate = new Date(data.verifica.data);
+        verificaDate.setHours(0, 0, 0, 0);
+        const isFutura = verificaDate > today;
+
+        // Pre-compila campi
+        editVerificaData.value = new Date(
+          data.verifica.data
+        ).toLocaleDateString("it-IT");
+        editMateria.value = data.verifica.materialID._id;
+        editArgomento.value = data.verifica.argomento;
+
+        // 🔧 LOGICA CORRETTA:
+        if (isFutura) {
+          // Se la verifica è FUTURA: forza "Non ho ancora il voto"
+          editValutazione.value = "";
+          editValutazione.disabled = true;
+          editPrevisto.checked = true;
+          editPrevisto.disabled = true; // ← NON PUÒ MODIFICARE
+        } else {
+          // Se la verifica è OGGI O NEL PASSATO: permetti sia voto che checkbox
+
+          if (data.verifica.voto !== null && data.verifica.voto !== undefined) {
+            // ✅ HA GIÀ UN VOTO: blocca tutto
+            editPrevisto.checked = false;
+            editValutazione.disabled = false;
+            editValutazione.value = data.verifica.voto?.toString() || "";
+            editPrevisto.disabled = true; // ← BLOCCA CHECKBOX (non avrebbe senso)
+          } else {
+            // NON HA VOTO: permetti di gestire checkbox e voto
+            editPrevisto.disabled = false; // ← PUÒ MODIFICARE IL CHECKBOX
+
+            if (data.verifica.votoFuturo || data.verifica.voto == null) {
+              editPrevisto.checked = true;
+              editValutazione.value = "";
+              editValutazione.disabled = true;
+            } else {
+              editPrevisto.checked = false;
+              editValutazione.disabled = false;
+              editValutazione.value = data.verifica.voto?.toString() || "";
+            }
+          }
+        }
+
+        // Gestione Flatpickr per calendario
+        if (editVerificaData._flatpickr) {
+          editVerificaData._flatpickr.destroy();
+        }
+
+        // Consenti date nel passato/oggi se la verifica è già nel passato
+        if (isFutura) {
+          // Se è futura: consenti solo date nel futuro (niente blocco)
+          flatpickr(editVerificaData, {
+            locale: "it",
+            dateFormat: "d/m/Y",
+            allowInput: false,
+            disableMobile: true,
+          });
+        } else {
+          // Se è nel passato/oggi: consenti solo date nel passato/oggi
+          flatpickr(editVerificaData, {
+            locale: "it",
+            dateFormat: "d/m/Y",
+            allowInput: false,
+            disableMobile: true,
+            maxDate: new Date(),
+          });
+        }
+
+        editVerificaModal.style.display = "flex";
+        document.body.classList.add("modal-open");
+      } else {
+        alert(data.message || "Errore dati verifica");
+      }
+    } catch {
+      alert("Errore di connessione");
+    }
+  }
+
+  // Gestione checkbox voto futuro/logica disabilitazione input
+  editPrevisto.addEventListener("change", function () {
+    if (editPrevisto.checked) {
+      editValutazione.value = "";
+      editValutazione.disabled = true;
+    } else {
+      editValutazione.disabled = false;
+      // Se l'input diventa abilitato e l'utente inserisce ora un voto,
+      // assicurati che non sia/venga settato "votoFuturo: true" nell'invio
+    }
+  });
+
+  document
+    .getElementById("closeEditVerifica")
+    .addEventListener("click", function () {
+      editVerificaModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    });
+
+  document
+    .getElementById("annullaEditVerifica")
+    .addEventListener("click", function () {
+      editVerificaModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    });
+
+  window.addEventListener("click", function (event) {
+    if (event.target === editVerificaModal) {
+      editVerificaModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    }
+  });
+
+  editVerificaForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    editVerificaError.style.display = "none";
+    editVerificaError.textContent = "";
+    editMateria.classList.remove("input-error");
+    editVerificaData.classList.remove("input-error");
+    editArgomento.classList.remove("input-error");
+    editValutazione.classList.remove("input-error");
+
+    // Prendi valori
+    const materia = editMateria.value;
+    const data = editVerificaData.value.trim();
+    const argomento = editArgomento.value.trim();
+    const voto = editValutazione.disabled
+      ? null
+      : editValutazione.value
+      ? parseFloat(editValutazione.value.replace(",", "."))
+      : null;
+    let votoFuturo = editPrevisto.checked;
+
+    // FIX: Se c'è un voto valido, forza votoFuturo a false
+    if (voto !== null && voto !== undefined && !isNaN(voto)) {
+      votoFuturo = false;
+    }
+
+    let firstError = "";
+    if (!data) {
+      editVerificaData.classList.add("input-error");
+      firstError ||= "⚠️ Seleziona la data";
+    } else if (!materia) {
+      editMateria.classList.add("input-error");
+      firstError ||= "⚠️ Scegli una materia";
+    } else if (!argomento || argomento.length < 3) {
+      editArgomento.classList.add("input-error");
+      firstError ||= "⚠️ L'argomento deve avere minimo 3 caratteri";
+    } else if (
+      votoFuturo === false &&
+      (voto === null || voto < 0 || voto > 10)
+    ) {
+      editValutazione.classList.add("input-error");
+      firstError ||= "⚠️ Il voto deve essere tra 0 e 10";
+    }
+
+    if (firstError) {
+      editVerificaError.style.display = "block";
+      editVerificaError.textContent = firstError;
+      return;
+    }
+
+    // conversione data IT → YYYY-MM-DD
+    const dateParts = data.split("/");
+    const formattedDate =
+      dateParts.length === 3
+        ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+        : data;
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/test/${verificaToEditID}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          materialID: materia, // ← INCLUDE SEMPRE MATERIAID
+          data: formattedDate,
+          argomento: argomento,
+          voto: votoFuturo ? null : voto,
+          votoFuturo: votoFuturo, // ← ADESSO CORRETTO
+        }),
+      });
+      const result = await res.json();
+      if (res.ok && result.verifica) {
+        editVerificaModal.style.display = "none";
+        await loadVerifiche();
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      } else {
+        editVerificaError.style.display = "block";
+        editVerificaError.textContent = result.message || "Errore modifica";
+        if (result.message?.toLowerCase().includes("data"))
+          editVerificaData.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("materia"))
+          editMateria.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("argomento"))
+          editArgomento.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("voto"))
+          editValutazione.classList.add("input-error");
+      }
+    } catch {
+      editVerificaError.style.display = "block";
+      editVerificaError.textContent = "Errore di connessione";
     }
   });
 
@@ -459,7 +992,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const dataVerifica = dataInput.value.trim();
     const argomento = argomentoTextarea.value.trim();
     const voto = selectValutazione.value
-      ? parseInt(selectValutazione.value)
+      ? parseFloat(selectValutazione.value.replace(",", "."))
       : null;
     const votoFuturo = checkboxPrevisto.checked;
 
@@ -469,19 +1002,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!dataVerifica) {
       dataInput.classList.add("input-error");
       firstError ||= "⚠️ Seleziona la data";
-    }
-    if (!materialID) {
+    } else if (!materialID) {
       materiaSelect.classList.add("input-error");
       firstError ||= "⚠️ Scegli una materia";
-    }
-
-    if (!argomento || argomento.length < 3) {
+    } else if (!argomento || argomento.length < 3) {
       argomentoTextarea.classList.add("input-error");
       firstError ||= "⚠️ L'argomento deve avere minimo 3 caratteri";
-    }
-    if (votoFuturo === false && (!voto || voto < 0 || voto > 10)) {
+    } else if (
+      votoFuturo === false &&
+      (voto === null || voto < 0 || voto > 10)
+    ) {
       selectValutazione.classList.add("input-error");
-      firstError ||= "⚠️ Inserisci un voto valido (1-10)";
+      firstError ||= "⚠️ Il voto deve essere un numero tra 0 e 10";
     }
 
     if (firstError) {
@@ -489,6 +1021,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       document.getElementById("verificaError").textContent = firstError;
       return;
     }
+
+    const dateParts = dataInput.value.trim().split("/");
+    const formattedDate =
+      dateParts.length === 3
+        ? `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+        : dataInput.value.trim();
 
     // Invio al backend
     try {
@@ -500,7 +1038,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
         body: JSON.stringify({
           materialID,
-          data: dataVerifica,
+          data: formattedDate,
           argomento,
           voto: votoFuturo ? null : voto,
           votoFuturo: votoFuturo,
@@ -513,16 +1051,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         modal.style.display = "none";
         resetInsertVerificaForm();
         await loadVerifiche(); // Aggiorna subito la lista verifiche
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       } else {
         // Se c'è un errore backend, mostra solo primo errore
         document.getElementById("verificaError").style.display = "block";
         document.getElementById("verificaError").textContent =
           result.message || "Errore nel salvataggio";
         // Evidenzia il campo sbagliato se il messaggio contiene "materia"/"data"/"argomento"/"voto"
-        if (result.message?.toLowerCase().includes("materia"))
-          materiaSelect.classList.add("input-error");
         if (result.message?.toLowerCase().includes("data"))
           dataInput.classList.add("input-error");
+        if (result.message?.toLowerCase().includes("materia"))
+          materiaSelect.classList.add("input-error");
         if (result.message?.toLowerCase().includes("argomento"))
           argomentoTextarea.classList.add("input-error");
         if (result.message?.toLowerCase().includes("voto"))

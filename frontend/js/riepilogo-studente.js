@@ -101,23 +101,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   document.querySelector(".delete-btn").addEventListener("click", function () {
     deleteProfileModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   });
 
   document
     .getElementById("closeDeleteProfile")
     .addEventListener("click", function () {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
   document
     .getElementById("cancelDeleteProfile")
     .addEventListener("click", function () {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
   window.addEventListener("click", function (event) {
     if (event.target === deleteProfileModal) {
       deleteProfileModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -206,6 +210,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     editPersonalModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   }
 
   // abilita/disabilita indirizzo in base al grado
@@ -226,17 +231,20 @@ document.addEventListener("DOMContentLoaded", async function () {
   // chiudi modale (X / annulla / click fuori)
   document.getElementById("closeEditPersonal").addEventListener("click", () => {
     editPersonalModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
   document
     .getElementById("cancelEditPersonal")
     .addEventListener("click", () => {
       editPersonalModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     });
 
   window.addEventListener("click", (e) => {
     if (e.target === editPersonalModal) {
       editPersonalModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -322,6 +330,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         userIcon.textContent = data.data.nome.charAt(0).toUpperCase();
 
         editPersonalModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       } else {
         showError(editErrors, null, data.message || "Errore nel salvataggio");
       }
@@ -365,11 +374,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   document.getElementById("editPasswordBtn").addEventListener("click", () => {
     resetPasswordModal();
     editPasswordModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   });
 
   // chiudi (X)
   document.getElementById("closeEditPassword").addEventListener("click", () => {
     editPasswordModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     resetPasswordModal();
   });
 
@@ -378,6 +389,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     .getElementById("cancelEditPassword")
     .addEventListener("click", () => {
       editPasswordModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       resetPasswordModal();
     });
 
@@ -385,6 +397,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.addEventListener("click", (e) => {
     if (e.target === editPasswordModal) {
       editPasswordModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       resetPasswordModal();
     }
   });
@@ -462,6 +475,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (response.ok) {
         editPasswordModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
         resetPasswordModal();
       } else {
         showError(
@@ -513,6 +527,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     clearFamilyInputErrors();
     editFamilyErrors.innerHTML = "";
     editFamilyModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   }
 
   /**
@@ -532,17 +547,20 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Chiudi modale (X)
   document.getElementById("closeEditFamily").addEventListener("click", () => {
     editFamilyModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
   // Chiudi modale (Annulla)
   document.getElementById("cancelEditFamily").addEventListener("click", () => {
     editFamilyModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
   // Chiudi modale (click fuori)
   window.addEventListener("click", (e) => {
     if (e.target === editFamilyModal) {
       editFamilyModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -635,6 +653,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         populateProfileData(window._studentData);
 
         editFamilyModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       } else {
         editFamilyErrors.innerHTML = `⚠️ ${
           data.message || "Errore nel salvataggio"
@@ -676,6 +695,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     updateAddSchoolBtnState();
 
     editSchoolModal.style.display = "flex";
+    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
   }
 
   /**
@@ -774,15 +794,18 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Chiudi modale
   document.getElementById("closeEditSchool").addEventListener("click", () => {
     editSchoolModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
   document.getElementById("cancelEditSchool").addEventListener("click", () => {
     editSchoolModal.style.display = "none";
+    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
   });
 
   window.addEventListener("click", (e) => {
     if (e.target === editSchoolModal) {
       editSchoolModal.style.display = "none";
+      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
     }
   });
 
@@ -842,6 +865,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Chiudi modale
         editSchoolModal.style.display = "none";
+        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
       } else {
         editSchoolErrors.innerHTML = data.message || "Errore nel salvataggio";
       }

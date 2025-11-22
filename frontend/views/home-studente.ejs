@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profilo Studente</title>
+    <title>Tutor 2.0</title>
     <link rel="stylesheet" href="css/home-studente.css" />
     <link
       rel="stylesheet"
@@ -42,8 +42,8 @@
           >🏠 Home</a
         >
         <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
-        <a href="/subject" class="sidebar-item">➕ Aggiungi Materie</a>
-        <div class="sidebar-item">📚 Media Materie</div>
+        <a href="/subject" class="sidebar-item">📑 Materie</a>
+        <a href="/avg-materie" class="sidebar-item">📚 Media Materie</a>
         <div class="sidebar-footer">
           <div class="sidebar-button">
             <button class="delete-btn">🗑️ Elimina profilo</button>
@@ -142,6 +142,7 @@
                 id="verificaData"
                 name="verificaData"
                 required
+                placeholder="Data Verifica"
                 autocomplete="off"
                 readonly
                 style="flex: 1"
@@ -162,6 +163,7 @@
               id="argomento"
               name="argomento"
               maxlength="500"
+              placeholder="Argomento Verifica"
               rows="4"
             ></textarea>
           </div>
@@ -170,20 +172,19 @@
             <label for="valutazione" style="font-size: 15px; font-weight: 500"
               >Valutazione</label
             >
-            <select id="valutazione" name="valutazione">
-              <option value="" selected disabled>Seleziona il voto</option>
-              <option value="10">0</option>
-              <option value="9">1</option>
-              <option value="8">2</option>
-              <option value="7">3</option>
-              <option value="6">4</option>
-              <option value="5">5</option>
-              <option value="4">6</option>
-              <option value="4">7</option>
-              <option value="4">8</option>
-              <option value="4">9</option>
-              <option value="4">10</option>
-            </select>
+            <div class="input-voto-flex">
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="10"
+                id="valutazione"
+                name="valutazione"
+                placeholder="Voto Verifica"
+                class="input-voto"
+                autocomplete="off"
+              />
+            </div>
             <div style="margin-top: 8px">
               <input type="checkbox" id="previsto" name="previsto" />
               <label for="previsto" style="font-size: 14px">
@@ -200,13 +201,143 @@
 
           <div style="display: flex; gap: 14px; margin-top: 20px">
             <button type="submit" class="plan-btn" style="margin: 0">
-              Pianifica
+              Inserisci Verifica
             </button>
             <button type="button" class="btn-annulla" id="annullaVerifica">
               Annulla
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Verifica -->
+    <div id="editVerificaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditVerifica">&times;</span>
+        <h2>Modifica verifica</h2>
+        <p>
+          Puoi modificare i dati della tua verifica.<br />
+          Attenzione: se la verifica ha già un voto non puoi impostare "Non ho
+          ancora il voto".
+        </p>
+        <form id="editVerificaForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="editVerificaData">Giorno</label>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <input
+                type="text"
+                id="editVerificaData"
+                name="editVerificaData"
+                required
+                placeholder="Data Verifica"
+                autocomplete="off"
+                readonly
+                style="flex: 1"
+              />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="editMateria">Materia</label>
+            <select
+              id="editMateria"
+              name="editMateria"
+              size="4"
+              required
+            ></select>
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="editArgomento"
+              >Descrivi l'argomento (max 500 caratteri)</label
+            >
+            <textarea
+              id="editArgomento"
+              name="editArgomento"
+              maxlength="500"
+              placeholder="Argomento Verifica"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div style="margin-bottom: 12px">
+            <label
+              for="editValutazione"
+              style="font-size: 15px; font-weight: 500"
+              >Valutazione</label
+            >
+            <div class="input-voto-flex">
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="10"
+                id="editValutazione"
+                name="editValutazione"
+                placeholder="Voto Verifica"
+                class="input-voto"
+                autocomplete="off"
+              />
+            </div>
+            <div style="margin-top: 8px">
+              <input type="checkbox" id="editPrevisto" name="editPrevisto" />
+              <label for="editPrevisto" style="font-size: 14px">
+                Non ho ancora il voto
+              </label>
+            </div>
+          </div>
+
+          <div
+            id="editVerificaError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Modifica Verifica
+            </button>
+            <button type="button" class="btn-annulla" id="annullaEditVerifica">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Elimina Verifica -->
+    <div id="deleteVerificaModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteVerifica">&times;</span>
+        <h2>Elimina verifica</h2>
+
+        <p>
+          Sei sicuro di voler eliminare questa verifica?<br />Una volta
+          selezionato <b>Elimina verifica</b> non potrai più recuperare i suoi
+          dati.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteVerifica"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina verifica
+          </button>
+          <button id="cancelDeleteVerifica" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Verifiche del Giorno -->
+    <div id="dayVerificheModal" class="modal">
+      <div class="modal-content" style="max-width: 600px">
+        <span class="close" id="closeDayVerifiche">&times;</span>
+        <h2 id="dayVerificheTitle">Verifiche del giorno</h2>
+        <div id="dayVerificheList" class="day-verifiche-list">
+          <!-- Generato da JavaScript -->
+        </div>
       </div>
     </div>
   </body>

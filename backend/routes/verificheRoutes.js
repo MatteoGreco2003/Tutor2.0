@@ -6,6 +6,7 @@ import {
   updateVerifica,
   deleteVerifica,
   getMaterieConMedia,
+  getVerifichePerMateria,
 } from "../controllers/testController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
@@ -21,6 +22,9 @@ router.get("/materie-media", verifyToken, getMaterieConMedia);
 
 // GET verifiche - Leggi tutte le verifiche dello studente
 router.get("/data", verifyToken, getVerificheStudente);
+
+// GET /test/materia/:materiaId - Leggi verifiche per materia
+router.get("/materia/:materiaId", verifyToken, getVerifichePerMateria);
 
 // GET verifiche/:verificaID - Leggi una singola verifica
 router.get("/:verificaID", verifyToken, getVerifica);
