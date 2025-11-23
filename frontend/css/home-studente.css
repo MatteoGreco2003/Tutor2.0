@@ -576,7 +576,7 @@ body {
   border: none;
 }
 
-/* ===== BADGE VERIFICHE NEL CALENDARIO ===== */
+/* ===== BADGE GENERICO ===== */
 .calendar-badge {
   position: absolute;
   bottom: 2px;
@@ -593,6 +593,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: none;
 }
 
 .calendar-badge:hover {
@@ -600,20 +601,21 @@ body {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
 
-.calendar-badge.badge-high {
-  background-color: #10b981;
-}
-
-.calendar-badge.badge-medium {
-  background-color: #f59e0b;
-}
-
-.calendar-badge.badge-low {
-  background-color: #ef4444;
-}
-
-.calendar-badge.badge-pending {
-  background-color: #9ca3af;
+/* Numero al centro */
+.calendar-badge::after {
+  content: attr(data-count);
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--dark-text);
+  line-height: 1;
 }
 
 /* Contenitore legenda */
@@ -647,68 +649,155 @@ body {
   position: relative;
 }
 
-/* Stili lista verifiche nel modal giorno */
+/* ===== MODAL GIORNO VERIFICHE ===== */
+.day-verifiche-modal {
+  min-width: 75%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 70vh;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--light-border);
+  background: var(--white);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--light-text);
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: var(--light-bg);
+  color: var(--dark-text);
+}
+
 .day-verifiche-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 16px;
+  background: var(--light-bg);
+  /* Scrollbar personalizzata */
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-purple) #f0f0f0;
 }
 
-.day-verifica-item {
-  background: linear-gradient(
-    135deg,
-    var(--light-bg),
-    rgba(158, 63, 253, 0.05)
-  );
-  padding: 14px;
+.day-verifica-card {
+  background: var(--white);
+  border-left: 4px solid var(--primary-purple);
   border-radius: 8px;
-  border-left: 3px solid var(--primary-purple);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.day-verifica-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.day-verifica-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.day-verifica-info h4 {
-  font-size: 15px;
-  margin: 0 0 6px 0;
+.materia-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--primary-purple);
-}
-
-.day-verifica-info p {
-  font-size: 13px;
-  margin: 3px 0;
-  color: var(--light-text);
+  flex: 1;
 }
 
 .day-verifica-voto {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 40px;
+  border-radius: 30%;
   font-weight: 700;
-  color: var(--blue-accent);
-  padding: 6px 10px;
-  background-color: rgba(17, 109, 255, 0.1);
-  border-radius: 6px;
-  text-align: center;
-  min-width: 50px;
+  font-size: 14px;
+  color: var(--white);
+}
+
+.day-verifica-voto.voto-high {
+  background-color: #10b981;
+}
+
+.day-verifica-voto.voto-medium {
+  background-color: #f59e0b;
+}
+
+.day-verifica-voto.voto-low {
+  background-color: #ef4444;
 }
 
 .day-verifica-voto.pending {
-  color: var(--light-text);
-  background-color: transparent;
-}
-
-.day-empty {
+  background-color: #9ca3af;
+  font-size: 11px;
   text-align: center;
-  padding: 30px 20px;
-  color: var(--light-text);
+  padding: 4px;
 }
 
-.day-empty i {
-  font-size: 32px;
-  margin-bottom: 10px;
-  opacity: 0.3;
+.day-verifica-content {
+  margin-top: 10px;
+}
+
+.argomento {
+  font-size: 14px;
+  color: var(--dark-text);
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word; /* <<< AGGIUNGI QUESTO */
+  overflow-wrap: anywhere; /* <<< E ANCHE QUESTO */
+  padding: 10px;
+  border-top: 1px solid var(--primary-purple);
+  border-bottom: 1px solid var(--primary-purple);
+  text-align: center;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px 20px;
+  border-top: 1px solid var(--light-border);
+  background: var(--white);
+}
+
+.modal-footer .btn {
+  min-width: 100px;
 }
 
 /* Modale Elimina Profilo */
@@ -997,6 +1086,104 @@ body {
   margin-top: 6px;
   margin-bottom: 0px;
   box-sizing: border-box;
+}
+
+/* ===== LEGENDA INTERATTIVA ===== */
+.calendar-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  margin-top: 20px;
+  padding: 16px;
+  border-top: 1px solid var(--light-bg);
+  flex-wrap: nowrap;
+}
+
+.legend-items {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--light-text);
+  font-weight: 500;
+}
+
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+
+.legend-tip {
+  flex: 1;
+  min-width: 200px;
+  background: linear-gradient(
+    135deg,
+    var(--light-bg),
+    rgba(158, 63, 253, 0.05)
+  );
+  border-left: 3px solid var(--primary-purple);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--light-text);
+  font-weight: 500;
+}
+
+.legend-tip i {
+  color: var(--primary-purple);
+  margin-right: 8px;
+  font-weight: 700;
+}
+
+/* ===== BADGE TORTA (PIE CHART) ===== */
+.calendar-badge.badge-pie {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: none;
+}
+
+.calendar-badge.badge-pie:hover {
+  transform: scale(1.2);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Numero al centro del badge torta */
+.calendar-badge.badge-pie::after {
+  content: attr(data-count);
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--dark-text);
+  line-height: 1;
 }
 
 body.modal-open {

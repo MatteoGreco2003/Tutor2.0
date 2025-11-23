@@ -23,7 +23,7 @@ class Calendario {
 
     // Header con giorni della settimana
     const headerRow = this.table.createTHead().insertRow();
-    const days = ["D", "L", "M", "M", "G", "V", "S"];
+    const days = ["L", "M", "M", "G", "V", "S", "D"];
     days.forEach((day) => {
       const th = document.createElement("th");
       th.textContent = day;
@@ -46,7 +46,10 @@ class Calendario {
       0
     );
     const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
+
+    // Converti domenica (0) a 6, lunedì (1) a 0, ecc.
+    let startingDayOfWeek = firstDay.getDay() - 1;
+    if (startingDayOfWeek < 0) startingDayOfWeek = 6;
 
     let date = 1;
 
@@ -84,6 +87,13 @@ class Calendario {
         }
       }
     }
+
+    // Richiama addBadgesToCalendar dopo il render
+    setTimeout(() => {
+      if (window.addBadgesToCalendar) {
+        window.addBadgesToCalendar();
+      }
+    }, 100);
   }
 
   updateMonthDisplay() {
@@ -152,35 +162,3 @@ document.addEventListener("DOMContentLoaded", () => {
     "currentMonth"
   );
 });
-
-// Aggiungi questa funzione in home-studente.js DOPO addBadgesToCalendar()
-
-function addCalendarLegend() {
-  const calendarWrapper = document.querySelector(".calendar-wrapper");
-
-  // Controlla se legenda esiste già
-  if (document.querySelector(".calendar-legend")) return;
-
-  const legend = document.createElement("div");
-  legend.className = "calendar-legend";
-  legend.innerHTML = `
-    <div class="legend-item">
-      <div class="legend-dot" style="background-color: #10b981;"></div>
-      <span>Voti alti (8-10)</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background-color: #f59e0b;"></div>
-      <span>Voti medi (6-7)</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background-color: #ef4444;"></div>
-      <span>Voti bassi (&lt;6)</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background-color: #9ca3af;"></div>
-      <span>Non votato</span>
-    </div>
-  `;
-
-  calendarWrapper.parentNode.insertBefore(legend, calendarWrapper.nextSibling);
-}

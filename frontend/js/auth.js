@@ -382,8 +382,27 @@ forgotPasswordForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // TODO: Implementare richiesta reset password al backend
-  // requestPasswordReset(email);
+  /**
+   * Submit form recupero password
+   */
+  forgotPasswordForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("forgotEmail").value.trim();
+
+    // Pulisci errori precedenti
+    document.getElementById("forgotErrors").innerHTML = "";
+    document.getElementById("forgotSuccess").style.display = "none";
+
+    // Valida email
+    if (!isValidEmail(email)) {
+      showErrorsForgotPass(["Email non valida (es: user@example.com)"]);
+      return;
+    }
+
+    // ✅ IMPLEMENTATO: Richiedi reset password
+    requestPasswordReset(email);
+  });
 });
 
 /**
@@ -455,35 +474,34 @@ document.querySelectorAll(".toggle-password").forEach((icon) => {
 });
 
 /**
- * [TODO] Richiedi reset password al backend
+ * Richiedi reset password al backend
  * @param {string} email - Email utente
- *
- * async function requestPasswordReset(email) {
- *   try {
- *     const response = await fetch("/auth/forgot-password", {
- *       method: "POST",
- *       headers: {
- *         "Content-Type": "application/json",
- *       },
- *       body: JSON.stringify({ email: email }),
- *     });
- *
- *     const data = await response.json();
- *
- *     if (response.ok) {
- *       document.getElementById("forgotSuccess").style.display = "block";
- *       forgotPasswordForm.reset();
- *
- *       setTimeout(() => {
- *         forgotPasswordModal.style.display = "none";
- *         document.getElementById("forgotSuccess").style.display = "none";
- *       }, 3000);
- *     } else {
- *       showErrorsForgotPass([data.message || "Errore nella richiesta"]);
- *     }
- *   } catch (error) {
- *     console.error("Errore:", error);
- *     showErrorsForgotPass(["Errore di connessione al server"]);
- *   }
- * }
  */
+async function requestPasswordReset(email) {
+  try {
+    const response = await fetch("/auth/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      document.getElementById("forgotSuccess").style.display = "block";
+      forgotPasswordForm.reset();
+
+      setTimeout(() => {
+        forgotPasswordModal.style.display = "none";
+        document.getElementById("forgotSuccess").style.display = "none";
+      }, 3000);
+    } else {
+      showErrorsForgotPass([data.message || "Errore nella richiesta"]);
+    }
+  } catch (error) {
+    console.error("Errore:", error);
+    showErrorsForgotPass(["Errore di connessione al server"]);
+  }
+}

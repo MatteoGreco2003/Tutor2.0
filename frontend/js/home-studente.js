@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   /**
    * Aggiunge i badge (pallini) al calendario
    */
-  function addBadgesToCalendar() {
+  window.addBadgesToCalendar = function () {
     const token = localStorage.getItem("token");
 
     // Carica le verifiche prima di aggiungerle al calendario
@@ -311,35 +311,90 @@ document.addEventListener("DOMContentLoaded", async function () {
 
           if (verificheDelGiorno.length === 0) return;
 
-          // Calcola media voti
-          const conVoto = verificheDelGiorno.filter(
-            (v) => v.voto !== null && v.voto !== undefined
-          );
-          let badgeClass = "badge-pending";
+          // Conta i voti per colore
+          const votiBasso = verificheDelGiorno.filter(
+            (v) => v.voto !== null && v.voto < 6
+          ).length;
+          const votiMedio = verificheDelGiorno.filter(
+            (v) => v.voto !== null && v.voto >= 6 && v.voto < 8
+          ).length;
+          const votiAlto = verificheDelGiorno.filter(
+            (v) => v.voto !== null && v.voto >= 8
+          ).length;
 
-          if (conVoto.length > 0) {
-            const media =
-              conVoto.reduce((sum, v) => sum + v.voto, 0) / conVoto.length;
-            if (media >= 8) badgeClass = "badge-high";
-            else if (media >= 6) badgeClass = "badge-medium";
-            else badgeClass = "badge-low";
-          }
+          // Totale verifiche con voto
+          const totalConVoto = votiBasso + votiMedio + votiAlto;
 
-          // Crea badge
+          // Crea il badge
           const badge = document.createElement("span");
-          badge.className = `calendar-badge ${badgeClass}`;
-          badge.textContent = verificheDelGiorno.length;
           badge.setAttribute("data-day", day);
           badge.addEventListener("click", (e) => {
             e.stopPropagation();
             openDayVerificheModal(day, verificheDelGiorno);
           });
 
+          // Se ci sono voti MISTI (più colori diversi), crea badge torta
+          const coloriDiversi = [
+            votiBasso > 0,
+            votiMedio > 0,
+            votiAlto > 0,
+          ].filter(Boolean).length;
+
+          if (totalConVoto > 0 && coloriDiversi > 1) {
+            // BADGE TORTA - Genera il gradient direttamente
+            badge.className = "calendar-badge badge-pie";
+            badge.setAttribute("data-count", verificheDelGiorno.length);
+
+            // Calcola percentuali e angoli
+            const percVerde = (votiAlto / totalConVoto) * 100;
+            const percGiallo = (votiMedio / totalConVoto) * 100;
+            const percRosso = (votiBasso / totalConVoto) * 100;
+
+            // Angoli cumulativi
+            const angVerde_end = percVerde;
+            const angGiallo_end = percVerde + percGiallo;
+
+            // Crea il gradient dinamico
+            const gradientStr = `conic-gradient(
+              #10b981 0%,
+              #10b981 ${angVerde_end}%,
+              #f59e0b ${angVerde_end}%,
+              #f59e0b ${angGiallo_end}%,
+              #ef4444 ${angGiallo_end}%,
+              #ef4444 100%
+            )`;
+
+            badge.style.background = gradientStr;
+            badge.innerHTML = "";
+          } else {
+            // ========== BADGE COLORE SINGOLO ==========
+            badge.className = "calendar-badge badge-single";
+            badge.setAttribute("data-count", verificheDelGiorno.length);
+
+            // Determina il colore di background
+            let bgColor = "#9ca3af"; // grigio (pending)
+
+            if (totalConVoto > 0) {
+              if (votiAlto > 0 && votiBasso === 0 && votiMedio === 0) {
+                bgColor = "#10b981"; // verde (high)
+              } else if (votiMedio > 0 && votiBasso === 0) {
+                bgColor = "#f59e0b"; // giallo (medium)
+              } else if (votiBasso > 0) {
+                bgColor = "#ef4444"; // rosso (low)
+              }
+            }
+
+            badge.style.background = bgColor;
+            badge.innerHTML = "";
+          }
+
           cell.appendChild(badge);
         });
+
+        addCalendarLegend();
       })
       .catch((error) => console.error("Errore caricamento badges:", error));
-  }
+  };
 
   /**
    * Apre il modal con le verifiche di un giorno specifico
@@ -365,20 +420,31 @@ document.addEventListener("DOMContentLoaded", async function () {
     list.innerHTML = "";
     verifiche.forEach((v) => {
       const item = document.createElement("div");
-      item.className = "day-verifica-item";
+      item.className = "day-verifica-card";
 
       const nomeMateria = v.materialID?.nome || "Materia sconosciuta";
+
+      // Determina classe voto
+      let votoClass = "voto-pending";
+      if (v.voto !== null && v.voto !== undefined) {
+        if (v.voto >= 8) votoClass = "voto-high";
+        else if (v.voto >= 6) votoClass = "voto-medium";
+        else votoClass = "voto-low";
+      }
+
       const votoDisplay =
         v.voto !== null && v.voto !== undefined
-          ? `<div class="day-verifica-voto">${v.voto}</div>`
+          ? `<div class="day-verifica-voto ${votoClass}">${v.voto}</div>`
           : `<div class="day-verifica-voto pending">Non ancora</div>`;
 
       item.innerHTML = `
-        <div class="day-verifica-info">
-          <h4>${nomeMateria}</h4>
-          <p>${v.argomento || "Senza argomento"}</p>
+        <div class="day-verifica-header">
+          <h4 class="materia-name">${nomeMateria}</h4>
+          ${votoDisplay}
         </div>
-        ${votoDisplay}
+        <div class="day-verifica-content">
+          <p class="argomento">${v.argomento || "Senza argomento specifico"}</p>
+        </div>
       `;
 
       list.appendChild(item);
@@ -388,11 +454,58 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.body.classList.add("modal-open");
   }
 
+  /**
+   * Aggiunge la legenda interattiva sotto il calendario
+   */
+  function addCalendarLegend() {
+    const calendarSection = document.querySelector(".calendar-section");
+
+    // Controlla se legenda esiste già
+    if (document.querySelector(".calendar-legend")) return;
+
+    const legend = document.createElement("div");
+    legend.className = "calendar-legend";
+    legend.innerHTML = `
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-dot" style="background-color: #10b981;"></div>
+          <span>Voti alti (8-10)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background-color: #f59e0b;"></div>
+          <span>Voti medi (6-7)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background-color: #ef4444;"></div>
+          <span>Voti bassi (&lt;6)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background-color: #9ca3af;"></div>
+          <span>Non votato</span>
+        </div>
+      </div>
+      <div class="legend-tip">
+        <i class="fas fa-lightbulb"></i>
+        Clicca su un pallino per vedere le verifiche del giorno!
+      </div>
+    `;
+
+    calendarSection.appendChild(legend);
+  }
+
   // Listener per chiudere il modal
   document.getElementById("closeDayVerifiche").addEventListener("click", () => {
     document.getElementById("dayVerificheModal").style.display = "none";
     document.body.classList.remove("modal-open");
   });
+
+  // Bottone chiudi in basso (nuovo)
+  document
+    .getElementById("closeDayVerificheBtn")
+    .addEventListener("click", () => {
+      document.getElementById("dayVerificheModal").style.display = "none";
+      document.body.classList.remove("modal-open");
+    });
 
   window.addEventListener("click", (event) => {
     const modal = document.getElementById("dayVerificheModal");
@@ -404,7 +517,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Carica le verifiche all'inizio
   await loadVerifiche();
-  addCalendarLegend();
 
   // ==========================================
   // PULSANTE DISCONNETTITI

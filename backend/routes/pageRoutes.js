@@ -12,6 +12,11 @@ router.get("/complete-profile", (req, res) => {
   res.render("completamento-profilo");
 });
 
+// GET /reset-password - Pagina reset password (pubblica)
+router.get("/reset-password", (req, res) => {
+  res.render("reset-password");
+});
+
 // ===== PAGINE PROTETTE → SERVITE COME PUBBLICHE =====
 // Ora sono pubbliche, il controllo accesso avviene via API
 router.get("/home-studenti", (req, res) => {
@@ -28,6 +33,16 @@ router.get("/home-tutor", verifyToken, (req, res) => {
   }
   res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
   res.render("home-tutor");
+});
+
+router.get("/home-admin", verifyToken, (req, res) => {
+  if (req.user.email !== "toptutor.it@gmail.com") {
+    return res
+      .status(403)
+      .render("errore", { message: "Accesso solo per admin" });
+  }
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.render("admin");
 });
 
 router.get("/profilo-studente", (req, res) => {

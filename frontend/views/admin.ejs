@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Tutor 2.0</title>
+    <link rel="stylesheet" href="css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="admin-icon">👨‍💼</div>
+        <div class="header-title">Admin Panel - Tutor 2.0</div>
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a href="#" class="sidebar-item active" data-page="home">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="#" class="sidebar-item" data-page="studenti">
+          <i class="fas fa-users"></i> Gestione Studenti
+        </a>
+        <a href="#" class="sidebar-item" data-page="tutor">
+          <i class="fas fa-chalkboard-user"></i> Gestione Tutor
+        </a>
+
+        <div class="sidebar-footer">
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- PAGE: HOME (STATISTICHE) -->
+        <div class="page" id="page-home">
+          <div class="section">
+            <h2 class="page-title">Dashboard</h2>
+
+            <!-- Statistiche Cards -->
+            <div class="stats-container">
+              <div class="stat-card">
+                <div class="stat-icon tutor-icon">
+                  <i class="fas fa-chalkboard-user"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Tutor Totali</h3>
+                  <p class="stat-number" id="totalTutor">0</p>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon student-icon">
+                  <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Studenti Totali</h3>
+                  <p class="stat-number" id="totalStudenti">0</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+              <h3>Azioni Rapide</h3>
+              <div class="actions-grid">
+                <button class="action-btn" data-action="create-tutor">
+                  <i class="fas fa-plus-circle"></i>
+                  <span>Crea Tutor</span>
+                </button>
+                <button class="action-btn" data-action="view-studenti">
+                  <i class="fas fa-eye"></i>
+                  <span>Visualizza Studenti</span>
+                </button>
+                <button class="action-btn" data-action="view-tutor">
+                  <i class="fas fa-list"></i>
+                  <span>Visualizza Tutor</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: GESTIONE STUDENTI -->
+        <div class="page" id="page-studenti" style="display: none">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="page-title">Gestione Studenti</h2>
+              <div class="search-box">
+                <input
+                  type="text"
+                  id="searchStudenti"
+                  placeholder="Cerca studente..."
+                />
+              </div>
+            </div>
+
+            <!-- Tabella Studenti -->
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Email</th>
+                    <th>Grado Scolastico</th>
+                    <th>Data Iscrizione</th>
+                    <th>Azioni</th>
+                  </tr>
+                </thead>
+                <tbody id="studenteTableBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px">
+                      <i class="fas fa-spinner fa-spin"></i> Caricamento...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: GESTIONE TUTOR -->
+        <div class="page" id="page-tutor" style="display: none">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="page-title">Gestione Tutor</h2>
+              <button class="add-btn" id="addTutorBtn">
+                <i class="fas fa-plus"></i> Crea Tutor
+              </button>
+            </div>
+
+            <!-- Tabella Tutor -->
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Email</th>
+                    <th>Studenti Associati</th>
+                    <th>Data Iscrizione</th>
+                    <th>Azioni</th>
+                  </tr>
+                </thead>
+                <tbody id="tutorTableBody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px">
+                      <i class="fas fa-spinner fa-spin"></i> Caricamento...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- MODAL: Crea Tutor -->
+    <div id="createTutorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeCreateTutor">&times;</span>
+        <h2>Crea Nuovo Tutor</h2>
+        <form id="createTutorForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="tutorNome">Nome</label>
+            <input
+              type="text"
+              id="tutorNome"
+              name="nome"
+              placeholder="Nome"
+              required
+            />
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="tutorCognome">Cognome</label>
+            <input
+              type="text"
+              id="tutorCognome"
+              name="cognome"
+              placeholder="Cognome"
+              required
+            />
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="tutorEmail">Email</label>
+            <input
+              type="email"
+              id="tutorEmail"
+              name="email"
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="tutorPassword">Password (min 8 caratteri)</label>
+            <input
+              type="password"
+              id="tutorPassword"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          <div
+            id="createTutorError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Crea Tutor
+            </button>
+            <button type="button" class="btn-annulla" id="cancelCreateTutor">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Modifica Tutor -->
+    <div id="editTutorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditTutor">&times;</span>
+        <h2>Modifica Tutor</h2>
+        <form id="editTutorForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="editTutorNome">Nome</label>
+            <input
+              type="text"
+              id="editTutorNome"
+              name="nome"
+              placeholder="Nome"
+              required
+            />
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="editTutorCognome">Cognome</label>
+            <input
+              type="text"
+              id="editTutorCognome"
+              name="cognome"
+              placeholder="Cognome"
+              required
+            />
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label for="editTutorEmail">Email</label>
+            <input
+              type="email"
+              id="editTutorEmail"
+              name="email"
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+
+          <div
+            id="editTutorError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Salva Modifiche
+            </button>
+            <button type="button" class="btn-annulla" id="cancelEditTutor">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Assegna Studente a Tutor -->
+    <div id="assegnaStudenteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeAssegnaStudente">&times;</span>
+        <h2>Assegna Studente a Tutor</h2>
+        <form id="assegnaStudenteForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="selectStudente">Scegli Studente</label>
+            <select id="selectStudente" name="studenteID" required>
+              <option value="">-- Seleziona uno studente --</option>
+            </select>
+          </div>
+
+          <div
+            id="assegnaStudenteError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Assegna
+            </button>
+            <button
+              type="button"
+              class="btn-annulla"
+              id="cancelAssegnaStudente"
+            >
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Elimina Tutor -->
+    <div id="deleteTutorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteTutor">&times;</span>
+        <h2>Elimina Tutor</h2>
+        <p>
+          Sei sicuro di voler eliminare questo tutor?<br />
+          <b>Questa azione non può essere annullata.</b>
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button id="confirmDeleteTutor" class="delete-btn" style="margin: 0">
+            Elimina
+          </button>
+          <button id="cancelDeleteTutor" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Elimina Studente -->
+    <div id="deleteStudenteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteStudente">&times;</span>
+        <h2>Elimina Studente</h2>
+        <p>
+          Sei sicuro di voler eliminare questo studente?<br />
+          <b>Questa azione non può essere annullata.</b>
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteStudente"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina
+          </button>
+          <button id="cancelDeleteStudente" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</html>

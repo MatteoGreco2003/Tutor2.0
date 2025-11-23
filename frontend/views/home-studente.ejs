@@ -330,13 +330,23 @@
       </div>
     </div>
 
-    <!-- Modale Verifiche del Giorno -->
+    <!-- MODAL: Verifiche del giorno -->
     <div id="dayVerificheModal" class="modal">
-      <div class="modal-content" style="max-width: 600px">
-        <span class="close" id="closeDayVerifiche">&times;</span>
-        <h2 id="dayVerificheTitle">Verifiche del giorno</h2>
-        <div id="dayVerificheList" class="day-verifiche-list">
-          <!-- Generato da JavaScript -->
+      <div class="modal-content day-verifiche-modal">
+        <!-- Header con titolo e close -->
+        <div class="modal-header">
+          <h2 id="dayVerificheTitle">Verifiche del giorno</h2>
+          <button id="closeDayVerifiche" class="close-btn">✕</button>
+        </div>
+
+        <!-- Lista verifiche -->
+        <div class="day-verifiche-list" id="dayVerificheList">
+          <!-- Populate dinamicamente -->
+        </div>
+
+        <!-- Footer con bottone Chiudi -->
+        <div class="modal-footer">
+          <button id="closeDayVerificheBtn" class="btn-annulla">Chiudi</button>
         </div>
       </div>
     </div>

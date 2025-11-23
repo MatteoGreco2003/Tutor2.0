@@ -369,7 +369,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Voto formattato
         const voto =
           verifica.voto !== null && verifica.voto !== undefined
-            ? verifica.voto.toFixed(2)
+            ? verifica.voto
             : "Non ancora";
         const votoClass = verifica.voto !== null ? "" : "no-voto";
 

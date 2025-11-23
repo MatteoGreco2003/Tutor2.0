@@ -1,4 +1,5 @@
 import Materie from "../models/Subject.js";
+import Verifiche from "../models/Test.js";
 
 // ===== CREA MATERIA =====
 export const createMateria = async (req, res) => {
@@ -76,13 +77,14 @@ export const getMaterieStudente = async (req, res) => {
   }
 };
 
-// ===== ELIMINA MATERIA =====
+// ===== ELIMINA MATERIA E LE SUE VERIFICHE =====
 export const deleteMateria = async (req, res) => {
   try {
     const { materiaId } = req.params;
     const studenteId = req.user.userId;
 
-    const materia = await Materie.findOneAndDelete({
+    // Trova la materia PRIMA di eliminarla
+    const materia = await Materie.findOne({
       _id: materiaId,
       studenteId: studenteId,
     });
@@ -93,9 +95,24 @@ export const deleteMateria = async (req, res) => {
       });
     }
 
+    // Elimina TUTTE le verifiche collegate a questa materia
+    const verificheEliminate = await Verifiche.deleteMany({
+      materialID: materiaId,
+      studenteID: studenteId, // ← Doubla sicurezza: solo verifiche di questo studente
+    });
+
+    // Elimina la materia
+    await Materie.findByIdAndDelete(materiaId);
+
+    // Log opzionale per debugging
+    console.log(
+      `✅ Materia ${materia.nome} eliminata. Verifiche rimosse: ${verificheEliminate.deletedCount}`
+    );
+
     res.status(200).json({
-      message: "Materia eliminata con successo",
+      message: "Materia e verifiche associate eliminate con successo",
       materiaId: materiaId,
+      verificheEliminate: verificheEliminate.deletedCount,
     });
   } catch (error) {
     console.error("Errore eliminazione materia:", error);
