@@ -462,7 +462,6 @@ async function submitProfile() {
       // Pulisci sessionStorage
       sessionStorage.removeItem("registrationData");
 
-      alert("Profilo completato con successo!");
       window.location.href = "/home-studenti";
     } else {
       showErrors([data.message || "Errore nel completamento del profilo"]);

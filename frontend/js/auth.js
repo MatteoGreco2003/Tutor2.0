@@ -277,7 +277,7 @@ loginForm.addEventListener("submit", (e) => {
 
 /**
  * Effettua login comunicando con il backend
- * Salva token e reindirizza a home se successo
+ * Salva token e reindirizza a home corretta in base al tipo utente
  * @param {string} email - Email utente
  * @param {string} password - Password utente
  */
@@ -299,8 +299,26 @@ async function loginUser(email, password) {
     if (response.ok) {
       // Salva token nel localStorage
       localStorage.setItem("token", data.token);
-      // Reindirizza a home
-      window.location.href = "/home-studenti";
+
+      // ✅ SALVA userType, userId, userEmail
+      localStorage.setItem("userType", data.user.tipo);
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("userEmail", data.user.email);
+
+      console.log("✅ Login riuscito!");
+      console.log("Tipo utente salvato:", data.user.tipo);
+
+      // Decidi la pagina in base al tipo utente
+      if (data.user.tipo === "admin") {
+        console.log("🔐 Admin riconosciuto");
+        window.location.href = "/home-admin";
+      } else if (data.user.tipo === "tutor") {
+        console.log("👨‍🏫 Tutor riconosciuto");
+        window.location.href = "/home-tutor";
+      } else {
+        console.log("👨‍🎓 Studente riconosciuto");
+        window.location.href = "/home-studenti";
+      }
     } else {
       // Mostra errore dal backend
       showErrors("login", [data.message || "Credenziali non valide"]);
@@ -363,47 +381,6 @@ function resetForgotPasswordForm() {
   document.getElementById("forgotErrors").innerHTML = "";
   document.getElementById("forgotSuccess").style.display = "none";
 }
-
-/**
- * Submit form recupero password
- */
-forgotPasswordForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById("forgotEmail").value.trim();
-
-  // Pulisci errori precedenti
-  document.getElementById("forgotErrors").innerHTML = "";
-  document.getElementById("forgotSuccess").style.display = "none";
-
-  // Valida email
-  if (!isValidEmail(email)) {
-    showErrorsForgotPass(["Email non valida (es: user@example.com)"]);
-    return;
-  }
-
-  /**
-   * Submit form recupero password
-   */
-  forgotPasswordForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("forgotEmail").value.trim();
-
-    // Pulisci errori precedenti
-    document.getElementById("forgotErrors").innerHTML = "";
-    document.getElementById("forgotSuccess").style.display = "none";
-
-    // Valida email
-    if (!isValidEmail(email)) {
-      showErrorsForgotPass(["Email non valida (es: user@example.com)"]);
-      return;
-    }
-
-    // ✅ IMPLEMENTATO: Richiedi reset password
-    requestPasswordReset(email);
-  });
-});
 
 /**
  * Mostra errori nella modale recupero password
@@ -505,3 +482,25 @@ async function requestPasswordReset(email) {
     showErrorsForgotPass(["Errore di connessione al server"]);
   }
 }
+
+/**
+ * Submit form recupero password
+ */
+forgotPasswordForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("forgotEmail").value.trim();
+
+  // Pulisci errori precedenti
+  document.getElementById("forgotErrors").innerHTML = "";
+  document.getElementById("forgotSuccess").style.display = "none";
+
+  // Valida email
+  if (!isValidEmail(email)) {
+    showErrorsForgotPass(["Email non valida (es: user@example.com)"]);
+    return;
+  }
+
+  // ✅ IMPLEMENTATO: Richiedi reset password
+  requestPasswordReset(email);
+});

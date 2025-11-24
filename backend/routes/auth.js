@@ -4,9 +4,11 @@ import {
   logout,
   registerComplete,
   verifyHomeStudenti,
+  //verifyHomeTutor,
+  verifyHomeAdmin,
   forgotPassword,
   resetPassword,
-} from "../Controllers/authController.js";
+} from "../controllers/authController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -30,5 +32,6 @@ router.post("/reset-password", resetPassword);
 // Queste controllano il token e restituiscono i dati
 router.get("/verify-home-studenti", verifyToken, verifyHomeStudenti);
 //router.get("/verify-home-tutor", verifyToken, verifyHomeTutor);
+router.get("/verify-home-admin", verifyToken, verifyHomeAdmin);
 
 export default router;

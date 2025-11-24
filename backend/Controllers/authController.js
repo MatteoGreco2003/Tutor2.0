@@ -1,11 +1,20 @@
+// ==========================================
+// AUTH CONTROLLER - TUTOR 2.0
+// ==========================================
+
+// 1️⃣ CARICA .env SUBITO
+import dotenv from "dotenv";
+dotenv.config();
+
+// 2️⃣ ORA importa il resto
 import Studenti from "../models/Student.js";
 import Tutor from "../models/Tutor.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-
 import crypto from "crypto";
 import sgMail from "@sendgrid/mail";
+
 // Inizializza SendGrid con API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -171,7 +180,8 @@ export const login = async (req, res) => {
 
     if (!user) {
       user = await Tutor.findOne({ email: cleanEmail });
-      userType = "tutor";
+      if (cleanEmail == "toptutor.it@gmail.com") userType = "admin";
+      else userType = "tutor";
     }
 
     if (!user) {
@@ -241,6 +251,25 @@ export const verifyHomeTutor = async (req, res) => {
     if (req.user.tipo !== "tutor") {
       return res.status(403).json({
         message: "Accesso solo per tutor",
+      });
+    }
+
+    res.status(200).json({
+      message: "Accesso autorizzato",
+      user: req.user,
+    });
+  } catch (error) {
+    console.error("Errore verifica accesso:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+// ===== VERIFICA ACCESSO HOME ADMIN =====
+export const verifyHomeAdmin = async (req, res) => {
+  try {
+    if (req.user.tipo !== "admin") {
+      return res.status(403).json({
+        message: "Accesso solo per admin",
       });
     }
 
@@ -394,7 +423,9 @@ async function sendResetPasswordEmail(email, resetUrl) {
     const msg = {
       to: email,
       from: process.env.SENDER_EMAIL,
+      replyTo: process.env.SENDER_EMAIL, // ← AGGIUNGI
       subject: "🔐 Recupera la tua password - Tutor 2.0",
+      text: `Clicca il link per reimpostare la password: ${resetUrl}`, // ← AGGIUNGI (versione testo)
       html: `
         <div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #9e3ffd, #7e32ca); padding: 40px; border-radius: 12px 12px 0 0; text-align: center;">
@@ -456,8 +487,7 @@ async function sendResetPasswordEmail(email, resetUrl) {
     };
 
     await sgMail.send(msg);
-    console.log("✅ Email reset password inviata a:", email);
   } catch (error) {
-    console.error("❌ Errore invio email SendGrid:", error);
+    console.error("❌ ERRORE CRITICO invio email SendGrid:", error);
   }
 }

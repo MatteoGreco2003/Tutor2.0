@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!isValidPassword(newPassword)) {
       showErrors([
-        "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero",
+        "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)",
       ]);
       return;
     }

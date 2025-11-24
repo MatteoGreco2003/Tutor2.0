@@ -27,7 +27,6 @@ window.addEventListener("popstate", function (event) {
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== VERIFICA TOKEN ALL'INIZIO =====
   const token = localStorage.getItem("token");
-  console.log("Token:", token);
 
   if (!token) {
     window.location.href = "/";

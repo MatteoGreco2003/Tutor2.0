@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin - Tutor 2.0</title>
+    <title>Admin</title>
     <link rel="stylesheet" href="css/admin.css" />
     <link
       rel="stylesheet"
@@ -14,8 +14,18 @@
     <!-- Header -->
     <div class="header">
       <div class="header-left">
-        <div class="admin-icon">👨‍💼</div>
-        <div class="header-title">Admin Panel - Tutor 2.0</div>
+        <a
+          href="/home-admin"
+          class="admin-icon"
+          style="text-decoration: none; color: inherit"
+          >👨‍💼</a
+        >
+        <a
+          href="/home-admin"
+          class="header-title"
+          style="text-decoration: none; color: inherit"
+          >Admin</a
+        >
       </div>
       <button class="logout-btn">Disconnettiti</button>
     </div>
@@ -25,7 +35,7 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <a href="#" class="sidebar-item active" data-page="home">
-          <i class="fas fa-home"></i> Dashboard
+          <i class="fas fa-home"></i> Home
         </a>
         <a href="#" class="sidebar-item" data-page="studenti">
           <i class="fas fa-users"></i> Gestione Studenti
@@ -42,8 +52,9 @@
             </p>
           </div>
           <div class="sidebar-socials">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/toptutor.it/" target="_blank"
+              ><i class="fab fa-instagram"></i
+            ></a>
           </div>
         </div>
       </aside>
@@ -76,24 +87,70 @@
                   <p class="stat-number" id="totalStudenti">0</p>
                 </div>
               </div>
+
+              <div class="stat-card">
+                <div class="stat-icon active-icon">
+                  <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Tutor Attivi (almeno uno studente)</h3>
+                  <p class="stat-number" id="activeTutorCount">0</p>
+                </div>
+              </div>
             </div>
 
             <!-- Quick Actions -->
             <div class="quick-actions">
               <h3>Azioni Rapide</h3>
               <div class="actions-grid">
-                <button class="action-btn" data-action="create-tutor">
-                  <i class="fas fa-plus-circle"></i>
-                  <span>Crea Tutor</span>
-                </button>
                 <button class="action-btn" data-action="view-studenti">
                   <i class="fas fa-eye"></i>
                   <span>Visualizza Studenti</span>
                 </button>
+
                 <button class="action-btn" data-action="view-tutor">
                   <i class="fas fa-list"></i>
                   <span>Visualizza Tutor</span>
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <!-- Ultimi Aggiunti -->
+            <div class="recent-section">
+              <h3>Ultimi Utenti Aggiunti</h3>
+
+              <div class="recent-container">
+                <!-- Ultimi Tutor -->
+                <div class="recent-card">
+                  <h4><i class="fas fa-chalkboard-user"></i> Ultimi Tutor</h4>
+                  <div class="recent-list" id="recentTutorList">
+                    <p class="empty-state-small">Caricamento...</p>
+                  </div>
+                </div>
+
+                <!-- Ultimi Studenti -->
+                <div class="recent-card">
+                  <h4><i class="fas fa-graduation-cap"></i> Ultimi Studenti</h4>
+                  <div class="recent-list" id="recentStudentiList">
+                    <p class="empty-state-small">Caricamento...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <!-- Grafici Sezione -->
+            <div class="charts-section">
+              <h3>Analitiche</h3>
+              <div class="charts-container">
+                <!-- Chart Studenti per Grado -->
+                <div class="chart-card">
+                  <h4>Studenti per Grado Scolastico</h4>
+                  <canvas id="gradoChart"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -104,12 +161,23 @@
           <div class="section">
             <div class="section-header">
               <h2 class="page-title">Gestione Studenti</h2>
-              <div class="search-box">
-                <input
-                  type="text"
-                  id="searchStudenti"
-                  placeholder="Cerca studente..."
-                />
+              <div class="filters-group">
+                <!-- Filtro Grado Scolastico -->
+                <select id="filterGrado" class="filter-select">
+                  <option value="">🎓 Tutti i gradi</option>
+                  <option value="Elementari">Elementari</option>
+                  <option value="Medie">Medie</option>
+                  <option value="Superiori">Superiori</option>
+                </select>
+
+                <!-- Ricerca Nome/Email -->
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="searchStudenti"
+                    placeholder="🔍 Cerca per nome o email..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -127,11 +195,7 @@
                   </tr>
                 </thead>
                 <tbody id="studenteTableBody">
-                  <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px">
-                      <i class="fas fa-spinner fa-spin"></i> Caricamento...
-                    </td>
-                  </tr>
+                  <!-- Questo verrà riempito da JS -->
                 </tbody>
               </table>
             </div>
@@ -143,9 +207,19 @@
           <div class="section">
             <div class="section-header">
               <h2 class="page-title">Gestione Tutor</h2>
-              <button class="add-btn" id="addTutorBtn">
-                <i class="fas fa-plus"></i> Crea Tutor
-              </button>
+              <div class="header-right">
+                <!-- Ricerca Nome/Email -->
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="searchTutor"
+                    placeholder="🔍 Cerca per nome o email..."
+                  />
+                </div>
+                <button id="createTutorBtn" class="add-btn">
+                  <i class="fas fa-plus"></i> Crea Tutor
+                </button>
+              </div>
             </div>
 
             <!-- Tabella Tutor -->
@@ -175,67 +249,57 @@
       </main>
     </div>
 
-    <!-- MODAL: Crea Tutor -->
+    <!-- MODAL: CREA NUOVO TUTOR -->
     <div id="createTutorModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeCreateTutor">&times;</span>
         <h2>Crea Nuovo Tutor</h2>
-        <form id="createTutorForm" novalidate>
-          <div style="margin-bottom: 16px">
-            <label for="tutorNome">Nome</label>
-            <input
-              type="text"
-              id="tutorNome"
-              name="nome"
-              placeholder="Nome"
-              required
-            />
+
+        <form id="createTutorForm" class="modal-body" novalidate>
+          <!-- RIGA 1: NOME E COGNOME -->
+          <div class="form-row">
+            <div class="form-group">
+              <input type="text" id="tutorNome" placeholder="Nome" required />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="tutorCognome"
+                placeholder="Cognome"
+                required
+              />
+            </div>
           </div>
 
-          <div style="margin-bottom: 16px">
-            <label for="tutorCognome">Cognome</label>
-            <input
-              type="text"
-              id="tutorCognome"
-              name="cognome"
-              placeholder="Cognome"
-              required
-            />
+          <!-- RIGA 2: EMAIL -->
+          <div class="form-group">
+            <input type="email" id="tutorEmail" placeholder="Email" required />
           </div>
 
-          <div style="margin-bottom: 16px">
-            <label for="tutorEmail">Email</label>
-            <input
-              type="email"
-              id="tutorEmail"
-              name="email"
-              placeholder="email@example.com"
-              required
-            />
-          </div>
-
-          <div style="margin-bottom: 16px">
-            <label for="tutorPassword">Password (min 8 caratteri)</label>
+          <!-- RIGA 3: PASSWORD -->
+          <div class="form-group">
             <input
               type="password"
               id="tutorPassword"
-              name="password"
               placeholder="Password"
               required
             />
           </div>
 
-          <div
-            id="createTutorError"
-            class="error-msg"
-            style="display: none; margin-bottom: 12px"
-          ></div>
+          <!-- CONTAINER ERRORI -->
+          <div id="tutorErrors" class="error-container"></div>
+          <!-- PULSANTI -->
 
-          <div style="display: flex; gap: 14px; margin-top: 20px">
-            <button type="submit" class="plan-btn" style="margin: 0">
+          <div class="modal-footer">
+            <button
+              type="submit"
+              id="submitCreateTutor"
+              class="add-btn"
+              style="flex: 1"
+            >
               Crea Tutor
             </button>
-            <button type="button" class="btn-annulla" id="cancelCreateTutor">
+            <button type="button" id="cancelCreateTutor" class="delete-btn">
               Annulla
             </button>
           </div>
@@ -346,9 +410,104 @@
         </p>
         <div style="display: flex; gap: 14px; margin-top: 20px">
           <button id="confirmDeleteTutor" class="delete-btn" style="margin: 0">
-            Elimina
+            Elimina Tutor
           </button>
           <button id="cancelDeleteTutor" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: VISUALIZZA PROFILO STUDENTE -->
+    <div id="viewStudenteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeViewStudente">&times;</span>
+        <h2 id="modalProfileTitle">Profilo Studente</h2>
+
+        <div class="modal-body">
+          <!-- SEZIONE 1: DATI PERSONALI -->
+          <div class="profile-section">
+            <h3>Dati Personali</h3>
+            <div class="profile-grid">
+              <!-- RIGA 1: Nome, Cognome, Telefono -->
+              <div class="profile-field">
+                <label>Nome</label>
+                <p id="profile-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Cognome</label>
+                <p id="profile-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Telefono</label>
+                <p id="profile-telefono">-</p>
+              </div>
+
+              <!-- RIGA 2: Grado e Indirizzo Scolastico -->
+              <div class="profile-field">
+                <label>Grado Scolastico</label>
+                <p id="profile-grado-scolastico">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Indirizzo Scolastico</label>
+                <p id="profile-indirizzo-scolastico">-</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEZIONE 2: DATI FAMIGLIA -->
+          <div class="profile-section">
+            <h3>Dati Famiglia</h3>
+            <div class="profile-grid">
+              <!-- RIGA 1: Genitore 1 (Nome, Cognome, Telefono) -->
+              <div class="profile-field">
+                <label>Genitore 1 - Nome</label>
+                <p id="profile-genitore1-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 1 - Cognome</label>
+                <p id="profile-genitore1-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 1 - Telefono</label>
+                <p id="profile-genitore1-telefono">-</p>
+              </div>
+
+              <!-- RIGA 2: Genitore 2 (Nome, Cognome, Telefono) -->
+              <div class="profile-field">
+                <label>Genitore 2 - Nome</label>
+                <p id="profile-genitore2-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 2 - Cognome</label>
+                <p id="profile-genitore2-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 2 - Telefono</label>
+                <p id="profile-genitore2-telefono">-</p>
+              </div>
+
+              <!-- RIGA 3: Email Famiglia -->
+              <div class="profile-field">
+                <label>Email Famiglia</label>
+                <p id="profile-email-famiglia">-</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEZIONE 3: DATI SCUOLA -->
+          <div class="profile-section">
+            <h3>Dati Scuola</h3>
+            <div class="profile-field">
+              <label>Email Professori</label>
+              <div id="profile-email-professori">
+                <p>-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="closeViewStudenteBtn" class="btn-close">Chiudi</button>
         </div>
       </div>
     </div>
@@ -368,14 +527,23 @@
             class="delete-btn"
             style="margin: 0"
           >
-            Elimina
+            Elimina Studente
           </button>
           <button id="cancelDeleteStudente" class="btn-annulla">Annulla</button>
         </div>
       </div>
     </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
   </body>
 
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
   <script src="/js/api.js"></script>
-  <script src="/js/admin.js"></script>
+  <script src="/js/admin-home.js"></script>
+  <script src="/js/admin-studenti.js"></script>
+  <script src="/js/admin-tutor.js"></script>
+  <script src="/js/admin-core.js"></script>
 </html>

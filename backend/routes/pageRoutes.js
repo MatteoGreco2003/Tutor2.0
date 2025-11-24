@@ -24,6 +24,11 @@ router.get("/home-studenti", (req, res) => {
   res.render("home-studente");
 });
 
+router.get("/home-admin", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.render("admin");
+});
+
 // Aggiungi altre pagine protette qui se servono
 router.get("/home-tutor", verifyToken, (req, res) => {
   if (req.user.tipo !== "tutor") {
@@ -36,13 +41,13 @@ router.get("/home-tutor", verifyToken, (req, res) => {
 });
 
 router.get("/home-admin", verifyToken, (req, res) => {
-  if (req.user.email !== "toptutor.it@gmail.com") {
+  if (req.user.tipo !== "admin") {
     return res
       .status(403)
       .render("errore", { message: "Accesso solo per admin" });
   }
   res.set("Cache-Control", "no-store, no-cache, must-revalidate");
-  res.render("admin");
+  res.render("admin", { user: req.user, token: null }); // ← Passa il user
 });
 
 router.get("/profilo-studente", (req, res) => {

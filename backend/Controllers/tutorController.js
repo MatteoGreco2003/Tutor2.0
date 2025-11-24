@@ -1,0 +1,326 @@
+import Tutor from "../models/Tutor.js";
+import Studenti from "../models/Student.js";
+import Materie from "../models/Subject.js";
+import Verifiche from "../models/Test.js";
+
+// ===== LEGGI STUDENTI ASSOCIATI AL TUTOR =====
+export const getStudentiAssociati = async (req, res) => {
+  try {
+    const tutorID = req.user.userId;
+
+    const tutor = await Tutor.findById(tutorID).populate(
+      "studentiAssociati",
+      "nome cognome email gradoScolastico"
+    );
+
+    if (!tutor) {
+      return res.status(404).json({
+        message: "Tutor non trovato",
+      });
+    }
+
+    const studentiDettagli = tutor.studentiAssociati.map((studente) => ({
+      id: studente._id,
+      nome: studente.nome,
+      cognome: studente.cognome,
+      email: studente.email,
+      scuola: studente.gradoScolastico,
+    }));
+
+    res.status(200).json({
+      message: "Studenti associati recuperati con successo",
+      totale: studentiDettagli.length,
+      studenti: studentiDettagli,
+    });
+  } catch (error) {
+    console.error("Errore lettura studenti associati:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== LEGGI RIEPILOGO COMPLETO DELLO STUDENTE =====
+export const getStudenteRiepilogo = async (req, res) => {
+  try {
+    const { studenteID } = req.params;
+    const tutorID = req.user.userId;
+
+    // Verifica che il tutor abbia questo studente associato
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(403).json({
+        message: "Accesso negato: studente non associato",
+      });
+    }
+
+    // Recupera dati studente
+    const studente = await Studenti.findById(studenteID);
+    if (!studente) {
+      return res.status(404).json({
+        message: "Studente non trovato",
+      });
+    }
+
+    // ===== MATERIE CON MEDIA =====
+    const materie = await Materie.find({ studenteId: studenteID });
+    const materieConMedia = await Promise.all(
+      materie.map(async (materia) => {
+        const verifiche = await Verifiche.find({
+          studenteID: studenteID,
+          materialID: materia._id,
+          voto: { $ne: null },
+        });
+
+        let media = 0;
+        if (verifiche.length > 0) {
+          const sommaVoti = verifiche.reduce((acc, v) => acc + v.voto, 0);
+          media = (sommaVoti / verifiche.length).toFixed(2);
+        }
+
+        const sufficienza = media >= 6 ? "Sufficiente" : "Insufficiente";
+
+        return {
+          id: materia._id,
+          nome: materia.nome,
+          media: parseFloat(media),
+          sufficienza: sufficienza,
+          numeroVerifiche: verifiche.length,
+        };
+      })
+    );
+
+    // ===== CONTROLLA SE HA MATERIE INSUFFICIENTI =====
+    const meterieInsufficenti = materieConMedia.some(
+      (m) => m.sufficienza === "Insufficiente"
+    );
+
+    // ===== VERIFICHE CON VOTO (STORICO) =====
+    const verificheConVoto = await Verifiche.find({
+      studenteID: studenteID,
+      voto: { $ne: null },
+    })
+      .populate("materialID", "nome")
+      .sort({ data: -1 });
+
+    // ===== VERIFICHE SENZA VOTO (FUTURE) =====
+    const verificheFuture = await Verifiche.find({
+      studenteID: studenteID,
+      voto: null,
+    })
+      .populate("materialID", "nome")
+      .sort({ data: -1 });
+
+    res.status(200).json({
+      message: "Riepilogo studente recuperato con successo",
+      studente: {
+        id: studente._id,
+        nome: studente.nome,
+        cognome: studente.cognome,
+        email: studente.email,
+        telefono: studente.telefono,
+        scuola: studente.gradoScolastico,
+        indirizzo: studente.indirizzoScolastico,
+        genitore1: studente.genitore1,
+        genitore2: studente.genitore2,
+        emailFamiglia: studente.emailFamiglia,
+      },
+      materie: {
+        totale: materieConMedia.length,
+        lista: materieConMedia,
+        hasInsufficenze: meterieInsufficenti,
+      },
+      verifiche: {
+        storico: {
+          totale: verificheConVoto.length,
+          lista: verificheConVoto,
+        },
+        future: {
+          totale: verificheFuture.length,
+          lista: verificheFuture,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Errore riepilogo studente:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== LEGGI VERIFICHE STORICO (CON VOTO) =====
+export const getVerificheStorico = async (req, res) => {
+  try {
+    const { studenteID } = req.params;
+    const tutorID = req.user.userId;
+
+    // Verifica accesso
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(403).json({
+        message: "Accesso negato: studente non associato",
+      });
+    }
+
+    const verifiche = await Verifiche.find({
+      studenteID: studenteID,
+      voto: { $ne: null },
+    })
+      .populate("materialID", "nome")
+      .sort({ data: -1 });
+
+    res.status(200).json({
+      message: "Storico verifiche recuperato con successo",
+      totale: verifiche.length,
+      verifiche: verifiche,
+    });
+  } catch (error) {
+    console.error("Errore storico verifiche:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== LEGGI VERIFICHE FUTURE (SENZA VOTO) =====
+export const getVerificheFuture = async (req, res) => {
+  try {
+    const { studenteID } = req.params;
+    const tutorID = req.user.userId;
+
+    // Verifica accesso
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(403).json({
+        message: "Accesso negato: studente non associato",
+      });
+    }
+
+    const verifiche = await Verifiche.find({
+      studenteID: studenteID,
+      voto: null,
+    })
+      .populate("materialID", "nome")
+      .sort({ data: -1 });
+
+    res.status(200).json({
+      message: "Verifiche future recuperate con successo",
+      totale: verifiche.length,
+      verifiche: verifiche,
+    });
+  } catch (error) {
+    console.error("Errore verifiche future:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== LEGGI MATERIE CON MEDIA =====
+export const getMaterieStudente = async (req, res) => {
+  try {
+    const { studenteID } = req.params;
+    const tutorID = req.user.userId;
+
+    // Verifica accesso
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(403).json({
+        message: "Accesso negato: studente non associato",
+      });
+    }
+
+    const materie = await Materie.find({ studenteId: studenteID });
+
+    const materieConMedia = await Promise.all(
+      materie.map(async (materia) => {
+        const verifiche = await Verifiche.find({
+          studenteID: studenteID,
+          materialID: materia._id,
+          voto: { $ne: null },
+        });
+
+        let media = 0;
+        if (verifiche.length > 0) {
+          const sommaVoti = verifiche.reduce((acc, v) => acc + v.voto, 0);
+          media = (sommaVoti / verifiche.length).toFixed(2);
+        }
+
+        const sufficienza = media >= 6 ? "Sufficiente" : "Insufficiente";
+
+        return {
+          id: materia._id,
+          nome: materia.nome,
+          media: parseFloat(media),
+          sufficienza: sufficienza,
+          numeroVerifiche: verifiche.length,
+        };
+      })
+    );
+
+    res.status(200).json({
+      message: "Materie recuperate con successo",
+      totale: materieConMedia.length,
+      materie: materieConMedia,
+    });
+  } catch (error) {
+    console.error("Errore lettura materie:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== CONTROLLA MATERIE INSUFFICIENTI =====
+export const checkMaterie = async (req, res) => {
+  try {
+    const { studenteID } = req.params;
+    const tutorID = req.user.userId;
+
+    // Verifica accesso
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(403).json({
+        message: "Accesso negato: studente non associato",
+      });
+    }
+
+    const materie = await Materie.find({ studenteId: studenteID });
+
+    const materieInsufficenti = [];
+
+    for (let materia of materie) {
+      const verifiche = await Verifiche.find({
+        studenteID: studenteID,
+        materialID: materia._id,
+        voto: { $ne: null },
+      });
+
+      if (verifiche.length > 0) {
+        const sommaVoti = verifiche.reduce((acc, v) => acc + v.voto, 0);
+        const media = sommaVoti / verifiche.length;
+
+        if (media < 6) {
+          materieInsufficenti.push({
+            materia: materia.nome,
+            media: media.toFixed(2),
+            numeroVerifiche: verifiche.length,
+          });
+        }
+      }
+    }
+
+    res.status(200).json({
+      message: "Controllo materie completato",
+      hasInsufficenze: materieInsufficenti.length > 0,
+      materieInsufficenti: materieInsufficenti,
+      totaleInsufficenze: materieInsufficenti.length,
+    });
+  } catch (error) {
+    console.error("Errore controllo materie:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
