@@ -1,10 +1,9 @@
-/**
- * STUDENT CONTROLLER
- * Gestisce tutte le operazioni relative al profilo studente
- */
-
 import Studenti from "../models/Student.js";
 import bcrypt from "bcryptjs";
+import Materie from "../models/Subject.js";
+import Verifiche from "../models/Test.js";
+import Tutor from "../models/Tutor.js";
+import Annotazioni from "../models/Annotation.js";
 
 /**
  * Ottiene i dati dello studente loggato
@@ -34,8 +33,15 @@ export const getStudentData = async (req, res) => {
 };
 
 /**
- * Elimina il profilo dello studente e tutti i dati associati
+ * Elimina il profilo dello studente e TUTTI i dati associati (CASCATA)
  * DELETE /student/profile
+ *
+ * Elimina:
+ * 1. Tutte le materie dello studente
+ * 2. Tutte le verifiche dello studente
+ * 3. Tutte le annotazioni fatte dai tutor su questo studente
+ * 4. Lo studente dall'array studentiAssociati dei tutor
+ * 5. Lo studente dalla collezione Student
  */
 export const deleteStudentProfile = async (req, res) => {
   try {
@@ -50,28 +56,46 @@ export const deleteStudentProfile = async (req, res) => {
       });
     }
 
-    // [TODO] Se hai una collezione "Verifiche", elimina tutte le verifiche dello studente
-    // const Verifiche = (await import("../models/Verifica.js")).default;
-    // await Verifiche.deleteMany({ studentId: studentId });
+    // ===== STEP 1: ELIMINA TUTTE LE MATERIE DELLO STUDENTE =====
+    const materieEliminategni = await Materie.deleteMany({
+      studenteId: studentId,
+    });
 
-    // [TODO] Se hai una collezione "Materie", elimina tutte le materie dello studente
-    // const Materie = (await import("../models/Materia.js")).default;
-    // await Materie.deleteMany({ studentId: studentId });
+    // ===== STEP 2: ELIMINA TUTTE LE VERIFICHE DELLO STUDENTE =====
+    const verificheEliminate = await Verifiche.deleteMany({
+      studenteID: studentId,
+    });
 
-    // eliminare anche se è uno studente associato a un tutor
-    // const TutorStudenti = (await import("../models/TutorStudente.js")).default;
-    // await TutorStudenti.deleteMany({ studentId: studentId });
+    // ===== STEP 3: ELIMINA TUTTE LE ANNOTAZIONI DELLO STUDENTE =====
+    const annotazioniEliminate = await Annotazioni.deleteMany({
+      studenteID: studentId,
+    });
 
-    // Elimina lo studente dal database
+    // ===== STEP 4: RIMUOVI LO STUDENTE DALL'ARRAY STUDENTI ASSOCIATI DEI TUTOR =====
+    const tutorAggiornati = await Tutor.updateMany(
+      { studentiAssociati: studentId },
+      { $pull: { studentiAssociati: studentId } }
+    );
+
+    // ===== STEP 5: ELIMINA LO STUDENTE =====
     await Studenti.findByIdAndDelete(studentId);
 
     res.status(200).json({
       success: true,
       message: "Profilo eliminato con successo",
+      dettagli: {
+        materieEliminate: materieEliminategni.deletedCount,
+        verificheEliminate: verificheEliminate.deletedCount,
+        annotazioniEliminate: annotazioniEliminate.deletedCount,
+        tutorAggiornati: tutorAggiornati.modifiedCount,
+      },
     });
   } catch (error) {
-    console.error("Errore nell'eliminazione del profilo:", error);
-    res.status(500).json({ message: "Errore del server" });
+    console.error("❌ Errore nell'eliminazione del profilo:", error);
+    res.status(500).json({
+      message: "Errore del server",
+      error: error.message,
+    });
   }
 };
 

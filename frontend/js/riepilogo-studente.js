@@ -582,6 +582,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let errorField = null;
     let errorMsg = "";
 
+    // ===== VALIDAZIONE GENITORE 1 =====
     if (gen1Nome.length < 2) {
       errorField = editGen1Nome;
       errorMsg = "Nome Genitore 1 deve contenere almeno 2 caratteri";
@@ -592,7 +593,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       errorField = editGen1Telefono;
       errorMsg = "Telefono Genitore 1 non valido (es: 3331234567)";
     }
-    // Genitore 2 - solo se ha almeno un campo compilato
+    // ===== VALIDAZIONE GENITORE 2 (solo se ha almeno un campo compilato) =====
     else if (gen2Nome || gen2Cognome || gen2Telefono) {
       if (gen2Nome && gen2Nome.length < 2) {
         errorField = editGen2Nome;
@@ -608,15 +609,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         errorMsg = "Telefono Genitore 2 non valido (es: 3331234567)";
       }
     }
-    // Email famiglia
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFam)) {
+    // ===== VALIDAZIONE EMAIL FAMIGLIA (MOVE QUI!) =====
+    if (!errorMsg && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFam)) {
       errorField = editEmailFamiglia;
-      errorMsg = "Email famiglia non valida";
+      errorMsg = "Email famiglia non valida (es: famiglia@example.com)";
     }
 
-    if (errorField) {
-      errorField.classList.add("input-error");
-      editFamilyErrors.innerHTML = `⚠️ ${errorMsg}`;
+    // Se c'è un errore, mostra e ritorna
+    if (errorMsg) {
+      if (errorField) {
+        errorField.classList.add("input-error");
+      }
+      editFamilyErrors.innerHTML = `<p style="margin:0;">⚠️ ${errorMsg}</p>`;
       return;
     }
 

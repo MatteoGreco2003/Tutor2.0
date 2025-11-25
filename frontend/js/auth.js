@@ -305,18 +305,12 @@ async function loginUser(email, password) {
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("userEmail", data.user.email);
 
-      console.log("✅ Login riuscito!");
-      console.log("Tipo utente salvato:", data.user.tipo);
-
       // Decidi la pagina in base al tipo utente
       if (data.user.tipo === "admin") {
-        console.log("🔐 Admin riconosciuto");
         window.location.href = "/home-admin";
       } else if (data.user.tipo === "tutor") {
-        console.log("👨‍🏫 Tutor riconosciuto");
         window.location.href = "/home-tutor";
       } else {
-        console.log("👨‍🎓 Studente riconosciuto");
         window.location.href = "/home-studenti";
       }
     } else {

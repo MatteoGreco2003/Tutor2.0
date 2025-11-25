@@ -6,14 +6,19 @@ const token = localStorage.getItem("token");
 
 // ===== DISABILITA BACK DOPO LOGOUT E CONTROLLA TOKEN =====
 window.addEventListener("pageshow", (event) => {
+  const token = localStorage.getItem("token");
+
+  // Se il token non esiste, torna a login
   if (!token) {
     window.location.href = "/";
     return;
   }
 });
 
+// Disabilita il back button tramite history
 window.history.pushState(null, null, window.location.href);
 window.addEventListener("popstate", function (event) {
+  // Non permettere di tornare indietro
   window.history.pushState(null, null, window.location.href);
 });
 

@@ -104,11 +104,6 @@ export const deleteMateria = async (req, res) => {
     // Elimina la materia
     await Materie.findByIdAndDelete(materiaId);
 
-    // Log opzionale per debugging
-    console.log(
-      `✅ Materia ${materia.nome} eliminata. Verifiche rimosse: ${verificheEliminate.deletedCount}`
-    );
-
     res.status(200).json({
       message: "Materia e verifiche associate eliminate con successo",
       materiaId: materiaId,

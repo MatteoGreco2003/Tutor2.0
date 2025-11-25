@@ -1,6 +1,6 @@
 import Tutor from "../models/Tutor.js";
 import Studenti from "../models/Student.js";
-
+import Annotazioni from "../models/Annotation.js";
 // ===== CREA TUTOR (ADMIN) =====
 export const createTutor = async (req, res) => {
   try {
@@ -264,7 +264,7 @@ export const assegnaStudenteATutor = async (req, res) => {
   }
 };
 
-// ===== RIMUOVI STUDENTE DA TUTOR (ADMIN) =====
+// ===== RIMUOVI STUDENTE DA TUTOR (ADMIN) - CON CASCATA =====
 export const rimuoviStudenteDaTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
@@ -283,19 +283,32 @@ export const rimuoviStudenteDaTutor = async (req, res) => {
       });
     }
 
-    // Rimuovi studente
+    // ===== STEP 1: RIMUOVI STUDENTE DALL'ARRAY =====
     tutor.studentiAssociati = tutor.studentiAssociati.filter(
       (id) => id.toString() !== studenteID
     );
     await tutor.save();
+    console.log(`✅ Studente ${studenteID} rimosso dall'array del tutor`);
+
+    // ===== STEP 2: ELIMINA TUTTE LE ANNOTAZIONI COLLEGATE =====
+    const annotazioniEliminate = await Annotazioni.deleteMany({
+      tutorID: tutorID,
+      studenteID: studenteID,
+    });
+    console.log(
+      `✅ Annotazioni eliminate: ${annotazioniEliminate.deletedCount}`
+    );
 
     res.status(200).json({
       message: "Studente rimosso dal tutor con successo",
-      tutor: {
-        id: tutor._id,
-        nome: tutor.nome,
-        cognome: tutor.cognome,
-        studentiAssociati: tutor.studentiAssociati,
+      dettagli: {
+        tutor: {
+          id: tutor._id,
+          nome: tutor.nome,
+          cognome: tutor.cognome,
+          studentiAssociati: tutor.studentiAssociati,
+        },
+        annotazioniEliminate: annotazioniEliminate.deletedCount,
       },
     });
   } catch (error) {

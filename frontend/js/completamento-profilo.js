@@ -17,8 +17,6 @@ window.addEventListener("pageshow", (event) => {
   if (!registrationData) {
     window.location.href = "/";
   }
-
-  console.log("✅ Pagina completamento-profilo caricata, sessione verificata");
 });
 
 // ===== DISABILITA IL BACK/FORWARD CACHE (bfcache) =====

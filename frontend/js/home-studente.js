@@ -71,9 +71,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       },
     });
 
-    console.log("Risposta status:", response.status);
     const data = await response.json();
-    console.log("Data:", data);
   } catch (error) {
     console.error("Errore:", error);
   }
@@ -983,12 +981,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (!argomento || argomento.length < 3) {
       editArgomento.classList.add("input-error");
       firstError ||= "⚠️ L'argomento deve avere minimo 3 caratteri";
-    } else if (
-      votoFuturo === false &&
-      (voto === null || voto < 0 || voto > 10)
-    ) {
+    } else if (votoFuturo === false && voto === null) {
       editValutazione.classList.add("input-error");
-      firstError ||= "⚠️ Il voto deve essere tra 0 e 10";
+      firstError ||= "⚠️ Inserisci un voto";
+    } else if (votoFuturo === false && !isValidVoto(voto)) {
+      editValutazione.classList.add("input-error");
+      firstError ||=
+        "⚠️ Voto non valido: usa solo 0, 0.5, 1, 1.5, 2, 2.5, ... 10";
     }
 
     if (firstError) {
@@ -1119,12 +1118,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     } else if (!argomento || argomento.length < 3) {
       argomentoTextarea.classList.add("input-error");
       firstError ||= "⚠️ L'argomento deve avere minimo 3 caratteri";
-    } else if (
-      votoFuturo === false &&
-      (voto === null || voto < 0 || voto > 10)
-    ) {
+    } else if (votoFuturo === false && voto === null) {
       selectValutazione.classList.add("input-error");
-      firstError ||= "⚠️ Il voto deve essere un numero tra 0 e 10";
+      firstError ||= "⚠️ Inserisci un voto";
+    } else if (votoFuturo === false && !isValidVoto(voto)) {
+      selectValutazione.classList.add("input-error");
+      firstError ||=
+        "⚠️ Voto non valido: usa solo 0, 0.5, 1, 1.5, 2, 2.5, ... 10";
     }
 
     if (firstError) {
@@ -1184,4 +1184,49 @@ document.addEventListener("DOMContentLoaded", async function () {
         "Errore di connessione al server";
     }
   });
+
+  // ===== VALIDAZIONE VOTI - SOLO 0, 0.5, 1, 1.5, 2, ... 10 =====
+  function isValidVoto(voto) {
+    const votoNum = parseFloat(voto);
+    if (isNaN(votoNum)) {
+      return false;
+    }
+    if (votoNum < 0 || votoNum > 10) {
+      return false;
+    }
+    if ((votoNum * 2) % 1 !== 0) {
+      return false;
+    }
+    return true;
+  }
+
+  // ===== VALIDAZIONE VOTO IN TEMPO REALE =====
+  selectValutazione.addEventListener("input", (e) => {
+    const voto = e.target.value;
+    if (voto === "") {
+      selectValutazione.classList.remove("input-error");
+      return;
+    }
+    if (!isValidVoto(voto)) {
+      selectValutazione.classList.add("input-error");
+    } else {
+      selectValutazione.classList.remove("input-error");
+    }
+  });
+
+  // ===== VALIDAZIONE VOTO IN EDIT =====
+  if (editValutazione) {
+    editValutazione.addEventListener("input", (e) => {
+      const voto = e.target.value;
+      if (voto === "") {
+        editValutazione.classList.remove("input-error");
+        return;
+      }
+      if (!isValidVoto(voto)) {
+        editValutazione.classList.add("input-error");
+      } else {
+        editValutazione.classList.remove("input-error");
+      }
+    });
+  }
 }); // ← CHIUSURA DOMContentLoaded

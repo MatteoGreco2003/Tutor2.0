@@ -256,40 +256,58 @@
         <h2>Crea Nuovo Tutor</h2>
 
         <form id="createTutorForm" class="modal-body" novalidate>
-          <!-- RIGA 1: NOME E COGNOME -->
-          <div class="form-row">
-            <div class="form-group">
-              <input type="text" id="tutorNome" placeholder="Nome" required />
-            </div>
-            <div class="form-group">
-              <input
-                type="text"
-                id="tutorCognome"
-                placeholder="Cognome"
-                required
-              />
-            </div>
+          <div class="input-box">
+            <input type="text" id="tutorNome" placeholder="Nome" required />
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="input-box">
+            <input
+              type="text"
+              id="tutorCognome"
+              placeholder="Cognome"
+              required
+            />
+            <i class="fa-solid fa-user"></i>
           </div>
 
           <!-- RIGA 2: EMAIL -->
-          <div class="form-group">
+          <div class="input-box">
             <input type="email" id="tutorEmail" placeholder="Email" required />
+            <i class="fa-solid fa-envelope"></i>
           </div>
 
           <!-- RIGA 3: PASSWORD -->
-          <div class="form-group">
+          <div class="input-box password-input-box">
             <input
               type="password"
               id="tutorPassword"
               placeholder="Password"
               required
             />
+            <i
+              class="fa-solid fa-lock toggle-password"
+              data-input="tutorPassword"
+            ></i>
+          </div>
+
+          <!-- RIGA 4: CONFERMA PASSWORD -->
+          <div class="input-box password-input-box">
+            <input
+              type="password"
+              id="tutorConfirmPassword"
+              placeholder="Conferma Password"
+              required
+            />
+            <i
+              class="fa-solid fa-lock toggle-password"
+              data-input="tutorConfirmPassword"
+            ></i>
           </div>
 
           <!-- CONTAINER ERRORI -->
-          <div id="tutorErrors" class="error-container"></div>
-          <!-- PULSANTI -->
+          <div id="tutorErrors" class="error-messages"></div>
 
+          <!-- PULSANTI -->
           <div class="modal-footer">
             <button
               type="submit"
@@ -299,7 +317,7 @@
             >
               Crea Tutor
             </button>
-            <button type="button" id="cancelCreateTutor" class="delete-btn">
+            <button type="button" id="cancelCreateTutor" class="btn-annulla">
               Annulla
             </button>
           </div>
@@ -307,60 +325,47 @@
       </div>
     </div>
 
-    <!-- MODAL: Modifica Tutor -->
-    <div id="editTutorModal" class="modal">
+    <!-- MODAL: VISUALIZZA PROFILO TUTOR -->
+    <div id="viewTutorModal" class="modal">
       <div class="modal-content">
-        <span class="close" id="closeEditTutor">&times;</span>
-        <h2>Modifica Tutor</h2>
-        <form id="editTutorForm" novalidate>
-          <div style="margin-bottom: 16px">
-            <label for="editTutorNome">Nome</label>
-            <input
-              type="text"
-              id="editTutorNome"
-              name="nome"
-              placeholder="Nome"
-              required
-            />
+        <span class="close" id="closeViewTutor">&times;</span>
+        <h2 id="modalTutorProfileTitle">Profilo Tutor</h2>
+
+        <div class="modal-body">
+          <!-- SEZIONE 1: DATI PERSONALI -->
+          <div class="profile-section">
+            <h3>Dati Personali</h3>
+            <div class="profile-grid">
+              <!-- RIGA 1: Nome e Cognome -->
+              <div class="profile-field">
+                <label>Nome</label>
+                <p id="profile-tutor-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Cognome</label>
+                <p id="profile-tutor-cognome">-</p>
+              </div>
+            </div>
+
+            <!-- RIGA 2: Email -->
+            <div class="profile-field">
+              <label>Email</label>
+              <p id="profile-tutor-email">-</p>
+            </div>
           </div>
 
-          <div style="margin-bottom: 16px">
-            <label for="editTutorCognome">Cognome</label>
-            <input
-              type="text"
-              id="editTutorCognome"
-              name="cognome"
-              placeholder="Cognome"
-              required
-            />
+          <!-- SEZIONE 2: STUDENTI ASSOCIATI -->
+          <div class="profile-section">
+            <h3>Studenti Associati</h3>
+            <div id="profile-tutor-studenti" class="studenti-list">
+              <p class="empty-state-small">Nessuno studente associato</p>
+            </div>
           </div>
+        </div>
 
-          <div style="margin-bottom: 16px">
-            <label for="editTutorEmail">Email</label>
-            <input
-              type="email"
-              id="editTutorEmail"
-              name="email"
-              placeholder="email@example.com"
-              required
-            />
-          </div>
-
-          <div
-            id="editTutorError"
-            class="error-msg"
-            style="display: none; margin-bottom: 12px"
-          ></div>
-
-          <div style="display: flex; gap: 14px; margin-top: 20px">
-            <button type="submit" class="plan-btn" style="margin: 0">
-              Salva Modifiche
-            </button>
-            <button type="button" class="btn-annulla" id="cancelEditTutor">
-              Annulla
-            </button>
-          </div>
-        </form>
+        <div class="modal-footer">
+          <button id="closeViewTutorBtn" class="btn-close">Chiudi</button>
+        </div>
       </div>
     </div>
 
@@ -368,12 +373,12 @@
     <div id="assegnaStudenteModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeAssegnaStudente">&times;</span>
-        <h2>Assegna Studente a Tutor</h2>
+        <h2>Assegna Studente</h2>
         <form id="assegnaStudenteForm" novalidate>
           <div style="margin-bottom: 16px">
             <label for="selectStudente">Scegli Studente</label>
             <select id="selectStudente" name="studenteID" required>
-              <option value="">-- Seleziona uno studente --</option>
+              <option value="">Seleziona Studente</option>
             </select>
           </div>
 
@@ -385,7 +390,7 @@
 
           <div style="display: flex; gap: 14px; margin-top: 20px">
             <button type="submit" class="plan-btn" style="margin: 0">
-              Assegna
+              Assegna Studente
             </button>
             <button
               type="button"
@@ -399,21 +404,40 @@
       </div>
     </div>
 
-    <!-- MODAL: Elimina Tutor -->
-    <div id="deleteTutorModal" class="modal">
+    <!-- MODAL: Rimuovi Studente da Tutor -->
+    <div id="rimuoviStudenteModal" class="modal">
       <div class="modal-content">
-        <span class="close" id="closeDeleteTutor">&times;</span>
-        <h2>Elimina Tutor</h2>
-        <p>
-          Sei sicuro di voler eliminare questo tutor?<br />
-          <b>Questa azione non può essere annullata.</b>
-        </p>
-        <div style="display: flex; gap: 14px; margin-top: 20px">
-          <button id="confirmDeleteTutor" class="delete-btn" style="margin: 0">
-            Elimina Tutor
-          </button>
-          <button id="cancelDeleteTutor" class="btn-annulla">Annulla</button>
-        </div>
+        <span class="close" id="closeRimuoviStudente">&times;</span>
+        <h2>Rimuovi Studente</h2>
+        <form id="rimuoviStudenteForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="selectStudenteRimuovi"
+              >Scegli Studente da Rimuovere</label
+            >
+            <select id="selectStudenteRimuovi" name="studenteID" required>
+              <option value="">Seleziona Studente</option>
+            </select>
+          </div>
+
+          <div
+            id="rimuoviStudenteError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Rimuovi Studente Associato
+            </button>
+            <button
+              type="button"
+              class="btn-annulla"
+              id="cancelRimuoviStudente"
+            >
+              Annulla
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -534,6 +558,30 @@
       </div>
     </div>
 
+    <!-- MODAL: Elimina Tutor -->
+    <div id="deleteTutorModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteTutor">&times;</span>
+        <h2>Elimina Tutor</h2>
+        <p>
+          Sei sicuro di voler eliminare il tutor
+          <strong id="deleteName"></strong>?
+          <br />
+
+          Questa azione non può essere annullata.
+        </p>
+
+        <div class="modal-footer">
+          <button type="button" id="confirmDeleteTutor" class="delete-btn">
+            Elimina Tutor
+          </button>
+          <button type="button" id="cancelDeleteTutor" class="btn-annulla">
+            Annulla
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
   </body>
@@ -542,8 +590,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <script src="/js/api.js"></script>
+  <script src="/js/admin-core.js"></script>
   <script src="/js/admin-home.js"></script>
   <script src="/js/admin-studenti.js"></script>
   <script src="/js/admin-tutor.js"></script>
-  <script src="/js/admin-core.js"></script>
 </html>

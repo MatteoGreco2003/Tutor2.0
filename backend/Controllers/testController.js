@@ -278,7 +278,6 @@ export const getVerifichePerMateria = async (req, res) => {
     return res.status(200).json({ verifiche });
   } catch (error) {
     console.error("❌ ERRORE getVerifichePerMateria:", error.message);
-    console.error("❌ Stack:", error.stack);
     return res.status(500).json({
       message: "Errore nel caricamento delle verifiche",
       error: error.message,

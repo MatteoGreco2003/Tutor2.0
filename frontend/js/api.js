@@ -3,10 +3,6 @@
 async function apiCall(url, options = {}) {
   const token = localStorage.getItem("token");
 
-  console.log("=== DEBUG APICALL ===");
-  console.log("URL:", url);
-  console.log("Token trovato:", token ? "✅ SÌ" : "❌ NO");
-
   if (!token) {
     console.error("❌ Token non trovato in localStorage");
     window.location.href = "/login";
@@ -19,12 +15,8 @@ async function apiCall(url, options = {}) {
     ...options.headers,
   };
 
-  console.log("Headers inviati:", headers);
-
   try {
     const response = await fetch(url, { ...options, headers });
-
-    console.log("Status risposta:", response.status);
 
     if (response.status === 401) {
       console.error("❌ Token scaduto o non valido");

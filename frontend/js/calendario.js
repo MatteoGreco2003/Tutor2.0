@@ -136,7 +136,6 @@ class Calendario {
   }
 
   onDateClick(day) {
-    console.log(`Cliccato il giorno: ${day}`);
     // Qui puoi aggiungere una modale per aggiungere verifiche
   }
 
