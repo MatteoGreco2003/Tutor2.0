@@ -2,6 +2,9 @@
 // AUTH CONTROLLER - TUTOR 2.0
 // ==========================================
 
+import dotenv from "dotenv";
+dotenv.config();
+
 // 2️⃣ ORA importa il resto
 import Studenti from "../models/Student.js";
 import Tutor from "../models/Tutor.js";
