@@ -42,9 +42,9 @@ app.use("/auth", authRoutes); // Autenticazione
 app.use("/student", studentRoutes);
 app.use("/subject", materieRoutes);
 app.use("/test", verificheRoutes);
+app.use("/tutor", tutorRoutes);
 app.use("/admin/tutor", adminTutorRoutes);
 app.use("/admin/student", adminStudentRoutes);
-app.use("/tutor", tutorRoutes);
 
 // ===== AVVIA SERVER =====
 connectDB(CONNECTION_URL)

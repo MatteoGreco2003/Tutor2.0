@@ -3,6 +3,7 @@ import Studenti from "../models/Student.js";
 import Materie from "../models/Subject.js";
 import Verifiche from "../models/Test.js";
 import Annotazioni from "../models/Annotation.js";
+import bcrypt from "bcryptjs";
 
 // ===== LEGGI STUDENTI ASSOCIATI AL TUTOR =====
 export const getStudentiAssociati = async (req, res) => {
@@ -469,5 +470,56 @@ export const rimuoviStudente = async (req, res) => {
     res.status(500).json({
       message: "Errore del server",
     });
+  }
+};
+
+// ===== MODIFICA PASSWORD TUTOR =====
+export const updateTutorPassword = async (req, res) => {
+  try {
+    console.log("🔐 updateTutorPassword chiamato!");
+    const tutorId = req.user.userId;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Tutti i campi sono obbligatori" });
+    }
+
+    const tutor = await Tutor.findById(tutorId);
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor non trovato" });
+    }
+
+    // Controlla password attuale
+    const match = await bcrypt.compare(oldPassword, tutor.password);
+    if (!match) {
+      return res.status(401).json({ message: "Password vecchia non corretta" });
+    }
+
+    // Validazione nuova password
+    const hasMinLength = newPassword.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumber = /\d/.test(newPassword);
+
+    if (!(hasMinLength && hasUpperCase && hasLowerCase && hasNumber)) {
+      return res.status(400).json({
+        message:
+          "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)",
+      });
+    }
+
+    // Aggiorna password (usa il pre-save per hash)
+    tutor.password = newPassword;
+    await tutor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password aggiornata con successo",
+    });
+  } catch (error) {
+    console.error("Errore update password tutor:", error);
+    res.status(500).json({ message: "Errore del server" });
   }
 };

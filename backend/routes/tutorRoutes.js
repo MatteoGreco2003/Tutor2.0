@@ -10,6 +10,7 @@ import {
   deleteTutorProfile,
   associaStudente,
   rimuoviStudente,
+  updateTutorPassword,
 } from "../controllers/tutorController.js";
 import {
   getAnnotazioni,
@@ -96,5 +97,8 @@ router.post("/studenti/associa", verifyToken, associaStudente);
 
 // DELETE /tutor/studenti/rimuovi - Rimuovi studente
 router.delete("/studenti/rimuovi", verifyToken, rimuoviStudente);
+
+// PATCH /tutor/password
+router.patch("/password", verifyToken, updateTutorPassword);
 
 export default router;

@@ -346,41 +346,41 @@ document.addEventListener("DOMContentLoaded", async function () {
       const newPwd = document.getElementById("newPassword").value;
       const confirmPwd = document.getElementById("confirmNewPassword").value;
 
-      // VALIDAZIONI - MOSTRA SOLO IL PRIMO ERRORE
+      // VALIDAZIONI
       if (!oldPwd) {
-        return showError(
-          editPasswordErrors,
-          oldPasswordInput,
-          "Inserisci la password attuale"
-        );
+        errorDiv.textContent = "⚠️ Inserisci la password attuale";
+        errorDiv.style.display = "block";
+        return;
       }
       if (!newPwd) {
-        return showError(
-          editPasswordErrors,
-          newPasswordInput,
-          "Inserisci una nuova password"
-        );
+        errorDiv.textContent = "⚠️ Inserisci una nuova password";
+        errorDiv.style.display = "block";
+        return;
       }
-      if (!isValidPassword(newPwd)) {
-        return showError(
-          editPasswordErrors,
-          newPasswordInput,
-          "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)"
-        );
+
+      // Validazione password lato client
+      const hasMinLength = newPwd.length >= 8;
+      const hasUpperCase = /[A-Z]/.test(newPwd);
+      const hasLowerCase = /[a-z]/.test(newPwd);
+      const hasNumber = /\d/.test(newPwd);
+
+      if (!(hasMinLength && hasUpperCase && hasLowerCase && hasNumber)) {
+        errorDiv.textContent =
+          "⚠️ Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)";
+        errorDiv.style.display = "block";
+        return;
       }
+
       if (!confirmPwd) {
-        return showError(
-          editPasswordErrors,
-          confirmNewPasswordInput,
-          "Conferma la nuova password"
-        );
+        errorDiv.textContent = "⚠️ Conferma la nuova password";
+        errorDiv.style.display = "block";
+        return;
       }
+
       if (newPwd !== confirmPwd) {
-        return showError(
-          editPasswordErrors,
-          confirmNewPasswordInput,
-          "Le nuove password non coincidono"
-        );
+        errorDiv.textContent = "⚠️ Le nuove password non coincidono";
+        errorDiv.style.display = "block";
+        return;
       }
 
       try {
@@ -388,16 +388,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         submitBtn.textContent = "Salvataggio...";
         errorDiv.style.display = "none";
 
-        // TODO: Implementare endpoint di modifica password
-        console.log("Modifica password");
+        const response = await fetch("/tutor/password", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            oldPassword: oldPwd,
+            newPassword: newPwd,
+          }),
+        });
 
-        editPasswordModal.style.display = "none";
-        document.body.classList.remove("modal-open");
-        editPasswordForm.reset();
-        resetPasswordIcons();
+        const data = await response.json();
+
+        if (response.ok) {
+          // ✅ Successo
+          editPasswordModal.style.display = "none";
+          document.body.classList.remove("modal-open");
+          editPasswordForm.reset();
+          resetPasswordIcons();
+        } else {
+          // ❌ Errore dal server
+          errorDiv.textContent = `❌ ${
+            data.message || "Errore nel salvataggio"
+          }`;
+          errorDiv.style.display = "block";
+        }
       } catch (error) {
         console.error("Errore:", error);
-        errorDiv.textContent = "❌ Errore nel salvataggio";
+        errorDiv.textContent = "❌ Errore di connessione al server";
         errorDiv.style.display = "block";
       } finally {
         submitBtn.disabled = false;
