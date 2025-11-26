@@ -18,22 +18,18 @@ let currentStudenteData = null;
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", async function () {
-  // ===== CHECK AUTENTICAZIONE =====
   token = localStorage.getItem("token");
   if (!token) {
     window.location.href = "/";
     return;
   }
 
-  // Ricontrolla token quando si ritorna sulla pagina
   window.addEventListener("pageshow", () => {
     if (!localStorage.getItem("token")) window.location.href = "/";
   });
 
-  // ===== LOAD TUTOR AVATAR =====
   loadTutorInfo();
 
-  // ===== ESTRAI STUDENT ID FROM QUERY PARAMETER =====
   const urlParams = new URLSearchParams(window.location.search);
   studenteID = urlParams.get("studenteID");
 
@@ -44,10 +40,12 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ===== LOAD DATA =====
-  await loadStudenteData();
-  await loadAnnotazioni();
+  await loadStudenteData(); // ✅ Carica tutto
+  await loadAnnotazioni(); // ✅ Annotazioni
+  await loadVerificheStorico(); // ✅ Storico
+  await loadVerificheFuture(); // ✅ AGGIUNGI QUESTA RIGA
 
-  // ===== SETUP EVENT LISTENERS =====
+  // ===== SETUP LISTENERS =====
   setupEventListeners();
   setupLogout();
   setupModalListeners();
@@ -107,41 +105,18 @@ async function loadTutorInfo() {
   }
 }
 
-async function loadStudenteData() {
-  try {
-    const response = await fetch(`/tutor/studenti/${studenteID}/riepilogo`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.ok && data.studente) {
-      currentStudenteData = data.studente;
-      renderStudenteInfo(currentStudenteData);
-      renderMaterie(currentStudenteData.materie || []);
-      renderVerifiche(currentStudenteData);
-    } else {
-      showError(data.message || "Errore nel caricamento dei dati");
-    }
-  } catch (error) {
-    console.error("Errore caricamento dati:", error);
-    showError("Errore di connessione al server");
-  }
-}
-
 async function loadAnnotazioni() {
   try {
-    const response = await fetch(`/tutor/annotazioni/${studenteID}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `/tutor/studenti/${studenteID}/annotazioni`, // ✅ ROUTE CORRETTA
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
 
@@ -153,6 +128,58 @@ async function loadAnnotazioni() {
   } catch (error) {
     console.error("Errore caricamento annotazioni:", error);
     renderAnnotazioni([]);
+  }
+}
+
+async function loadVerificheStorico() {
+  try {
+    const response = await fetch(
+      `/tutor/studenti/${studenteID}/verifiche/storico`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data.verifiche)) {
+      renderVerificheStorico(data.verifiche);
+    } else {
+      renderVerificheStorico([]);
+    }
+  } catch (error) {
+    console.error("Errore caricamento verifiche storico:", error);
+    renderVerificheStorico([]);
+  }
+}
+
+async function loadVerificheFuture() {
+  try {
+    const response = await fetch(
+      `/tutor/studenti/${studenteID}/verifiche/future`, // ✅ ENDPOINT FUTURE
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data.verifiche)) {
+      renderVerificheFuture(data.verifiche);
+    } else {
+      renderVerificheFuture([]);
+    }
+  } catch (error) {
+    console.error("Errore caricamento verifiche future:", error);
+    renderVerificheFuture([]);
   }
 }
 
@@ -216,26 +243,116 @@ function renderMaterie(materie) {
     .join("");
 }
 
-function renderVerifiche(studente) {
-  // TODO: Implementare logica verifiche passate e future
-  // Per ora mostriamo empty state
+function renderVerificheStorico(verifiche) {
+  const container = document.getElementById("storicoContent");
+  document.getElementById("storicoCount").textContent = verifiche
+    ? verifiche.length
+    : 0;
 
-  const storicoContent = document.getElementById("storicoContent");
-  const futureContent = document.getElementById("futureContent");
+  if (!verifiche || verifiche.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-check-circle"></i>
+        <p>Nessuna verifica nel passato</p>
+      </div>
+    `;
+    return;
+  }
 
-  storicoContent.innerHTML = `
-    <div class="empty-state">
-      <i class="fas fa-check-circle"></i>
-      <p>Nessuna verifica nel passato</p>
-    </div>
-  `;
+  container.innerHTML = verifiche
+    .map((verifica) => {
+      const data = new Date(verifica.data);
+      const formattedDate = data.toLocaleDateString("it-IT", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
-  futureContent.innerHTML = `
-    <div class="empty-state">
-      <i class="fas fa-calendar"></i>
-      <p>Nessuna verifica pianificata</p>
-    </div>
-  `;
+      // Colore voto
+      let colorVoto = "#10b981"; // verde
+      if (verifica.voto < 6) {
+        colorVoto = "#ff4444"; // rosso
+      } else if (verifica.voto < 7) {
+        colorVoto = "#f59e0b"; // arancione
+      }
+
+      return `
+        <div class="verifica-item">
+          <div class="verifica-header">
+            <div class="verifica-info">
+              <div class="verifica-materia">${escapeHtml(
+                verifica.materialID?.nome || "Materia sconosciuta"
+              )}</div>
+              <div class="verifica-argomento">${escapeHtml(
+                verifica.argomento
+              )}</div>
+            </div>
+            <div class="verifica-voto" style="background-color: ${colorVoto};">
+              ${verifica.voto}
+            </div>
+          </div>
+          <div class="verifica-footer">
+            <div class="verifica-data">
+              <i class="fas fa-calendar"></i>
+              ${formattedDate}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderVerificheFuture(verifiche) {
+  const container = document.getElementById("futureContent");
+  document.getElementById("countFuture").textContent = verifiche
+    ? verifiche.length
+    : 0;
+
+  if (!verifiche || verifiche.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-calendar"></i>
+        <p>Nessuna verifica pianificata</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = verifiche
+    .map((verifica) => {
+      const data = new Date(verifica.data);
+      const formattedDate = data.toLocaleDateString("it-IT", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      return `
+        <div class="verifica-item">
+          <div class="verifica-header">
+            <div class="verifica-info">
+              <div class="verifica-materia">${escapeHtml(
+                verifica.materialID?.nome || "Materia sconosciuta"
+              )}</div>
+              <div class="verifica-argomento">${escapeHtml(
+                verifica.argomento
+              )}</div>
+            </div>
+            <div class="verifica-voto" style="background-color: #9e3ffd; color: white;">
+              Da fare
+            </div>
+          </div>
+          <div class="verifica-footer">
+            <div class="verifica-data">
+              <i class="fas fa-calendar"></i>
+              ${formattedDate}
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderAnnotazioni(annotazioni) {

@@ -152,7 +152,7 @@ export const getStudenteRiepilogo = async (req, res) => {
   }
 };
 
-// ===== LEGGI VERIFICHE STORICO (CON VOTO) =====
+// ===== LEGGI VERIFICHE STORICO (CON VOTO E DATA PASSATA) =====
 export const getVerificheStorico = async (req, res) => {
   try {
     const { studenteID } = req.params;
@@ -166,12 +166,18 @@ export const getVerificheStorico = async (req, res) => {
       });
     }
 
+    // ===== OGGI A MEZZANOTTE =====
+    const oggi = new Date();
+    oggi.setHours(0, 0, 0, 0);
+
+    // ===== RECUPERA VERIFICHE PASSATE CON VOTO =====
     const verifiche = await Verifiche.find({
       studenteID: studenteID,
-      voto: { $ne: null },
+      data: { $lt: oggi }, // Data PRIMA di oggi
+      voto: { $ne: null }, // CON VOTO
     })
       .populate("materialID", "nome")
-      .sort({ data: -1 });
+      .sort({ data: -1 }); // Più recenti prima
 
     res.status(200).json({
       message: "Storico verifiche recuperato con successo",
