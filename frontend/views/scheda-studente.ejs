@@ -65,12 +65,10 @@
               </div>
               <span class="badge-count" id="countStorico">0</span>
             </div>
-            <div class="section-content">
-              <div id="storicoContent">
-                <div class="empty-state">
-                  <i class="fas fa-check-circle"></i>
-                  <p>Nessuna verifica nel passato</p>
-                </div>
+            <div class="section-content" id="storicoContent">
+              <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>Nessuna verifica nel passato</p>
               </div>
             </div>
           </div>
@@ -148,18 +146,13 @@
         </div>
         <form onsubmit="saveAnnotazione(event)">
           <div class="form-group">
-            <label class="form-label" for="annotazioneText"
-              >Testo Annotazione</label
-            >
             <textarea
               class="form-control form-control-large"
               id="annotazioneText"
-              placeholder="Scrivi qui la tua annotazione..."
+              placeholder="Nuova Annotazione"
               required
-              maxlength="1000"
             >
             </textarea>
-            <span class="char-count"><span id="charCount">0</span>/1000</span>
           </div>
           <div class="modal-footer">
             <button
@@ -170,7 +163,7 @@
               Annulla
             </button>
             <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save"></i> Salva Annotazione
+              Salva Annotazione
             </button>
           </div>
         </form>

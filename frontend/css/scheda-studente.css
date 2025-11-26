@@ -303,6 +303,7 @@ body.modal-open {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  height: 75px;
 }
 
 .section-title {
@@ -413,7 +414,6 @@ body.modal-open {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
 }
 
 .materia-name {
@@ -423,11 +423,6 @@ body.modal-open {
 }
 
 .materia-media {
-  background: linear-gradient(
-    135deg,
-    var(--primary-purple),
-    var(--primary-purple-dark)
-  );
   color: white;
   padding: 8px 16px;
   border-radius: 8px;
@@ -861,10 +856,9 @@ body.modal-open {
 #futureContent,
 #materieContent,
 #annotazioniContent {
-  max-height: 420px; /* Mostra ~3 items */
+  max-height: 450px; /* Mostra ~3 items */
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 8px;
 }
 
 /* Scrollbar styling */

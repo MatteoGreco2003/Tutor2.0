@@ -215,30 +215,33 @@ function renderMaterie(materie) {
   }
 
   container.innerHTML = materie
-    .map(
-      (materia) => `
-    <div class="materia-item">
-      <div class="materia-header">
-        <div class="materia-name">${escapeHtml(materia.nome)}</div>
-        <div class="materia-media">${materia.media || "SV"}</div>
-      </div>
-      <div class="materia-actions">
-        <button class="btn-small" onclick="editMateria('${
-          materia._id
-        }', '${escapeHtml(materia.nome)}', ${
-        materia.media
-      })" title="Modifica materia">
-          <i class="fas fa-edit"></i> Modifica
-        </button>
-        <button class="btn-small btn-small-danger" onclick="deleteMateria('${
-          materia._id
-        }')" title="Elimina materia">
-          <i class="fas fa-trash"></i> Elimina
-        </button>
-      </div>
-    </div>
-  `
-    )
+    .map((materia) => {
+      // ✅ LOGICA DEI COLORI
+      let colorMedia = "#a0a0a0"; // grigino (default SV)
+      let mediaDisplay = materia.media || "SV";
+
+      if (mediaDisplay !== "SV") {
+        const media = parseFloat(mediaDisplay);
+        if (media < 6) {
+          colorMedia = "#ff4444"; // rosso
+        } else if (media < 8) {
+          colorMedia = "#f59e0b"; // giallino
+        } else {
+          colorMedia = "#10b981"; // verde
+        }
+      }
+
+      return `
+        <div class="materia-item">
+          <div class="materia-header">
+            <div class="materia-name">${escapeHtml(materia.nome)}</div>
+            <div class="materia-media" style="background-color: ${colorMedia}; color: white;">
+              ${mediaDisplay}
+            </div>
+          </div>
+        </div>
+      `;
+    })
     .join("");
 }
 
@@ -291,7 +294,7 @@ function renderVerificheStorico(verifiche) {
             </div>
           </div>
           <div class="verifica-footer">
-            
+           
             <div class="verifica-argomento">${escapeHtml(
               verifica.argomento
             )}</div>
@@ -338,16 +341,16 @@ function renderVerificheFuture(verifiche) {
               <i class="fas fa-calendar"></i>
               ${formattedDate}
             </div>
-              
+             
             </div>
-            <div class="verifica-voto" style="background-color: #9e3ffd; color: white;">
-              Da fare
+            <div class="verifica-voto" style="background-color: #a0a0a0;">
+              DA FARE
             </div>
           </div>
           <div class="verifica-footer">
             <div class="verifica-argomento">${escapeHtml(
-                verifica.argomento
-              )}</div>
+              verifica.argomento
+            )}</div>
           </div>
         </div>
       `;
