@@ -7,7 +7,7 @@ import {
   deleteVerifica,
   getMaterieConMedia,
   getVerifichePerMateria,
-} from "../controllers/testController.js";
+} from "../Controllers/testController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

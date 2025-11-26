@@ -8,7 +8,7 @@ import {
   assegnaStudenteATutor,
   rimuoviStudenteDaTutor,
   getStatisticheTutor,
-} from "../controllers/adminController.js";
+} from "../Controllers/adminController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

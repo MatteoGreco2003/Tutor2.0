@@ -12,13 +12,13 @@ import {
   rimuoviStudente,
   updateTutorPassword,
   updateTutorPersonalData,
-} from "../controllers/tutorController.js";
+} from "../Controllers/tutorController.js";
 import {
   getAnnotazioni,
   createAnnotazione,
   updateAnnotazione,
   deleteAnnotazione,
-} from "../controllers/annotationController.js";
+} from "../Controllers/annotationController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
