@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!localStorage.getItem("token")) window.location.href = "/";
   });
 
-  loadTutorInfo();
-
   const urlParams = new URLSearchParams(window.location.search);
   studenteID = urlParams.get("studenteID");
 
@@ -40,10 +38,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ===== LOAD DATA =====
-  await loadStudenteData(); // ✅ Carica tutto
-  await loadAnnotazioni(); // ✅ Annotazioni
-  await loadVerificheStorico(); // ✅ Storico
-  await loadVerificheFuture(); // ✅ AGGIUNGI QUESTA RIGA
+  await loadStudenteData();
+  await loadAnnotazioni();
+  await loadVerificheStorico();
+  await loadVerificheFuture();
 
   // ===== SETUP LISTENERS =====
   setupEventListeners();
@@ -57,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function setupLogout() {
   document
-    .querySelector(".btn-logout")
+    .querySelector(".logout-btn")
     ?.addEventListener("click", async function () {
       try {
         const response = await fetch("/auth/logout", {
@@ -85,9 +83,9 @@ function setupLogout() {
 // LOAD FUNCTIONS
 // ==========================================
 
-async function loadTutorInfo() {
+async function loadStudenteData() {
   try {
-    const response = await fetch("/tutor/data", {
+    const response = await fetch(`/tutor/studenti/${studenteID}/riepilogo`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -96,27 +94,29 @@ async function loadTutorInfo() {
     });
 
     const data = await response.json();
-    if (response.ok && data.data) {
-      const userAvatar = document.getElementById("userAvatar");
-      userAvatar.textContent = data.data.nome?.charAt(0).toUpperCase() || "T";
+
+    if (response.ok && data.studente) {
+      currentStudenteData = data.studente;
+      renderStudenteInfo(currentStudenteData);
+      renderMaterie(data.materie?.lista || []);
+    } else {
+      showError(data.message || "Errore nel caricamento dei dati");
     }
   } catch (error) {
-    console.error("Errore caricamento info tutor:", error);
+    console.error("Errore caricamento dati:", error);
+    showError("Errore di connessione al server");
   }
 }
 
 async function loadAnnotazioni() {
   try {
-    const response = await fetch(
-      `/tutor/studenti/${studenteID}/annotazioni`, // ✅ ROUTE CORRETTA
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`/tutor/studenti/${studenteID}/annotazioni`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
 
@@ -160,7 +160,7 @@ async function loadVerificheStorico() {
 async function loadVerificheFuture() {
   try {
     const response = await fetch(
-      `/tutor/studenti/${studenteID}/verifiche/future`, // ✅ ENDPOINT FUTURE
+      `/tutor/studenti/${studenteID}/verifiche/future`,
       {
         method: "GET",
         headers: {
@@ -197,7 +197,6 @@ function renderStudenteInfo(studente) {
   document.getElementById("studenteIndirizzo").textContent =
     studente.indirizzo || "-";
 
-  // ===== AGGIORNA AVATAR NELLA BANNER =====
   const studenteAvatar = document.getElementById("studenteAvatar");
   studenteAvatar.textContent = studente.nome?.charAt(0).toUpperCase() || "S";
 }
@@ -245,7 +244,7 @@ function renderMaterie(materie) {
 
 function renderVerificheStorico(verifiche) {
   const container = document.getElementById("storicoContent");
-  document.getElementById("storicoCount").textContent = verifiche
+  document.getElementById("countStorico").textContent = verifiche
     ? verifiche.length
     : 0;
 
@@ -268,12 +267,11 @@ function renderVerificheStorico(verifiche) {
         day: "numeric",
       });
 
-      // Colore voto
-      let colorVoto = "#10b981"; // verde
+      let colorVoto = "#10b981";
       if (verifica.voto < 6) {
-        colorVoto = "#ff4444"; // rosso
+        colorVoto = "#ff4444";
       } else if (verifica.voto < 7) {
-        colorVoto = "#f59e0b"; // arancione
+        colorVoto = "#f59e0b";
       }
 
       return `
@@ -434,7 +432,6 @@ function closeAddMateriaModal() {
 // ==========================================
 
 function setupModalListeners() {
-  // ===== MODAL CLOSE ON OUTSIDE CLICK =====
   window.addEventListener("click", function (event) {
     const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
     const addMateriaModal = document.getElementById("addMateriaModal");
@@ -447,15 +444,6 @@ function setupModalListeners() {
     }
   });
 
-  // ===== CLOSE BUTTONS =====
-  document
-    .getElementById("closeAddAnnotazioneBtn")
-    ?.addEventListener("click", closeAddAnnotazioneModal);
-  document
-    .getElementById("closeAddMateriaBtn")
-    ?.addEventListener("click", closeAddMateriaModal);
-
-  // ===== CANCEL BUTTONS =====
   document.querySelectorAll(".btn-secondary").forEach((btn) => {
     btn.addEventListener("click", function (e) {
       if (this.closest("#addAnnotazioneModal")) {
@@ -467,7 +455,6 @@ function setupModalListeners() {
     });
   });
 
-  // ===== KEYBOARD SHORTCUTS =====
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") {
       closeAddAnnotazioneModal();
@@ -496,14 +483,14 @@ async function saveAnnotazione(event) {
     const originalText = btn.textContent;
     btn.textContent = "Salvataggio...";
 
-    const response = await fetch("/tutor/annotazioni", {
+    // ✅ ROUTE CORRETTA
+    const response = await fetch(`/tutor/studenti/${studenteID}/annotazioni`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        studenteID: studenteID,
         testo: testo,
       }),
     });
@@ -526,54 +513,6 @@ async function saveAnnotazione(event) {
   }
 }
 
-async function saveMateria(event) {
-  event.preventDefault();
-
-  const nome = document.getElementById("materiaName").value.trim();
-  const media = parseFloat(document.getElementById("materiaMedio").value);
-
-  if (!nome || isNaN(media)) {
-    showError("⚠️ Inserisci dati validi");
-    return;
-  }
-
-  if (media < 0 || media > 10) {
-    showError("⚠️ La media deve essere tra 0 e 10");
-    return;
-  }
-
-  try {
-    const btn = event.target.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    const originalText = btn.textContent;
-    btn.textContent = "Aggiunta in corso...";
-
-    // TODO: Implementare endpoint backend per salvare materia
-    // const response = await fetch("/tutor/materie", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    //   body: JSON.stringify({
-    //     studenteID: studenteID,
-    //     nome: nome,
-    //     media: media,
-    //   }),
-    // });
-
-    showSuccess("✅ Materia aggiunta con successo");
-    closeAddMateriaModal();
-    // await loadStudenteData();
-
-    btn.disabled = false;
-    btn.textContent = originalText;
-  } catch (error) {
-    console.error("Errore aggiunta materia:", error);
-    showError("❌ Errore di connessione al server");
-  }
-}
-
 // ==========================================
 // DELETE FUNCTIONS
 // ==========================================
@@ -584,13 +523,17 @@ async function deleteAnnotazione(annotazioneID) {
   }
 
   try {
-    const response = await fetch(`/tutor/annotazioni/${annotazioneID}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+    // ✅ ROUTE CORRETTA
+    const response = await fetch(
+      `/tutor/studenti/${studenteID}/annotazioni/${annotazioneID}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (response.ok) {
       showSuccess("✅ Annotazione eliminata");
@@ -610,9 +553,7 @@ function deleteMateria(materiaID) {
   }
 
   try {
-    // TODO: Implementare endpoint backend per eliminare materia
     showSuccess("✅ Materia eliminata");
-    // await loadStudenteData();
   } catch (error) {
     console.error("Errore eliminazione materia:", error);
     showError("❌ Errore di connessione");
@@ -620,7 +561,6 @@ function deleteMateria(materiaID) {
 }
 
 function editMateria(materiaID, nome, media) {
-  // TODO: Implementare modale di modifica materia
   console.log("Edit materia:", materiaID, nome, media);
   showInfo("ℹ️ Funzionalità di modifica in sviluppo");
 }
@@ -630,7 +570,6 @@ function editMateria(materiaID, nome, media) {
 // ==========================================
 
 function setupEventListeners() {
-  // ===== TEXTAREA CHARACTER COUNT =====
   const annotazioneText = document.getElementById("annotazioneText");
   const charCount = document.getElementById("charCount");
 
@@ -640,7 +579,6 @@ function setupEventListeners() {
     });
   }
 
-  // ===== BACK BUTTON =====
   document.querySelector(".btn-back")?.addEventListener("click", function () {
     window.history.back();
   });
