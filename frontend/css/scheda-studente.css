@@ -852,3 +852,48 @@ body.modal-open {
   align-items: center;
   gap: 6px;
 }
+
+/* ========================================
+   SECTION CONTENT WITH SCROLL
+   ======================================== */
+
+#storicoContent,
+#futureContent,
+#materieContent,
+#annotazioniContent {
+  max-height: 420px; /* Mostra ~3 items */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+/* Scrollbar styling */
+#storicoContent::-webkit-scrollbar,
+#futureContent::-webkit-scrollbar,
+#materieContent::-webkit-scrollbar,
+#annotazioniContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+#storicoContent::-webkit-scrollbar-track,
+#futureContent::-webkit-scrollbar-track,
+#materieContent::-webkit-scrollbar-track,
+#annotazioniContent::-webkit-scrollbar-track {
+  background: rgba(158, 63, 253, 0.05);
+  border-radius: 10px;
+}
+
+#storicoContent::-webkit-scrollbar-thumb,
+#futureContent::-webkit-scrollbar-thumb,
+#materieContent::-webkit-scrollbar-thumb,
+#annotazioniContent::-webkit-scrollbar-thumb {
+  background: rgba(158, 63, 253, 0.3);
+  border-radius: 10px;
+}
+
+#storicoContent::-webkit-scrollbar-thumb:hover,
+#futureContent::-webkit-scrollbar-thumb:hover,
+#materieContent::-webkit-scrollbar-thumb:hover,
+#annotazioniContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(158, 63, 253, 0.6);
+}

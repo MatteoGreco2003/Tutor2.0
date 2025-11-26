@@ -220,7 +220,7 @@ function renderMaterie(materie) {
     <div class="materia-item">
       <div class="materia-header">
         <div class="materia-name">${escapeHtml(materia.nome)}</div>
-        <div class="materia-media">${materia.media || "0"}</div>
+        <div class="materia-media">${materia.media || "SV"}</div>
       </div>
       <div class="materia-actions">
         <button class="btn-small" onclick="editMateria('${
@@ -270,7 +270,7 @@ function renderVerificheStorico(verifiche) {
       let colorVoto = "#10b981";
       if (verifica.voto < 6) {
         colorVoto = "#ff4444";
-      } else if (verifica.voto < 7) {
+      } else if (verifica.voto < 8) {
         colorVoto = "#f59e0b";
       }
 
@@ -281,19 +281,20 @@ function renderVerificheStorico(verifiche) {
               <div class="verifica-materia">${escapeHtml(
                 verifica.materialID?.nome || "Materia sconosciuta"
               )}</div>
-              <div class="verifica-argomento">${escapeHtml(
-                verifica.argomento
-              )}</div>
+              <div class="verifica-data">
+              <i class="fas fa-calendar"></i>
+              ${formattedDate}
+            </div>
             </div>
             <div class="verifica-voto" style="background-color: ${colorVoto};">
               ${verifica.voto}
             </div>
           </div>
           <div class="verifica-footer">
-            <div class="verifica-data">
-              <i class="fas fa-calendar"></i>
-              ${formattedDate}
-            </div>
+            
+            <div class="verifica-argomento">${escapeHtml(
+              verifica.argomento
+            )}</div>
           </div>
         </div>
       `;
@@ -333,19 +334,20 @@ function renderVerificheFuture(verifiche) {
               <div class="verifica-materia">${escapeHtml(
                 verifica.materialID?.nome || "Materia sconosciuta"
               )}</div>
-              <div class="verifica-argomento">${escapeHtml(
-                verifica.argomento
-              )}</div>
+              <div class="verifica-data">
+              <i class="fas fa-calendar"></i>
+              ${formattedDate}
+            </div>
+              
             </div>
             <div class="verifica-voto" style="background-color: #9e3ffd; color: white;">
               Da fare
             </div>
           </div>
           <div class="verifica-footer">
-            <div class="verifica-data">
-              <i class="fas fa-calendar"></i>
-              ${formattedDate}
-            </div>
+            <div class="verifica-argomento">${escapeHtml(
+                verifica.argomento
+              )}</div>
           </div>
         </div>
       `;

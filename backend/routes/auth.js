@@ -4,13 +4,12 @@ import {
   logout,
   registerComplete,
   verifyHomeStudenti,
-  //verifyHomeTutor,
   verifyHomeAdmin,
   forgotPassword,
   resetPassword,
 } from "../controllers/authController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-
+//verifyHomeTutor, nel import
 const router = express.Router();
 
 // POST auth/login
