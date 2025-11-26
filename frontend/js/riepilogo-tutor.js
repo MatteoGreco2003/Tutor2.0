@@ -231,10 +231,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     document
       .getElementById("editPersonalBtn")
       ?.addEventListener("click", () => {
+        // Popola i campi con i dati attuali
         document.getElementById("editNome").value =
           document.getElementById("personalNome").textContent;
         document.getElementById("editCognome").value =
           document.getElementById("personalCognome").textContent;
+
+        // Resetta errori
+        errorDiv.textContent = "";
+        errorDiv.style.display = "none";
+
         editPersonalModal.style.display = "flex";
         document.body.classList.add("modal-open");
       });
@@ -262,8 +268,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       const nome = document.getElementById("editNome").value.trim();
       const cognome = document.getElementById("editCognome").value.trim();
 
-      if (!nome || !cognome) {
-        errorDiv.textContent = "⚠️ Nome e cognome sono obbligatori";
+      // VALIDAZIONI
+      if (nome.length < 2) {
+        errorDiv.textContent = "⚠️ Nome deve contenere almeno 2 caratteri";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      if (cognome.length < 2) {
+        errorDiv.textContent = "⚠️ Cognome deve contenere almeno 2 caratteri";
         errorDiv.style.display = "block";
         return;
       }
@@ -273,21 +286,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         submitBtn.textContent = "Salvataggio...";
         errorDiv.style.display = "none";
 
-        // TODO: Implementare endpoint di modifica dati tutor
-        console.log("Salvataggio:", { nome, cognome });
+        // INVIA AL SERVER
+        const response = await fetch("/tutor/personal-data", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nome: nome,
+            cognome: cognome,
+          }),
+        });
 
-        document.getElementById("personalNome").textContent = nome;
-        document.getElementById("personalCognome").textContent = cognome;
-        document.querySelector(
-          ".header-title"
-        ).textContent = `${nome} ${cognome}`;
+        const data = await response.json();
 
-        editPersonalModal.style.display = "none";
-        document.body.classList.remove("modal-open");
-        editPersonalForm.reset();
+        if (response.ok) {
+          // ✅ Successo - Aggiorna il DOM
+          document.getElementById("personalNome").textContent = nome;
+          document.getElementById("personalCognome").textContent = cognome;
+          document.querySelector(
+            ".header-title"
+          ).textContent = `${nome} ${cognome}`;
+
+          // Chiudi modal
+          editPersonalModal.style.display = "none";
+          document.body.classList.remove("modal-open");
+          editPersonalForm.reset();
+        } else {
+          // ❌ Errore dal server
+          errorDiv.textContent = `⚠️ ${
+            data.message || "Errore nel salvataggio"
+          }`;
+          errorDiv.style.display = "block";
+        }
       } catch (error) {
         console.error("Errore:", error);
-        errorDiv.textContent = "❌ Errore nel salvataggio";
+        errorDiv.textContent = "❌ Errore di connessione al server";
         errorDiv.style.display = "block";
       } finally {
         submitBtn.disabled = false;
@@ -308,6 +343,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     document
       .getElementById("editPasswordBtn")
       ?.addEventListener("click", () => {
+        editPasswordForm.reset();
+        errorDiv.textContent = "";
+        errorDiv.style.display = "none";
+
         editPasswordModal.style.display = "flex";
         document.body.classList.add("modal-open");
         resetPasswordIcons();
@@ -329,15 +368,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.body.classList.remove("modal-open");
       }
     });
-
-    // validazione password lato client
-    function isValidPassword(pwd) {
-      const hasMinLength = pwd.length >= 8;
-      const hasUpperCase = /[A-Z]/.test(pwd);
-      const hasLowerCase = /[a-z]/.test(pwd);
-      const hasNumber = /\d/.test(pwd);
-      return hasMinLength && hasUpperCase && hasLowerCase && hasNumber;
-    }
 
     editPasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -410,7 +440,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           resetPasswordIcons();
         } else {
           // ❌ Errore dal server
-          errorDiv.textContent = `❌ ${
+          errorDiv.textContent = `⚠️ ${
             data.message || "Errore nel salvataggio"
           }`;
           errorDiv.style.display = "block";

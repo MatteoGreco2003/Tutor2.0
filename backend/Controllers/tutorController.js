@@ -476,7 +476,6 @@ export const rimuoviStudente = async (req, res) => {
 // ===== MODIFICA PASSWORD TUTOR =====
 export const updateTutorPassword = async (req, res) => {
   try {
-    console.log("🔐 updateTutorPassword chiamato!");
     const tutorId = req.user.userId;
     const { oldPassword, newPassword } = req.body;
 
@@ -520,6 +519,49 @@ export const updateTutorPassword = async (req, res) => {
     });
   } catch (error) {
     console.error("Errore update password tutor:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+// ===== MODIFICA DATI PERSONALI TUTOR =====
+export const updateTutorPersonalData = async (req, res) => {
+  try {
+    const tutorId = req.user.userId;
+    const { nome, cognome } = req.body;
+
+    if (!nome || !cognome) {
+      return res.status(400).json({
+        message: "Nome e cognome sono obbligatori",
+      });
+    }
+
+    // Validazione lunghezza
+    if (nome.trim().length < 2 || cognome.trim().length < 2) {
+      return res.status(400).json({
+        message: "Nome e cognome devono contenere almeno 2 caratteri",
+      });
+    }
+
+    const tutor = await Tutor.findById(tutorId);
+    if (!tutor) {
+      return res.status(404).json({ message: "Tutor non trovato" });
+    }
+
+    // Aggiorna nome e cognome
+    tutor.nome = nome.trim();
+    tutor.cognome = cognome.trim();
+    await tutor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Dati personali aggiornati con successo",
+      data: {
+        nome: tutor.nome,
+        cognome: tutor.cognome,
+      },
+    });
+  } catch (error) {
+    console.error("Errore update dati personali tutor:", error);
     res.status(500).json({ message: "Errore del server" });
   }
 };

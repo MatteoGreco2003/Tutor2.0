@@ -11,6 +11,7 @@ import {
   associaStudente,
   rimuoviStudente,
   updateTutorPassword,
+  updateTutorPersonalData,
 } from "../controllers/tutorController.js";
 import {
   getAnnotazioni,
@@ -100,5 +101,8 @@ router.delete("/studenti/rimuovi", verifyToken, rimuoviStudente);
 
 // PATCH /tutor/password
 router.patch("/password", verifyToken, updateTutorPassword);
+
+// PATCH /tutor/personal-data - Modifica nome e cognome
+router.patch("/personal-data", verifyToken, updateTutorPersonalData);
 
 export default router;
