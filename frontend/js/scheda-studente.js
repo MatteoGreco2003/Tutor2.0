@@ -56,9 +56,11 @@ async function loadTutorInfo() {
 
     const data = await response.json();
     if (response.ok && data.data) {
-      const tutorName = `${data.data.nome || "Tutor"} ${data.data.cognome || ""}`.trim();
+      const tutorName = `${data.data.nome || "Tutor"} ${
+        data.data.cognome || ""
+      }`.trim();
       document.getElementById("tutorName").textContent = tutorName;
-      
+
       const userAvatar = document.getElementById("userAvatar");
       userAvatar.textContent = data.data.nome?.charAt(0).toUpperCase() || "T";
     }
@@ -121,10 +123,14 @@ async function loadAnnotazioni() {
 // ==========================================
 
 function renderStudenteInfo(studente) {
-  document.getElementById("studenteName").textContent = `${studente.nome} ${studente.cognome}`;
+  document.getElementById(
+    "studenteName"
+  ).textContent = `${studente.nome} ${studente.cognome}`;
   document.getElementById("studenteEmail").textContent = studente.email || "-";
-  document.getElementById("studenteScuola").textContent = studente.scuola || "-";
-  document.getElementById("studenteTelefono").textContent = studente.telefono || "-";
+  document.getElementById("studenteScuola").textContent =
+    studente.scuola || "-";
+  document.getElementById("studenteTelefono").textContent =
+    studente.telefono || "-";
 }
 
 function renderMaterie(materie) {
@@ -149,10 +155,16 @@ function renderMaterie(materie) {
         <div class="materia-media">${materia.media || "0"}</div>
       </div>
       <div class="materia-actions">
-        <button class="btn-small" onclick="editMateria('${materia._id}', '${escapeHtml(materia.nome)}', ${materia.media})" title="Modifica materia">
+        <button class="btn-small" onclick="editMateria('${
+          materia._id
+        }', '${escapeHtml(materia.nome)}', ${
+        materia.media
+      })" title="Modifica materia">
           <i class="fas fa-edit"></i> Modifica
         </button>
-        <button class="btn-small btn-small-danger" onclick="deleteMateria('${materia._id}')" title="Elimina materia">
+        <button class="btn-small btn-small-danger" onclick="deleteMateria('${
+          materia._id
+        }')" title="Elimina materia">
           <i class="fas fa-trash"></i> Elimina
         </button>
       </div>
@@ -216,7 +228,9 @@ function renderAnnotazioni(annotazioni) {
           ${formattedDate}
         </div>
         <div class="annotation-actions">
-          <button class="btn-action btn-action-danger" onclick="deleteAnnotazione('${ann._id}')" title="Elimina annotazione">
+          <button class="btn-action btn-action-danger" onclick="deleteAnnotazione('${
+            ann._id
+          }')" title="Elimina annotazione">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -445,10 +459,6 @@ function goBack() {
 }
 
 function logoutUser() {
-  if (!confirm("Sei sicuro di voler uscire?")) {
-    return;
-  }
-
   try {
     const response = fetch("/auth/logout", {
       method: "GET",

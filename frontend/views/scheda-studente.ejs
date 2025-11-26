@@ -15,17 +15,13 @@
     <div class="header">
       <div class="header-left">
         <button class="btn-back" onclick="goBack()" title="Torna indietro">
-          <i class="fas fa-chevron-left"></i> Torna al portfoglio
+          <i class="fas fa-chevron-left"></i> Torna al portfolio
         </button>
-        <h1 class="header-title">📋 Scheda Studente</h1>
       </div>
+      <h1 class="header-title">📋 Scheda Studente</h1>
       <div class="header-actions">
-        <div class="user-info">
-          <span class="user-name" id="tutorName">Tutor</span>
-          <div class="user-avatar" id="userAvatar">T</div>
-        </div>
-        <button class="btn-logout" onclick="logoutUser()" title="Esci">
-          <i class="fas fa-sign-out-alt"></i>
+        <button class="logout-btn" onclick="logoutUser()" title="Esci">
+          Disconnettiti
         </button>
       </div>
     </div>
@@ -47,6 +43,10 @@
             <div class="info-item">
               <span class="info-label">Scuola:</span>
               <span class="info-value" id="studenteScuola">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Indirizzo:</span>
+              <span class="info-value" id="studenteIndirizzo">-</span>
             </div>
             <div class="info-item">
               <span class="info-label">Telefono:</span>
