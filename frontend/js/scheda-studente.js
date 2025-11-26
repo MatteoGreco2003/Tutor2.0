@@ -2,13 +2,19 @@
 // SCHEDA STUDENTE - JavaScript
 // ==========================================
 
+// ======= BLOCCA BACK BUTTON =======
+window.history.pushState(null, null, window.location.href);
+window.addEventListener("popstate", function () {
+  window.history.pushState(null, null, window.location.href);
+});
+
 // ===== GLOBAL VARIABLES =====
 let studenteID = null;
 let token = null;
 let currentStudenteData = null;
 
 // ==========================================
-// INITIALIZATION
+// SETUP ON LOAD
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -19,7 +25,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  // ===== LOAD TUTOR NAME =====
+  // Ricontrolla token quando si ritorna sulla pagina
+  window.addEventListener("pageshow", () => {
+    if (!localStorage.getItem("token")) window.location.href = "/";
+  });
+
+  // ===== LOAD TUTOR AVATAR =====
   loadTutorInfo();
 
   // ===== ESTRAI STUDENT ID FROM QUERY PARAMETER =====
@@ -38,7 +49,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // ===== SETUP EVENT LISTENERS =====
   setupEventListeners();
+  setupLogout();
+  setupModalListeners();
 });
+
+// ==========================================
+// LOGOUT HANDLER
+// ==========================================
+
+function setupLogout() {
+  document
+    .querySelector(".btn-logout")
+    ?.addEventListener("click", async function () {
+      try {
+        const response = await fetch("/auth/logout", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          localStorage.removeItem("token");
+          window.location.href = "/";
+        } else {
+          alert("Errore durante il logout");
+        }
+      } catch (error) {
+        console.error("Errore logout:", error);
+        alert("Errore durante il logout");
+      }
+    });
+}
 
 // ==========================================
 // LOAD FUNCTIONS
@@ -56,11 +99,6 @@ async function loadTutorInfo() {
 
     const data = await response.json();
     if (response.ok && data.data) {
-      const tutorName = `${data.data.nome || "Tutor"} ${
-        data.data.cognome || ""
-      }`.trim();
-      document.getElementById("tutorName").textContent = tutorName;
-
       const userAvatar = document.getElementById("userAvatar");
       userAvatar.textContent = data.data.nome?.charAt(0).toUpperCase() || "T";
     }
@@ -129,8 +167,12 @@ function renderStudenteInfo(studente) {
   document.getElementById("studenteEmail").textContent = studente.email || "-";
   document.getElementById("studenteScuola").textContent =
     studente.scuola || "-";
-  document.getElementById("studenteTelefono").textContent =
-    studente.telefono || "-";
+  document.getElementById("studenteIndirizzo").textContent =
+    studente.indirizzo || "-";
+
+  // ===== AGGIORNA AVATAR NELLA BANNER =====
+  const studenteAvatar = document.getElementById("studenteAvatar");
+  studenteAvatar.textContent = studente.nome?.charAt(0).toUpperCase() || "S";
 }
 
 function renderMaterie(materie) {
@@ -246,24 +288,75 @@ function renderAnnotazioni(annotazioni) {
 
 function openAddAnnotazioneModal() {
   document.getElementById("addAnnotazioneModal").classList.add("show");
+  document.body.classList.add("modal-open");
   document.getElementById("annotazioneText").focus();
 }
 
 function closeAddAnnotazioneModal() {
   document.getElementById("addAnnotazioneModal").classList.remove("show");
+  document.body.classList.remove("modal-open");
   document.getElementById("annotazioneText").value = "";
   document.getElementById("charCount").textContent = "0";
 }
 
 function openAddMateriaModal() {
   document.getElementById("addMateriaModal").classList.add("show");
+  document.body.classList.add("modal-open");
   document.getElementById("materiaName").focus();
 }
 
 function closeAddMateriaModal() {
   document.getElementById("addMateriaModal").classList.remove("show");
+  document.body.classList.remove("modal-open");
   document.getElementById("materiaName").value = "";
   document.getElementById("materiaMedio").value = "";
+}
+
+// ==========================================
+// MODAL EVENT LISTENERS
+// ==========================================
+
+function setupModalListeners() {
+  // ===== MODAL CLOSE ON OUTSIDE CLICK =====
+  window.addEventListener("click", function (event) {
+    const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
+    const addMateriaModal = document.getElementById("addMateriaModal");
+
+    if (event.target === addAnnotazioneModal) {
+      closeAddAnnotazioneModal();
+    }
+    if (event.target === addMateriaModal) {
+      closeAddMateriaModal();
+    }
+  });
+
+  // ===== CLOSE BUTTONS =====
+  document
+    .getElementById("closeAddAnnotazioneBtn")
+    ?.addEventListener("click", closeAddAnnotazioneModal);
+  document
+    .getElementById("closeAddMateriaBtn")
+    ?.addEventListener("click", closeAddMateriaModal);
+
+  // ===== CANCEL BUTTONS =====
+  document.querySelectorAll(".btn-secondary").forEach((btn) => {
+    btn.addEventListener("click", function (e) {
+      if (this.closest("#addAnnotazioneModal")) {
+        closeAddAnnotazioneModal();
+      }
+      if (this.closest("#addMateriaModal")) {
+        closeAddMateriaModal();
+      }
+    });
+  });
+
+  // ===== KEYBOARD SHORTCUTS =====
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeAddAnnotazioneModal();
+      closeAddMateriaModal();
+    }
+  });
 }
 
 // ==========================================
@@ -283,6 +376,7 @@ async function saveAnnotazione(event) {
   try {
     const btn = event.target.querySelector('button[type="submit"]');
     btn.disabled = true;
+    const originalText = btn.textContent;
     btn.textContent = "Salvataggio...";
 
     const response = await fetch("/tutor/annotazioni", {
@@ -300,18 +394,18 @@ async function saveAnnotazione(event) {
     const data = await response.json();
 
     if (response.ok) {
-      showSuccess("Annotazione salvata con successo");
+      showSuccess("✅ Annotazione salvata con successo");
       closeAddAnnotazioneModal();
       await loadAnnotazioni();
     } else {
-      showError(data.message || "Errore nel salvataggio");
+      showError("❌ " + (data.message || "Errore nel salvataggio"));
     }
 
     btn.disabled = false;
-    btn.textContent = "Salva Annotazione";
+    btn.textContent = originalText;
   } catch (error) {
     console.error("Errore salvataggio annotazione:", error);
-    showError("Errore di connessione al server");
+    showError("❌ Errore di connessione al server");
   }
 }
 
@@ -322,18 +416,19 @@ async function saveMateria(event) {
   const media = parseFloat(document.getElementById("materiaMedio").value);
 
   if (!nome || isNaN(media)) {
-    showError("Inserisci dati validi");
+    showError("⚠️ Inserisci dati validi");
     return;
   }
 
   if (media < 0 || media > 10) {
-    showError("La media deve essere tra 0 e 10");
+    showError("⚠️ La media deve essere tra 0 e 10");
     return;
   }
 
   try {
     const btn = event.target.querySelector('button[type="submit"]');
     btn.disabled = true;
+    const originalText = btn.textContent;
     btn.textContent = "Aggiunta in corso...";
 
     // TODO: Implementare endpoint backend per salvare materia
@@ -350,15 +445,15 @@ async function saveMateria(event) {
     //   }),
     // });
 
-    showSuccess("Materia aggiunta con successo");
+    showSuccess("✅ Materia aggiunta con successo");
     closeAddMateriaModal();
     // await loadStudenteData();
 
     btn.disabled = false;
-    btn.textContent = "Aggiungi Materia";
+    btn.textContent = originalText;
   } catch (error) {
     console.error("Errore aggiunta materia:", error);
-    showError("Errore di connessione al server");
+    showError("❌ Errore di connessione al server");
   }
 }
 
@@ -381,14 +476,14 @@ async function deleteAnnotazione(annotazioneID) {
     });
 
     if (response.ok) {
-      showSuccess("Annotazione eliminata");
+      showSuccess("✅ Annotazione eliminata");
       await loadAnnotazioni();
     } else {
-      showError("Errore nell'eliminazione");
+      showError("❌ Errore nell'eliminazione");
     }
   } catch (error) {
     console.error("Errore eliminazione annotazione:", error);
-    showError("Errore di connessione");
+    showError("❌ Errore di connessione");
   }
 }
 
@@ -399,18 +494,18 @@ function deleteMateria(materiaID) {
 
   try {
     // TODO: Implementare endpoint backend per eliminare materia
-    showSuccess("Materia eliminata");
+    showSuccess("✅ Materia eliminata");
     // await loadStudenteData();
   } catch (error) {
     console.error("Errore eliminazione materia:", error);
-    showError("Errore di connessione");
+    showError("❌ Errore di connessione");
   }
 }
 
 function editMateria(materiaID, nome, media) {
   // TODO: Implementare modale di modifica materia
   console.log("Edit materia:", materiaID, nome, media);
-  showInfo("Funzionalità di modifica in sviluppo");
+  showInfo("ℹ️ Funzionalità di modifica in sviluppo");
 }
 
 // ==========================================
@@ -428,25 +523,9 @@ function setupEventListeners() {
     });
   }
 
-  // ===== MODAL CLOSE ON OUTSIDE CLICK =====
-  window.addEventListener("click", function (event) {
-    const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
-    const addMateriaModal = document.getElementById("addMateriaModal");
-
-    if (event.target === addAnnotazioneModal) {
-      closeAddAnnotazioneModal();
-    }
-    if (event.target === addMateriaModal) {
-      closeAddMateriaModal();
-    }
-  });
-
-  // ===== KEYBOARD SHORTCUTS =====
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      closeAddAnnotazioneModal();
-      closeAddMateriaModal();
-    }
+  // ===== BACK BUTTON =====
+  document.querySelector(".btn-back")?.addEventListener("click", function () {
+    window.history.back();
   });
 }
 
@@ -460,7 +539,7 @@ function goBack() {
 
 function logoutUser() {
   try {
-    const response = fetch("/auth/logout", {
+    fetch("/auth/logout", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -493,20 +572,17 @@ function escapeHtml(text) {
 // ==========================================
 
 function showSuccess(message) {
-  console.log("✅ SUCCESS:", message);
-  // TODO: Implementare toast notification
+  console.log(message);
   alert(message);
 }
 
 function showError(message) {
-  console.error("❌ ERROR:", message);
-  // TODO: Implementare toast notification
+  console.error(message);
   alert(message);
 }
 
 function showInfo(message) {
-  console.info("ℹ️ INFO:", message);
-  // TODO: Implementare toast notification
+  console.info(message);
   alert(message);
 }
 
@@ -519,13 +595,3 @@ window.addEventListener("pageshow", function () {
     window.location.href = "/";
   }
 });
-
-// ==========================================
-// PREVENT BACK NAVIGATION (OPTIONAL)
-// ==========================================
-
-// Uncomment to prevent browser back button
-// window.history.pushState(null, null, window.location.href);
-// window.addEventListener("popstate", function () {
-//   window.history.pushState(null, null, window.location.href);
-// });
