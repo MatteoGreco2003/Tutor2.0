@@ -330,30 +330,57 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
+    // validazione password lato client
+    function isValidPassword(pwd) {
+      const hasMinLength = pwd.length >= 8;
+      const hasUpperCase = /[A-Z]/.test(pwd);
+      const hasLowerCase = /[a-z]/.test(pwd);
+      const hasNumber = /\d/.test(pwd);
+      return hasMinLength && hasUpperCase && hasLowerCase && hasNumber;
+    }
+
     editPasswordForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const oldPassword = document.getElementById("oldPassword").value;
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword =
-        document.getElementById("confirmNewPassword").value;
+      const oldPwd = document.getElementById("oldPassword").value;
+      const newPwd = document.getElementById("newPassword").value;
+      const confirmPwd = document.getElementById("confirmNewPassword").value;
 
-      if (!oldPassword || !newPassword || !confirmPassword) {
-        errorDiv.textContent = "⚠️ Compila tutti i campi";
-        errorDiv.style.display = "block";
-        return;
+      // VALIDAZIONI - MOSTRA SOLO IL PRIMO ERRORE
+      if (!oldPwd) {
+        return showError(
+          editPasswordErrors,
+          oldPasswordInput,
+          "Inserisci la password attuale"
+        );
       }
-
-      if (newPassword !== confirmPassword) {
-        errorDiv.textContent = "⚠️ Le password non corrispondono";
-        errorDiv.style.display = "block";
-        return;
+      if (!newPwd) {
+        return showError(
+          editPasswordErrors,
+          newPasswordInput,
+          "Inserisci una nuova password"
+        );
       }
-
-      if (newPassword.length < 8) {
-        errorDiv.textContent = "⚠️ Password deve contenere minimo 8 caratteri";
-        errorDiv.style.display = "block";
-        return;
+      if (!isValidPassword(newPwd)) {
+        return showError(
+          editPasswordErrors,
+          newPasswordInput,
+          "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)"
+        );
+      }
+      if (!confirmPwd) {
+        return showError(
+          editPasswordErrors,
+          confirmNewPasswordInput,
+          "Conferma la nuova password"
+        );
+      }
+      if (newPwd !== confirmPwd) {
+        return showError(
+          editPasswordErrors,
+          confirmNewPasswordInput,
+          "Le nuove password non coincidono"
+        );
       }
 
       try {
