@@ -32,9 +32,9 @@ const __dirname = path.dirname(__filename);
 // ===== MIDDLEWARE =====
 app.use(express.json());
 app.use(cors());
-// app.use(express.static(path.join(__dirname, "../frontend")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.set("view engine", "ejs");
-// app.set("views", "../frontend/views");
+app.set("views", "../frontend/views");
 
 // ===== ROUTES =====
 app.use("/", pageRoutes); // Pagine (pubbliche e protette)

@@ -118,7 +118,7 @@
               </div>
               <button
                 class="btn-header-action"
-                onclick="openAddAnnotazioneModal()"
+                id="addAnnotazioneBtn"
                 title="Aggiungi annotazione"
               >
                 <i class="fas fa-plus-circle"></i>
@@ -144,15 +144,26 @@
             &times;
           </button>
         </div>
-        <form onsubmit="saveAnnotazione(event)">
+        <form
+          id="addAnnotazioneForm"
+          onsubmit="event.preventDefault()"
+          novalidate
+        >
           <div class="form-group">
             <textarea
               class="form-control form-control-large"
               id="annotazioneText"
               placeholder="Nuova Annotazione"
-              required
             >
             </textarea>
+          </div>
+          <!-- ✅ DIV ERRORI SOPRA I BOTTONI -->
+          <div class="form-group">
+            <div
+              class="modal-error"
+              id="addAnnotazioneError"
+              style="display: none"
+            ></div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary btn-salva">

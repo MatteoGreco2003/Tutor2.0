@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   studenteID = urlParams.get("studenteID");
 
   if (!studenteID) {
-    showError("ID studente non valido");
     setTimeout(() => window.history.back(), 2000);
     return;
   }
@@ -46,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ===== SETUP LISTENERS =====
   setupEventListeners();
   setupLogout();
-  setupModalListeners();
+  setupAnnotazioneModal();
 });
 
 // ==========================================
@@ -69,14 +68,119 @@ function setupLogout() {
         if (response.ok) {
           localStorage.removeItem("token");
           window.location.href = "/";
-        } else {
-          alert("Errore durante il logout");
         }
       } catch (error) {
         console.error("Errore logout:", error);
-        alert("Errore durante il logout");
       }
     });
+}
+
+// ==========================================
+// SETUP ANNOTAZIONE MODAL
+// ==========================================
+
+function setupAnnotazioneModal() {
+  const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
+  const addAnnotazioneForm = document.getElementById("addAnnotazioneForm");
+  const annotazioneText = document.getElementById("annotazioneText");
+  const submitBtn = addAnnotazioneForm.querySelector('button[type="submit"]');
+  const cancelBtn = document.getElementById("cancelAddAnnotazione");
+  const closeBtn = document.getElementById("closeAddAnnotazione");
+  const errorDiv = document.getElementById("addAnnotazioneError");
+
+  // Apri modal quando clicchi bottone add-annotazione
+  document
+    .getElementById("addAnnotazioneBtn")
+    ?.addEventListener("click", () => {
+      resetAnnotazioneForm();
+      addAnnotazioneModal.classList.add("show");
+      document.body.classList.add("modal-open");
+      errorDiv.style.display = "none";
+      annotazioneText.focus();
+    });
+
+  // Chiudi modal (X)
+  closeBtn?.addEventListener("click", () => {
+    addAnnotazioneModal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    errorDiv.style.display = "none";
+    resetAnnotazioneForm();
+  });
+
+  // Chiudi modal (Annulla)
+  cancelBtn?.addEventListener("click", () => {
+    addAnnotazioneModal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+    errorDiv.style.display = "none";
+    resetAnnotazioneForm();
+  });
+
+  // Chiudi modal cliccando fuori
+  window.addEventListener("click", (e) => {
+    if (e.target === addAnnotazioneModal) {
+      addAnnotazioneModal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+      errorDiv.style.display = "none";
+      resetAnnotazioneForm();
+    }
+  });
+
+  // Submit form - Salva annotazione
+  addAnnotazioneForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const testo = annotazioneText.value.trim();
+
+    if (!testo) {
+      showErrorModal(errorDiv, "Inserisci il testo dell'annotazione");
+      return;
+    }
+
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Salvataggio...";
+      errorDiv.style.display = "none";
+
+      const response = await fetch(
+        `/tutor/studenti/${studenteID}/annotazioni`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            testo: testo,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        addAnnotazioneModal.classList.remove("show");
+        document.body.classList.remove("modal-open");
+        resetAnnotazioneForm();
+        await loadAnnotazioni();
+      } else {
+        showErrorModal(errorDiv, data.message || "Errore nel salvataggio");
+      }
+    } catch (error) {
+      console.error("Errore salvataggio annotazione:", error);
+      showErrorModal(errorDiv, "Errore di connessione al server");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Salva Annotazione";
+    }
+  });
+
+  // Reset form
+  function resetAnnotazioneForm() {
+    addAnnotazioneForm.reset();
+    annotazioneText.value = "";
+    annotazioneText.style.height = "120px";
+    errorDiv.style.display = "none";
+  }
 }
 
 // ==========================================
@@ -99,12 +203,9 @@ async function loadStudenteData() {
       currentStudenteData = data.studente;
       renderStudenteInfo(currentStudenteData);
       renderMaterie(data.materie?.lista || []);
-    } else {
-      showError(data.message || "Errore nel caricamento dei dati");
     }
   } catch (error) {
     console.error("Errore caricamento dati:", error);
-    showError("Errore di connessione al server");
   }
 }
 
@@ -216,18 +317,17 @@ function renderMaterie(materie) {
 
   container.innerHTML = materie
     .map((materia) => {
-      // ✅ LOGICA DEI COLORI
-      let colorMedia = "#a0a0a0"; // grigino (default SV)
+      let colorMedia = "#a0a0a0";
       let mediaDisplay = materia.media || "SV";
 
       if (mediaDisplay !== "SV") {
         const media = parseFloat(mediaDisplay);
         if (media < 6) {
-          colorMedia = "#ff4444"; // rosso
+          colorMedia = "#ff4444";
         } else if (media < 8) {
-          colorMedia = "#f59e0b"; // giallino
+          colorMedia = "#f59e0b";
         } else {
-          colorMedia = "#10b981"; // verde
+          colorMedia = "#10b981";
         }
       }
 
@@ -285,16 +385,15 @@ function renderVerificheStorico(verifiche) {
                 verifica.materialID?.nome || "Materia sconosciuta"
               )}</div>
               <div class="verifica-data">
-              <i class="fas fa-calendar"></i>
-              ${formattedDate}
-            </div>
+                <i class="fas fa-calendar"></i>
+                ${formattedDate}
+              </div>
             </div>
             <div class="verifica-voto" style="background-color: ${colorVoto};">
               ${verifica.voto}
             </div>
           </div>
           <div class="verifica-footer">
-           
             <div class="verifica-argomento">${escapeHtml(
               verifica.argomento
             )}</div>
@@ -338,10 +437,9 @@ function renderVerificheFuture(verifiche) {
                 verifica.materialID?.nome || "Materia sconosciuta"
               )}</div>
               <div class="verifica-data">
-              <i class="fas fa-calendar"></i>
-              ${formattedDate}
-            </div>
-             
+                <i class="fas fa-calendar"></i>
+                ${formattedDate}
+              </div>
             </div>
             <div class="verifica-voto" style="background-color: #a0a0a0;">
               DA FARE
@@ -381,141 +479,25 @@ function renderAnnotazioni(annotazioni) {
       });
 
       return `
-      <div class="annotation-item">
-        <div class="annotation-header">
-          <div class="annotation-text">${escapeHtml(ann.testo)}</div>
+        <div class="annotation-item">
+          <div class="annotation-header">
+            <div class="annotation-text">${escapeHtml(ann.testo)}</div>
+          </div>
+          <div class="annotation-date">
+            <i class="fas fa-calendar-alt"></i>
+            ${formattedDate}
+          </div>
+          <div class="annotation-actions">
+            <button class="btn-action btn-action-danger" onclick="deleteAnnotazione('${
+              ann._id
+            }')" title="Elimina annotazione">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </div>
-        <div class="annotation-date">
-          <i class="fas fa-calendar-alt"></i>
-          ${formattedDate}
-        </div>
-        <div class="annotation-actions">
-          <button class="btn-action btn-action-danger" onclick="deleteAnnotazione('${
-            ann._id
-          }')" title="Elimina annotazione">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    `;
+      `;
     })
     .join("");
-}
-
-// ==========================================
-// MODAL FUNCTIONS
-// ==========================================
-
-function openAddAnnotazioneModal() {
-  document.getElementById("addAnnotazioneModal").classList.add("show");
-  document.body.classList.add("modal-open");
-  document.getElementById("annotazioneText").focus();
-}
-
-function closeAddAnnotazioneModal() {
-  document.getElementById("addAnnotazioneModal").classList.remove("show");
-  document.body.classList.remove("modal-open");
-  document.getElementById("annotazioneText").value = "";
-  document.getElementById("charCount").textContent = "0";
-}
-
-function openAddMateriaModal() {
-  document.getElementById("addMateriaModal").classList.add("show");
-  document.body.classList.add("modal-open");
-  document.getElementById("materiaName").focus();
-}
-
-function closeAddMateriaModal() {
-  document.getElementById("addMateriaModal").classList.remove("show");
-  document.body.classList.remove("modal-open");
-  document.getElementById("materiaName").value = "";
-  document.getElementById("materiaMedio").value = "";
-}
-
-// ==========================================
-// MODAL EVENT LISTENERS
-// ==========================================
-
-function setupModalListeners() {
-  window.addEventListener("click", function (event) {
-    const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
-    const addMateriaModal = document.getElementById("addMateriaModal");
-
-    if (event.target === addAnnotazioneModal) {
-      closeAddAnnotazioneModal();
-    }
-    if (event.target === addMateriaModal) {
-      closeAddMateriaModal();
-    }
-  });
-
-  document.querySelectorAll(".btn-secondary").forEach((btn) => {
-    btn.addEventListener("click", function (e) {
-      if (this.closest("#addAnnotazioneModal")) {
-        closeAddAnnotazioneModal();
-      }
-      if (this.closest("#addMateriaModal")) {
-        closeAddMateriaModal();
-      }
-    });
-  });
-
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      closeAddAnnotazioneModal();
-      closeAddMateriaModal();
-    }
-  });
-}
-
-// ==========================================
-// FORM SUBMISSION FUNCTIONS
-// ==========================================
-
-async function saveAnnotazione(event) {
-  event.preventDefault();
-
-  const testo = document.getElementById("annotazioneText").value.trim();
-
-  if (!testo) {
-    showError("Inserisci il testo dell'annotazione");
-    return;
-  }
-
-  try {
-    const btn = event.target.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    const originalText = btn.textContent;
-    btn.textContent = "Salvataggio...";
-
-    // ✅ ROUTE CORRETTA
-    const response = await fetch(`/tutor/studenti/${studenteID}/annotazioni`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        testo: testo,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      showSuccess("✅ Annotazione salvata con successo");
-      closeAddAnnotazioneModal();
-      await loadAnnotazioni();
-    } else {
-      showError("❌ " + (data.message || "Errore nel salvataggio"));
-    }
-
-    btn.disabled = false;
-    btn.textContent = originalText;
-  } catch (error) {
-    console.error("Errore salvataggio annotazione:", error);
-    showError("❌ Errore di connessione al server");
-  }
 }
 
 // ==========================================
@@ -528,7 +510,6 @@ async function deleteAnnotazione(annotazioneID) {
   }
 
   try {
-    // ✅ ROUTE CORRETTA
     const response = await fetch(
       `/tutor/studenti/${studenteID}/annotazioni/${annotazioneID}`,
       {
@@ -541,33 +522,38 @@ async function deleteAnnotazione(annotazioneID) {
     );
 
     if (response.ok) {
-      showSuccess("✅ Annotazione eliminata");
       await loadAnnotazioni();
-    } else {
-      showError("❌ Errore nell'eliminazione");
     }
   } catch (error) {
     console.error("Errore eliminazione annotazione:", error);
-    showError("❌ Errore di connessione");
   }
 }
 
-function deleteMateria(materiaID) {
-  if (!confirm("Sei sicuro di voler eliminare questa materia?")) {
-    return;
-  }
+// ==========================================
+// GLOBAL MODAL FUNCTIONS
+// ==========================================
 
-  try {
-    showSuccess("✅ Materia eliminata");
-  } catch (error) {
-    console.error("Errore eliminazione materia:", error);
-    showError("❌ Errore di connessione");
-  }
+function openAddAnnotazioneModal() {
+  const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
+  const annotazioneText = document.getElementById("annotazioneText");
+  const errorDiv = document.getElementById("addAnnotazioneError");
+
+  addAnnotazioneModal.classList.add("show");
+  document.body.classList.add("modal-open");
+  errorDiv.style.display = "none";
+  annotazioneText.value = "";
+  annotazioneText.focus();
 }
 
-function editMateria(materiaID, nome, media) {
-  console.log("Edit materia:", materiaID, nome, media);
-  showInfo("ℹ️ Funzionalità di modifica in sviluppo");
+function closeAddAnnotazioneModal() {
+  const addAnnotazioneModal = document.getElementById("addAnnotazioneModal");
+  const annotazioneText = document.getElementById("annotazioneText");
+  const errorDiv = document.getElementById("addAnnotazioneError");
+
+  addAnnotazioneModal.classList.remove("show");
+  document.body.classList.remove("modal-open");
+  annotazioneText.value = "";
+  errorDiv.style.display = "none";
 }
 
 // ==========================================
@@ -584,29 +570,6 @@ function setupEventListeners() {
 // UTILITY FUNCTIONS
 // ==========================================
 
-function goBack() {
-  window.history.back();
-}
-
-function logoutUser() {
-  try {
-    fetch("/auth/logout", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  } catch (error) {
-    console.error("Errore logout:", error);
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  }
-}
-
 function escapeHtml(text) {
   const map = {
     "&": "&amp;",
@@ -618,28 +581,10 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-// ==========================================
-// NOTIFICATION FUNCTIONS
-// ==========================================
-
-function showSuccess(message) {
-  console.log(message);
-  alert(message);
+function showErrorModal(errorDiv, message) {
+  errorDiv.textContent = message;
+  errorDiv.style.display = "block";
 }
-
-function showError(message) {
-  console.error(message);
-  alert(message);
-}
-
-function showInfo(message) {
-  console.info(message);
-  alert(message);
-}
-
-// ==========================================
-// PAGE UNLOAD HANDLER
-// ==========================================
 
 window.addEventListener("pageshow", function () {
   if (!localStorage.getItem("token")) {
