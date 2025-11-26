@@ -4,7 +4,7 @@ import {
   getStudente,
   deleteStudente,
   getStatisticheStudenti,
-} from "../Controllers/adminController.js";
+} from "../controllers/adminController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

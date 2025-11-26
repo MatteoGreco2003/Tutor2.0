@@ -6,7 +6,7 @@ import {
   updateStudentPassword,
   updateStudentFamilyData,
   updateStudentSchoolData,
-} from "../Controllers/studentController.js";
+} from "../controllers/studentController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

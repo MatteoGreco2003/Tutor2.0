@@ -4,7 +4,7 @@ import {
   getMaterieStudente,
   deleteMateria,
   updateMateria,
-} from "../Controllers/subjectController.js";
+} from "../controllers/subjectController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

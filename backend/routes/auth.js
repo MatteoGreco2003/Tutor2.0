@@ -7,7 +7,7 @@ import {
   verifyHomeAdmin,
   forgotPassword,
   resetPassword,
-} from "../Controllers/authController.js";
+} from "../controllers/authController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 //verifyHomeTutor, nel import
 const router = express.Router();
