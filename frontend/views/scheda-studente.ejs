@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheda Studente</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/scheda-studente.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <button class="btn-back" onclick="goBack()" title="Torna indietro">
+          <i class="fas fa-chevron-left"></i> Indietro
+        </button>
+        <h1 class="header-title">📋 Scheda Studente</h1>
+      </div>
+      <div class="header-actions">
+        <div class="user-info">
+          <span class="user-name" id="tutorName">Tutor</span>
+          <div class="user-avatar" id="userAvatar">T</div>
+        </div>
+        <button class="btn-logout" onclick="logoutUser()" title="Esci">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Info Banner -->
+      <div class="info-banner" id="infoBanner">
+        <div class="banner-content">
+          <div class="banner-title">
+            <i class="fas fa-user-circle"></i>
+            <span id="studenteName">Caricamento...</span>
+          </div>
+          <div class="banner-info" id="bannerInfo">
+            <div class="info-item">
+              <span class="info-label">Email:</span>
+              <span class="info-value" id="studenteEmail">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Scuola:</span>
+              <span class="info-value" id="studenteScuola">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Telefono:</span>
+              <span class="info-value" id="studenteTelefono">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="sections-grid">
+        <!-- Left Column -->
+        <div class="column-left">
+          <!-- Storico Verifiche -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <i class="fas fa-history"></i>
+                Storico Verifiche
+              </div>
+              <span class="badge-count" id="countStorico">0</span>
+            </div>
+            <div class="section-content" id="storicoContent">
+              <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>Nessuna verifica nel passato</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verifiche Future -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Verifiche Future
+              </div>
+              <span class="badge-count" id="countFuture">0</span>
+            </div>
+            <div class="section-content" id="futureContent">
+              <div class="empty-state">
+                <i class="fas fa-calendar"></i>
+                <p>Nessuna verifica pianificata</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="column-right">
+          <!-- Materie -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <i class="fas fa-book"></i>
+                Materie
+              </div>
+              <button
+                class="btn-header-action"
+                onclick="openAddMateriaModal()"
+                title="Aggiungi materia"
+              >
+                <i class="fas fa-plus-circle"></i>
+              </button>
+            </div>
+            <div class="section-content" id="materieContent">
+              <div class="empty-state">
+                <i class="fas fa-book"></i>
+                <p>Nessuna materia associata</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Storico Annotazioni -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <i class="fas fa-sticky-note"></i>
+                Annotazioni
+              </div>
+              <button
+                class="btn-header-action"
+                onclick="openAddAnnotazioneModal()"
+                title="Aggiungi annotazione"
+              >
+                <i class="fas fa-plus-circle"></i>
+              </button>
+            </div>
+            <div class="section-content" id="annotazioniContent">
+              <div class="empty-state">
+                <i class="fas fa-sticky-note"></i>
+                <p>Nessuna annotazione</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Aggiungi Annotazione -->
+    <div class="modal" id="addAnnotazioneModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Nuova Annotazione</h2>
+          <button class="btn-close" onclick="closeAddAnnotazioneModal()">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveAnnotazione(event)">
+          <div class="form-group">
+            <label class="form-label" for="annotazioneText"
+              >Testo Annotazione</label
+            >
+            <textarea
+              class="form-control form-control-large"
+              id="annotazioneText"
+              placeholder="Scrivi qui la tua annotazione..."
+              required
+              maxlength="1000"
+            >
+            </textarea>
+            <span class="char-count"><span id="charCount">0</span>/1000</span>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeAddAnnotazioneModal()"
+            >
+              Annulla
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Salva Annotazione
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Aggiungi Materia -->
+    <div class="modal" id="addMateriaModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Aggiungi Materia</h2>
+          <button class="btn-close" onclick="closeAddMateriaModal()">
+            &times;
+          </button>
+        </div>
+        <form onsubmit="saveMateria(event)">
+          <div class="form-group">
+            <label class="form-label" for="materiaName">Materia</label>
+            <input
+              type="text"
+              class="form-control"
+              id="materiaName"
+              placeholder="Es: Matematica, Inglese..."
+              required
+              maxlength="100"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="materiaMedio">Media</label>
+            <input
+              type="number"
+              class="form-control"
+              id="materiaMedio"
+              step="0.5"
+              min="0"
+              max="10"
+              placeholder="Es: 7.5"
+              required
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeAddMateriaModal()"
+            >
+              Annulla
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Aggiungi Materia
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/scheda-studente.js"></script>
+</html>
