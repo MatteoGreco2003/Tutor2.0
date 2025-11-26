@@ -5,9 +5,6 @@ node_modules/
 .env
 .env.local
 
-#Dati sensibili
-config/database.js
-
 #Output build e log
 dist/
 build/
