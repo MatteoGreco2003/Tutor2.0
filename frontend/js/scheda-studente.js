@@ -575,15 +575,6 @@ function editMateria(materiaID, nome, media) {
 // ==========================================
 
 function setupEventListeners() {
-  const annotazioneText = document.getElementById("annotazioneText");
-  const charCount = document.getElementById("charCount");
-
-  if (annotazioneText) {
-    annotazioneText.addEventListener("input", function () {
-      charCount.textContent = this.value.length;
-    });
-  }
-
   document.querySelector(".btn-back")?.addEventListener("click", function () {
     window.history.back();
   });

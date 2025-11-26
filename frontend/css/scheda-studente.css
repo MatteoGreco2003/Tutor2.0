@@ -709,22 +709,15 @@ body.modal-open {
   );
   color: white;
   box-shadow: 0 2px 8px rgba(158, 63, 253, 0.3);
-}
-
-.btn-primary:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(158, 63, 253, 0.4);
-  transform: translateY(-2px);
+  flex: 1;
+  text-align: center;
 }
 
 .btn-secondary {
   background: var(--gray-light);
   color: var(--dark-text);
   border: 1.5px solid var(--gray-border);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--light-bg);
-  border-color: var(--primary-purple);
+  text-align: center;
 }
 
 .btn-danger {
@@ -748,10 +741,6 @@ body.modal-open {
   margin-top: 32px;
   padding-top: 24px;
   border-top: 2px solid var(--light-bg);
-}
-
-.modal-footer .btn {
-  flex: 1;
 }
 
 /* ========================================
