@@ -6,6 +6,10 @@ import {
   getVerificheFuture,
   getMaterieStudente,
   checkMaterie,
+  getTutorData,
+  deleteTutorProfile,
+  associaStudente,
+  rimuoviStudente,
 } from "../controllers/tutorController.js";
 import {
   getAnnotazioni,
@@ -78,5 +82,19 @@ router.delete(
   verifyToken,
   deleteAnnotazione
 );
+
+// ===== TUTOR - GESTIONE PROFILO =====
+
+// GET /tutor/data - Leggi dati tutor loggato
+router.get("/data", verifyToken, getTutorData);
+
+// DELETE /tutor/profile - Elimina profilo tutor loggato
+router.delete("/profile", verifyToken, deleteTutorProfile);
+
+// POST /tutor/studenti/associa - Associa studente
+router.post("/studenti/associa", verifyToken, associaStudente);
+
+// DELETE /tutor/studenti/rimuovi - Rimuovi studente
+router.delete("/studenti/rimuovi", verifyToken, rimuoviStudente);
 
 export default router;

@@ -2,6 +2,7 @@ import Tutor from "../models/Tutor.js";
 import Studenti from "../models/Student.js";
 import Materie from "../models/Subject.js";
 import Verifiche from "../models/Test.js";
+import Annotazioni from "../models/Annotation.js";
 
 // ===== LEGGI STUDENTI ASSOCIATI AL TUTOR =====
 export const getStudentiAssociati = async (req, res) => {
@@ -124,6 +125,7 @@ export const getStudenteRiepilogo = async (req, res) => {
         genitore1: studente.genitore1,
         genitore2: studente.genitore2,
         emailFamiglia: studente.emailFamiglia,
+        emailInsegnanti: studente.emailInsegnanti || [],
       },
       materie: {
         totale: materieConMedia.length,
@@ -319,6 +321,151 @@ export const checkMaterie = async (req, res) => {
     });
   } catch (error) {
     console.error("Errore controllo materie:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+
+// ===== LEGGI DATI DEL TUTOR LOGGATO =====
+export const getTutorData = async (req, res) => {
+  try {
+    const tutorID = req.user.userId;
+
+    const tutor = await Tutor.findById(tutorID).select(
+      "email nome cognome studentiAssociati"
+    );
+
+    if (!tutor) {
+      return res.status(404).json({
+        message: "Tutor non trovato",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: tutor,
+    });
+  } catch (error) {
+    console.error("Errore nel recupero dati tutor:", error);
+    res.status(500).json({ message: "Errore del server" });
+  }
+};
+
+// ===== ELIMINA IL PROFILO DEL TUTOR LOGGATO E TUTTI I DATI ASSOCIATI =====
+export const deleteTutorProfile = async (req, res) => {
+  try {
+    const tutorID = req.user.userId;
+
+    // Cerca il tutor
+    const tutor = await Tutor.findById(tutorID);
+
+    if (!tutor) {
+      return res.status(404).json({
+        message: "Tutor non trovato",
+      });
+    }
+
+    // ===== STEP 1: ELIMINA TUTTE LE ANNOTAZIONI DEL TUTOR =====
+    const annotazioniEliminate = await Annotazioni.deleteMany({
+      tutorID: tutorID,
+    });
+
+    // ===== STEP 2: ELIMINA IL TUTOR =====
+    await Tutor.findByIdAndDelete(tutorID);
+
+    res.status(200).json({
+      success: true,
+      message: "Profilo tutor eliminato con successo",
+      dettagli: {
+        annotazioniEliminate: annotazioniEliminate.deletedCount,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Errore nell'eliminazione del profilo tutor:", error);
+    res.status(500).json({
+      message: "Errore del server",
+      error: error.message,
+    });
+  }
+};
+
+// ===== AGGIUNGI STUDENTE ASSOCIATO =====
+export const associaStudente = async (req, res) => {
+  try {
+    const tutorID = req.user.userId;
+    const { studenteID } = req.body;
+
+    if (!studenteID) {
+      return res.status(400).json({
+        message: "Errore: studenteID mancante",
+      });
+    }
+
+    // Verifica che il tutor esista
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor) {
+      return res.status(404).json({
+        message: "Tutor non trovato",
+      });
+    }
+
+    // Verifica che lo studente non sia già associato
+    if (tutor.studentiAssociati.includes(studenteID)) {
+      return res.status(400).json({
+        message: "Lo studente è già associato a questo tutor",
+      });
+    }
+
+    // Aggiungi lo studente
+    tutor.studentiAssociati.push(studenteID);
+    await tutor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Studente associato con successo",
+      studentiAssociati: tutor.studentiAssociati,
+    });
+  } catch (error) {
+    console.error("Errore associazione studente:", error);
+    res.status(500).json({
+      message: "Errore del server",
+    });
+  }
+};
+// ===== RIMUOVI STUDENTE ASSOCIATO =====
+export const rimuoviStudente = async (req, res) => {
+  try {
+    const tutorID = req.user.userId;
+    const { studenteID } = req.body;
+
+    if (!studenteID) {
+      return res.status(400).json({
+        message: "Errore: studenteID mancante",
+      });
+    }
+
+    // Verifica che il tutor esista
+    const tutor = await Tutor.findById(tutorID);
+    if (!tutor) {
+      return res.status(404).json({
+        message: "Tutor non trovato",
+      });
+    }
+
+    // Rimuovi lo studente
+    tutor.studentiAssociati = tutor.studentiAssociati.filter(
+      (id) => id.toString() !== studenteID
+    );
+    await tutor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Studente rimosso con successo",
+      studentiAssociati: tutor.studentiAssociati,
+    });
+  } catch (error) {
+    console.error("Errore rimozione studente:", error);
     res.status(500).json({
       message: "Errore del server",
     });

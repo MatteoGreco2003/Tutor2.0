@@ -24,9 +24,33 @@ router.get("/home-studenti", (req, res) => {
   res.render("home-studente");
 });
 
+router.get("/home-tutor", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate"); //evita caricamento pagine dalla cache
+  res.render("home-tutor");
+});
+
 router.get("/home-admin", (req, res) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate");
   res.render("admin");
+});
+
+router.get("/profilo-tutor", (req, res) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.render("riepilogo-tutor");
+});
+
+//pagina di tutor per vedere studente singolo
+router.get("/scheda-studente", (req, res) => {
+  const { studenteID } = req.query;
+
+  if (!studenteID) {
+    return res.status(400).send("Errore: studenteID mancante");
+  }
+
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate");
+
+  // Renderizza la pagina EJS/HTML e passa l'ID come variabile
+  res.render("scheda-studente", { studenteID });
 });
 
 // Aggiungi altre pagine protette qui se servono

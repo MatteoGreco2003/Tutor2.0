@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profilo Tutor</title>
+    <link rel="stylesheet" href="css/riepilogo-tutor.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <a
+          href="/home-tutor"
+          class="user-icon"
+          style="text-decoration: none; color: inherit"
+          >👤</a
+        >
+        <a
+          href="/home-tutor"
+          class="header-title"
+          style="text-decoration: none; color: inherit"
+          >Nome e Cognome</a
+        >
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a href="/home-tutor" class="sidebar-item" data-page="home">🏠 Home</a>
+        <a href="/profilo-tutor" class="sidebar-item active" data-page="profilo"
+          >👨‍🏫 Profilo Tutor</a
+        >
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="https://www.instagram.com/toptutor.it/" target="_blank"
+              ><i class="fab fa-instagram"></i
+            ></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- DATI PERSONALI -->
+        <div class="profile-card">
+          <div class="card-header">
+            <h2 class="card-title">📋 Profilo Tutor</h2>
+            <button class="edit-btn" id="editPersonalBtn">
+              <i class="fas fa-pen"></i> Modifica
+            </button>
+          </div>
+
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <label class="info-label">Nome</label>
+                <p class="info-value" id="personalNome">-</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">Cognome</label>
+                <p class="info-value" id="personalCognome">-</p>
+              </div>
+            </div>
+
+            <!-- EMAIL (non modificabile) -->
+            <div class="email">
+              <div class="info-item">
+                <label class="info-label">Email</label>
+                <p class="info-value" id="personalEmail">-</p>
+              </div>
+            </div>
+
+            <!-- MODIFICA PASSWORD -->
+            <div class="modifyPassword">
+              <h3>🔐 Sicurezza</h3>
+              <button class="edit-btn" id="editPasswordBtn">
+                <i class="fas fa-lock"></i> Modifica Password
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENTI ASSOCIATI -->
+        <div class="profile-card">
+          <div class="card-header">
+            <h2 class="card-title">👨‍🎓 Studenti Associati</h2>
+            <span class="student-count" id="studentCount">0</span>
+          </div>
+
+          <div class="card-body">
+            <div id="studentiContainer">
+              <p class="empty-state-message">Caricamento...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modale Elimina Profilo -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Dati Personali -->
+    <div id="editPersonalModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditPersonal">&times;</span>
+        <h2>Modifica dati personali</h2>
+        <p>
+          Aggiorna i tuoi dati personali. <br />
+          Le modifiche avranno effetto sul tuo account.
+        </p>
+
+        <form id="editPersonalForm" novalidate>
+          <!-- Nome e Cognome -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editNome">Nome</label>
+              <input
+                type="text"
+                id="editNome"
+                name="editNome"
+                placeholder="Nome"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="editCognome">Cognome</label>
+              <input
+                type="text"
+                id="editCognome"
+                name="editCognome"
+                placeholder="Cognome"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Errori -->
+          <div id="editPersonalErrors" class="error-messages"></div>
+
+          <!-- Bottoni -->
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="btn-save">Salva modifiche</button>
+            <button type="button" class="btn-annulla" id="cancelEditPersonal">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modifica Password -->
+    <div id="editPasswordModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeEditPassword">&times;</span>
+        <h2>Modifica password</h2>
+        <p>
+          Inserisci la tua password attuale e la nuova password che desideri
+          impostare.
+        </p>
+
+        <form id="editPasswordForm" novalidate>
+          <div class="form-group">
+            <label for="oldPassword">Password attuale</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="oldPassword"
+                name="oldPassword"
+                autocomplete="current-password"
+                placeholder="Password Attuale"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="oldPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Nuova password</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                autocomplete="new-password"
+                placeholder="Nuova Password"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="newPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmNewPassword">Conferma nuova password</label>
+            <div class="password-input-box">
+              <input
+                type="password"
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                autocomplete="new-password"
+                placeholder="Conferma Nuova Password"
+                required
+              />
+              <i
+                class="fa-solid fa-lock toggle-password"
+                data-input="confirmNewPassword"
+              ></i>
+            </div>
+          </div>
+
+          <div id="editPasswordErrors" class="error-messages"></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 24px">
+            <button type="submit" class="btn-save">Salva nuova password</button>
+            <button type="button" class="btn-annulla" id="cancelEditPassword">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script src="/js/riepilogo-tutor.js"></script>
+</html>

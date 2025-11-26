@@ -1,6 +1,9 @@
 import Tutor from "../models/Tutor.js";
 import Studenti from "../models/Student.js";
 import Annotazioni from "../models/Annotation.js";
+import Materie from "../models/Subject.js";
+import Verifiche from "../models/Test.js";
+
 // ===== CREA TUTOR (ADMIN) =====
 export const createTutor = async (req, res) => {
   try {
@@ -183,12 +186,12 @@ export const updateTutor = async (req, res) => {
   }
 };
 
-// ===== ELIMINA TUTOR (ADMIN) =====
+// ===== ELIMINA TUTOR (ADMIN) - CON CASCATA =====
 export const deleteTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
 
-    const tutor = await Tutor.findByIdAndDelete(tutorID);
+    const tutor = await Tutor.findById(tutorID);
 
     if (!tutor) {
       return res.status(404).json({
@@ -196,9 +199,20 @@ export const deleteTutor = async (req, res) => {
       });
     }
 
+    // ===== STEP 1: ELIMINA TUTTE LE ANNOTAZIONI DEL TUTOR =====
+    const annotazioniEliminate = await Annotazioni.deleteMany({
+      tutorID: tutorID,
+    });
+
+    // ===== STEP 2: ELIMINA IL TUTOR =====
+    await Tutor.findByIdAndDelete(tutorID);
+
     res.status(200).json({
       message: "Tutor eliminato con successo",
-      tutorID: tutorID,
+      dettagli: {
+        tutorID: tutorID,
+        annotazioniEliminate: annotazioniEliminate.deletedCount,
+      },
     });
   } catch (error) {
     console.error("Errore eliminazione tutor:", error);
@@ -398,12 +412,11 @@ export const getStudente = async (req, res) => {
   }
 };
 
-// ===== ELIMINA STUDENTE (ADMIN) =====
+// ===== ELIMINA STUDENTE (ADMIN) - CON CASCATA COMPLETA =====
 export const deleteStudente = async (req, res) => {
   try {
     const { studenteID } = req.params;
 
-    // Controlla se lo studente esiste
     const studente = await Studenti.findById(studenteID);
     if (!studente) {
       return res.status(404).json({
@@ -411,18 +424,41 @@ export const deleteStudente = async (req, res) => {
       });
     }
 
-    // Rimuovi lo studente da tutti i tutor che lo hanno associato
-    await Tutor.updateMany(
+    // ===== STEP 1: ELIMINA TUTTE LE MATERIE DELLO STUDENTE =====
+    const Materie = (await import("../models/Subject.js")).default;
+    const materieEliminategni = await Materie.deleteMany({
+      studenteId: studenteID,
+    });
+
+    // ===== STEP 2: ELIMINA TUTTE LE VERIFICHE DELLO STUDENTE =====
+    const Verifiche = (await import("../models/Test.js")).default;
+    const verificheEliminate = await Verifiche.deleteMany({
+      studenteID: studenteID,
+    });
+
+    // ===== STEP 3: ELIMINA TUTTE LE ANNOTAZIONI DELLO STUDENTE =====
+    const annotazioniEliminate = await Annotazioni.deleteMany({
+      studenteID: studenteID,
+    });
+
+    // ===== STEP 4: RIMUOVI LO STUDENTE DALL'ARRAY STUDENTI ASSOCIATI DEI TUTOR =====
+    const tutorAggiornati = await Tutor.updateMany(
       { studentiAssociati: studenteID },
       { $pull: { studentiAssociati: studenteID } }
     );
 
-    // Elimina lo studente
+    // ===== STEP 5: ELIMINA LO STUDENTE =====
     await Studenti.findByIdAndDelete(studenteID);
 
     res.status(200).json({
       message: "Studente eliminato con successo",
-      studenteID: studenteID,
+      dettagli: {
+        studenteID: studenteID,
+        materieEliminate: materieEliminategni.deletedCount,
+        verificheEliminate: verificheEliminate.deletedCount,
+        annotazioniEliminate: annotazioniEliminate.deletedCount,
+        tutorAggiornati: tutorAggiornati.modifiedCount,
+      },
     });
   } catch (error) {
     console.error("Errore eliminazione studente:", error);

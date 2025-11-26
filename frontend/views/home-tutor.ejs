@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Tutor</title>
+    <link rel="stylesheet" href="css/home-tutor.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <a
+          href="/home-tutor"
+          class="user-icon"
+          style="text-decoration: none; color: inherit"
+          >👤</a
+        >
+        <a
+          href="/home-tutor"
+          class="header-title"
+          style="text-decoration: none; color: inherit"
+          >Nome e Cognome</a
+        >
+      </div>
+      <button class="logout-btn">Disconnettiti</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <a href="/home-tutor" class="sidebar-item active">🏠 Home</a>
+        <a href="/profilo-tutor" class="sidebar-item">👨‍🏫 Profilo Tutor</a>
+        <div class="sidebar-footer">
+          <div class="sidebar-button">
+            <button class="delete-btn">🗑️ Elimina profilo</button>
+          </div>
+          <div class="outro">
+            <p>
+              Powered by
+              <a href="https://www.toptutor.it/" target="_blank">toptutor.it</a>
+            </p>
+          </div>
+          <div class="sidebar-socials">
+            <a href="https://www.instagram.com/toptutor.it/" target="_blank">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h2 class="page-title">Portafoglio Studenti</h2>
+        <div class="section">
+          <div class="quick-actions">
+            <h3>Azioni Rapide</h3>
+            <div class="actions-grid">
+              <button class="action-btn" id="addStudentBtn">
+                <i class="fas fa-link"></i>
+                Aggiungi Studente
+              </button>
+              <button class="action-btn remove" id="removeStudentBtn">
+                <i class="fas fa-unlink"></i>
+                Rimuovi Studente
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- SEZIONE TABELLA STUDENTI ASSOCIATI -->
+        <div class="section">
+          <div class="section-header">
+            <h3 style="margin: 0">Tabella Studenti Associati</h3>
+            <div class="student-count">
+              <span>Totale Studenti Associati:</span>
+              <strong id="totalStudentiCount">0</strong>
+            </div>
+          </div>
+
+          <div class="student-table-container">
+            <table class="student-table">
+              <thead>
+                <tr>
+                  <th>Nome e Cognome</th>
+                  <th>Email</th>
+                  <th>Scuola</th>
+                  <th>Materie Insufficienti</th>
+                  <th>Azioni</th>
+                </tr>
+              </thead>
+              <tbody id="tutorStudentTableBody">
+                <!-- Render JS qui -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- MODAL: Aggiungi Studente Associato -->
+    <div id="addStudentModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeAddStudent">&times;</span>
+        <h2>Aggiungi Studente Associato</h2>
+        <form id="addStudentForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="selectStudenteToAdd">Scegli Studente</label>
+            <select id="selectStudenteToAdd" name="studenteID" required>
+              <option value="">Seleziona Studente</option>
+            </select>
+          </div>
+
+          <div
+            id="addStudentError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Aggiungi Studente
+            </button>
+            <button type="button" class="btn-annulla" id="cancelAddStudent">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Rimuovi Studente Associato -->
+    <div id="removeStudentModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeRemoveStudent">&times;</span>
+        <h2>Rimuovi Studente Associato</h2>
+        <form id="removeStudentForm" novalidate>
+          <div style="margin-bottom: 16px">
+            <label for="selectStudenteToRemove">Scegli Studente</label>
+            <select id="selectStudenteToRemove" name="studenteID" required>
+              <option value="">Seleziona Studente</option>
+            </select>
+          </div>
+
+          <div
+            id="removeStudentError"
+            class="error-msg"
+            style="display: none; margin-bottom: 12px"
+          ></div>
+
+          <div style="display: flex; gap: 14px; margin-top: 20px">
+            <button type="submit" class="plan-btn" style="margin: 0">
+              Rimuovi Studente
+            </button>
+            <button type="button" class="btn-annulla" id="cancelRemoveStudent">
+              Annulla
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: VISUALIZZA PROFILO STUDENTE -->
+    <div id="viewStudenteModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeViewStudente">&times;</span>
+        <h2 id="modalProfileTitle" style="margin: 0">Profilo Studente</h2>
+
+        <div class="modal-body">
+          <!-- SEZIONE 1: DATI PERSONALI -->
+          <div class="profile-section">
+            <h3>Dati Personali</h3>
+            <div class="profile-grid">
+              <!-- RIGA 1: Nome, Cognome, Telefono -->
+              <div class="profile-field">
+                <label>Nome</label>
+                <p id="profile-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Cognome</label>
+                <p id="profile-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Telefono</label>
+                <p id="profile-telefono">-</p>
+              </div>
+
+              <!-- RIGA 2: Grado e Indirizzo Scolastico -->
+              <div class="profile-field">
+                <label>Grado Scolastico</label>
+                <p id="profile-grado-scolastico">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Indirizzo Scolastico</label>
+                <p id="profile-indirizzo-scolastico">-</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEZIONE 2: DATI FAMIGLIA -->
+          <div class="profile-section">
+            <h3>Dati Famiglia</h3>
+            <div class="profile-grid">
+              <!-- RIGA 1: Genitore 1 (Nome, Cognome, Telefono) -->
+              <div class="profile-field">
+                <label>Genitore 1 - Nome</label>
+                <p id="profile-genitore1-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 1 - Cognome</label>
+                <p id="profile-genitore1-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 1 - Telefono</label>
+                <p id="profile-genitore1-telefono">-</p>
+              </div>
+
+              <!-- RIGA 2: Genitore 2 (Nome, Cognome, Telefono) -->
+              <div class="profile-field">
+                <label>Genitore 2 - Nome</label>
+                <p id="profile-genitore2-nome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 2 - Cognome</label>
+                <p id="profile-genitore2-cognome">-</p>
+              </div>
+              <div class="profile-field">
+                <label>Genitore 2 - Telefono</label>
+                <p id="profile-genitore2-telefono">-</p>
+              </div>
+
+              <!-- RIGA 3: Email Famiglia -->
+              <div class="profile-field">
+                <label>Email Famiglia</label>
+                <p id="profile-email-famiglia">-</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEZIONE 3: DATI SCUOLA -->
+          <div class="profile-section">
+            <h3>Dati Scuola</h3>
+            <div class="profile-field">
+              <label>Email Professori</label>
+              <div id="profile-email-professori">
+                <p>-</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="closeViewStudenteBtn" class="btn-close">Chiudi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale Elimina Profilo (nascosta inizialmente) -->
+    <div id="deleteProfileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeDeleteProfile">&times;</span>
+        <h2>Elimina profilo</h2>
+        <p>
+          Sei sicuro di eliminare il tuo profilo?<br />
+          Una volta selezionato <b>Elimina comunque</b> non sarai più in grado
+          di recuperare le tue informazioni.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 20px">
+          <button
+            id="confirmDeleteProfile"
+            class="delete-btn"
+            style="margin: 0"
+          >
+            Elimina comunque
+          </button>
+          <button id="cancelDeleteProfile" class="btn-annulla">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="/js/home-tutor.js"></script>
+</html>
