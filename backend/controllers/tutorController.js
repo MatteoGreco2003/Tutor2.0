@@ -166,18 +166,18 @@ export const getVerificheStorico = async (req, res) => {
       });
     }
 
-    // ===== OGGI A MEZZANOTTE =====
-    const oggi = new Date();
-    oggi.setHours(0, 0, 0, 0);
+    // OGGI: fine giornata
+    const oggiFine = new Date();
+    oggiFine.setHours(23, 59, 59, 999);
 
-    // ===== RECUPERA VERIFICHE PASSATE CON VOTO =====
+    // Recupera verifiche fino a fine oggi
     const verifiche = await Verifiche.find({
       studenteID: studenteID,
-      data: { $lt: oggi }, // Data PRIMA di oggi
-      voto: { $ne: null }, // CON VOTO
+      data: { $lte: oggiFine },
+      voto: { $ne: null },
     })
       .populate("materialID", "nome")
-      .sort({ data: -1 }); // Più recenti prima
+      .sort({ data: -1 });
 
     res.status(200).json({
       message: "Storico verifiche recuperato con successo",
