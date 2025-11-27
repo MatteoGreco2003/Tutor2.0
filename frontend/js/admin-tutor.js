@@ -220,7 +220,6 @@ function setupCreateTutorModal() {
       const data = await response.json();
 
       if (response.ok) {
-        showToast("✅ Tutor creato con successo", "success");
         createTutorModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         createTutorForm.reset();
@@ -237,45 +236,48 @@ function setupCreateTutorModal() {
       submitCreateTutorBtn.textContent = "Crea Tutor";
     }
   });
-
-  // Setup toggle password
-  setupTutorPasswordToggle();
 }
 
 // ===== TOGGLE PASSWORD VISIBILITY =====
 function setupTutorPasswordToggle() {
   document
-    .querySelectorAll("#createTutorModal .toggle-password")
-    .forEach((icon) => {
+    .querySelectorAll("#createTutorModal .password-input-box")
+    .forEach((box) => {
+      const icon = box.querySelector(".toggle-password");
+      const input = box.querySelector("input");
+
+      if (!icon || !input) return;
+
       const inputId = icon.getAttribute("data-input");
-      const input = document.getElementById(inputId);
+      const actualInput = document.getElementById(inputId);
+
+      if (!actualInput) return;
 
       function updateIcon() {
-        if (input.value.length > 0) {
+        if (actualInput.value.length > 0) {
           icon.classList.remove("fa-lock");
           icon.classList.add("fa-eye");
           icon.style.cursor = "pointer";
-          icon.style.pointerEvents = "auto"; // ← AGGIUNGI QUESTA RIGA
+          icon.style.pointerEvents = "auto";
         } else {
           icon.classList.remove("fa-eye");
           icon.classList.add("fa-lock");
-          input.type = "password";
+          actualInput.type = "password";
           icon.style.cursor = "default";
-          icon.style.pointerEvents = "none"; // ← AGGIUNGI QUESTA RIGA
+          icon.style.pointerEvents = "none";
         }
       }
 
-      input.addEventListener("input", updateIcon);
+      actualInput.addEventListener("input", updateIcon);
 
+      // ✅ Toggle senza preventDefault
       icon.addEventListener("click", (e) => {
-        // ← AGGIUNGI (e)
-        e.stopPropagation(); // ← AGGIUNGI QUESTA RIGA
-        if (input.value.length > 0) {
-          if (input.type === "password") {
-            input.type = "text";
-          } else {
-            input.type = "password";
-          }
+        e.stopPropagation();
+
+        if (actualInput.type === "password") {
+          actualInput.type = "text";
+        } else {
+          actualInput.type = "password";
         }
       });
 
@@ -447,18 +449,15 @@ function setupDeleteTutorModal() {
       });
 
       if (response.ok) {
-        showToast("✅ Tutor eliminato con successo", "success");
         deleteModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         await loadTutor();
         tutorToDelete = null;
       } else {
         const data = await response.json();
-        showToast(`❌ ${data.message || "Errore nell'eliminazione"}`, "error");
       }
     } catch (error) {
       console.error("Errore eliminazione:", error);
-      showToast("❌ Errore di connessione al server", "error");
     } finally {
       deleteConfirmBtn.disabled = false;
       deleteConfirmBtn.textContent = "Elimina";
@@ -544,7 +543,6 @@ function setupAssegnaStudenteModal() {
       }
     } catch (error) {
       console.error("Errore caricamento studenti:", error);
-      showToast("❌ Errore nel caricamento degli studenti", "error");
     }
   }
 
@@ -606,7 +604,6 @@ function setupAssegnaStudenteModal() {
       const data = await response.json();
 
       if (response.ok) {
-        showToast("✅ Studente assegnato con successo", "success");
         assegnaModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         await loadTutor();
@@ -752,7 +749,6 @@ function setupRimuoviStudenteModal() {
       const data = await response.json();
 
       if (response.ok) {
-        showToast("✅ Studente rimosso con successo", "success");
         rimuoviModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         await loadTutor();
@@ -855,6 +851,7 @@ function validateTutorForm() {
 // ===== INITIALIZATION =====
 loadTutor();
 setupCreateTutorModal();
+setupTutorPasswordToggle();
 setupViewTutorModal();
 setupDeleteTutorModal();
 setupAssegnaStudenteModal();

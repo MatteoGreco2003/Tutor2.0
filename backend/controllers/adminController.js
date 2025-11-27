@@ -302,16 +302,12 @@ export const rimuoviStudenteDaTutor = async (req, res) => {
       (id) => id.toString() !== studenteID
     );
     await tutor.save();
-    console.log(`✅ Studente ${studenteID} rimosso dall'array del tutor`);
 
     // ===== STEP 2: ELIMINA TUTTE LE ANNOTAZIONI COLLEGATE =====
     const annotazioniEliminate = await Annotazioni.deleteMany({
       tutorID: tutorID,
       studenteID: studenteID,
     });
-    console.log(
-      `✅ Annotazioni eliminate: ${annotazioniEliminate.deletedCount}`
-    );
 
     res.status(200).json({
       message: "Studente rimosso dal tutor con successo",

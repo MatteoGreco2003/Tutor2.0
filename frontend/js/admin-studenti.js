@@ -210,7 +210,6 @@ function openDeleteStudenteModal(studenteID) {
       );
 
       if (response.ok) {
-        showToast("✅ Studente eliminato con successo", "success");
         deleteStudenteModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         await loadStudenti();

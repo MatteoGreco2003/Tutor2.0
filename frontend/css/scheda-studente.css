@@ -890,3 +890,98 @@ body.modal-open {
   content: "⚠️";
   font-size: 16px;
 }
+
+/* ===== ANNOTAZIONI INLINE ROW ===== */
+.annotation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.annotation-date-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--light-text);
+}
+
+.annotation-date-inline i {
+  font-size: 16px;
+}
+
+.annotation-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.annotation-actions button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+  color: var(--white);
+}
+
+.btn-action {
+  background-color: var(--blue-accent);
+}
+
+.btn-action:hover {
+  background-color: var(--blue-accent-dark);
+  transform: scale(1.1);
+}
+
+.btn-action i {
+  color: var(--white);
+}
+
+.btn-action-danger {
+  background-color: var(--error-red);
+}
+
+.btn-action-danger:hover {
+  background-color: var(--error-red-dark);
+  transform: scale(1.1);
+}
+
+.btn-action-danger i {
+  color: var(--white);
+}
+
+/* Testo dettaglio annotazione nella modal */
+#viewAnnotazioneText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--dark-text);
+  white-space: pre-wrap;
+}
+
+#viewAnnotazioneModal .modal-header,
+#confirmDeleteAnnotazioneModal .modal-header {
+  margin: 0;
+}
+
+#viewAnnotazioneModal .section-content,
+#confirmDeleteAnnotazioneModal .section-content {
+  min-height: auto;
+  padding: 32px 0 32px 0;
+}
+
+#viewAnnotazioneModal .modal-footer,
+#confirmDeleteAnnotazioneModal .modal-footer {
+  margin: 0;
+  justify-content: end;
+}
+
+#confirmDeleteAnnotazioneModal .btn-danger {
+  flex: 1;
+}

@@ -22,31 +22,6 @@ window.addEventListener("popstate", function (event) {
   window.history.pushState(null, null, window.location.href);
 });
 
-// ===== TOAST NOTIFICATIONS =====
-function showToast(message, type = "success") {
-  const container = document.getElementById("toastContainer");
-  const toast = document.createElement("div");
-  toast.className = `toast toast-${type}`;
-
-  const icons = {
-    success: "fa-check-circle",
-    error: "fa-exclamation-circle",
-    info: "fa-info-circle",
-  };
-
-  toast.innerHTML = `
-    <i class="fas ${icons[type]}"></i>
-    <span>${message}</span>
-  `;
-
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.add("removing");
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-}
-
 // ===== CARICAMENTO PAGINA =====
 document.addEventListener("DOMContentLoaded", async function () {
   if (!token) {

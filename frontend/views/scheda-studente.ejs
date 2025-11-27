@@ -180,6 +180,73 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal Visualizza Annotazione -->
+    <div class="modal" id="viewAnnotazioneModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Dettaglio Annotazione</h2>
+          <button class="btn-close" onclick="closeViewAnnotazioneModal()">
+            &times;
+          </button>
+        </div>
+        <div class="section-content">
+          <div class="annotation-date-inline">
+            <i class="fas fa-calendar-alt"></i>
+            <span id="viewAnnotazioneDate">-</span>
+          </div>
+          <div class="form-group" style="margin-top: 20px">
+            <p id="viewAnnotazioneText" class="annotation-text"></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeViewAnnotazioneModal()"
+          >
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Conferma Eliminazione Annotazione -->
+    <div class="modal" id="confirmDeleteAnnotazioneModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Conferma eliminazione</h2>
+          <button
+            class="btn-close"
+            onclick="closeConfirmDeleteAnnotazioneModal()"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="section-content">
+          <p class="confirm-text">
+            Sei sicuro di voler eliminare questa annotazione? Questa azione non
+            può essere annullata.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeConfirmDeleteAnnotazioneModal()"
+          >
+            Annulla
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            onclick="confirmDeleteAnnotazione()"
+          >
+            Elimina comunque
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
   <!-- Scripts -->
   <script src="/js/api.js"></script>

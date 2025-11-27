@@ -8,6 +8,11 @@ window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
+// ===== FUNZIONE BACK AL PORTFOLIO =====
+function goBack() {
+  window.location.href = "/home-tutor";
+}
+
 // ===== GLOBAL VARIABLES =====
 let studenteID = null;
 let token = null;
@@ -43,7 +48,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   await loadVerificheFuture();
 
   // ===== SETUP LISTENERS =====
-  setupEventListeners();
   setupLogout();
   setupAnnotazioneModal();
 });
@@ -480,19 +484,29 @@ function renderAnnotazioni(annotazioni) {
 
       return `
         <div class="annotation-item">
-          <div class="annotation-header">
-            <div class="annotation-text">${escapeHtml(ann.testo)}</div>
-          </div>
-          <div class="annotation-date">
-            <i class="fas fa-calendar-alt"></i>
-            ${formattedDate}
-          </div>
-          <div class="annotation-actions">
-            <button class="btn-action btn-action-danger" onclick="deleteAnnotazione('${
-              ann._id
-            }')" title="Elimina annotazione">
-              <i class="fas fa-trash"></i>
-            </button>
+          <div class="annotation-row">
+            <div class="annotation-date-inline">
+              <i class="fas fa-calendar-alt"></i>
+              <span>${formattedDate}</span>
+            </div>
+            <div class="annotation-inline-actions">
+              <button 
+                class="btn-action" 
+                title="Visualizza annotazione"
+                onclick="openViewAnnotazioneModal('${ann._id}', '${escapeHtml(
+        ann.testo
+      )}', '${formattedDate}')"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <button 
+                class="btn-action btn-action-danger" 
+                title="Elimina annotazione"
+                onclick="openConfirmDeleteAnnotazioneModal('${ann._id}')"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -505,10 +519,6 @@ function renderAnnotazioni(annotazioni) {
 // ==========================================
 
 async function deleteAnnotazione(annotazioneID) {
-  if (!confirm("Sei sicuro di voler eliminare questa annotazione?")) {
-    return;
-  }
-
   try {
     const response = await fetch(
       `/tutor/studenti/${studenteID}/annotazioni/${annotazioneID}`,
@@ -556,15 +566,71 @@ function closeAddAnnotazioneModal() {
   errorDiv.style.display = "none";
 }
 
+// ===== MODAL VIEW ANNOTAZIONE =====
+function openViewAnnotazioneModal(id, testo, dataFormattata) {
+  const modal = document.getElementById("viewAnnotazioneModal");
+  const textEl = document.getElementById("viewAnnotazioneText");
+  const dateEl = document.getElementById("viewAnnotazioneDate");
+
+  textEl.textContent = testo;
+  dateEl.textContent = dataFormattata;
+
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+}
+
+function closeViewAnnotazioneModal() {
+  const modal = document.getElementById("viewAnnotazioneModal");
+  const textEl = document.getElementById("viewAnnotazioneText");
+  const dateEl = document.getElementById("viewAnnotazioneDate");
+
+  modal.classList.remove("show");
+  document.body.classList.remove("modal-open");
+  textEl.textContent = "";
+  dateEl.textContent = "";
+}
+
+// ===== MODAL CONFERMA ELIMINAZIONE =====
+let annotazioneToDeleteId = null;
+
+function openConfirmDeleteAnnotazioneModal(annotazioneID) {
+  annotazioneToDeleteId = annotazioneID;
+  const modal = document.getElementById("confirmDeleteAnnotazioneModal");
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+}
+
+function closeConfirmDeleteAnnotazioneModal() {
+  annotazioneToDeleteId = null;
+  const modal = document.getElementById("confirmDeleteAnnotazioneModal");
+  modal.classList.remove("show");
+  document.body.classList.remove("modal-open");
+}
+
+// Usa la stessa deleteAnnotazione ma passando l'ID salvato
+async function confirmDeleteAnnotazione() {
+  if (!annotazioneToDeleteId) return;
+  await deleteAnnotazione(annotazioneToDeleteId);
+  closeConfirmDeleteAnnotazioneModal();
+}
+
 // ==========================================
-// EVENT LISTENERS SETUP
+// CHIUSURA MODAL CLICCANDO FUORI
 // ==========================================
 
-function setupEventListeners() {
-  document.querySelector(".btn-back")?.addEventListener("click", function () {
-    window.history.back();
-  });
-}
+window.addEventListener("click", function (e) {
+  const viewAnnotazioneModal = document.getElementById("viewAnnotazioneModal");
+  const confirmDeleteAnnotazioneModal = document.getElementById(
+    "confirmDeleteAnnotazioneModal"
+  );
+
+  if (e.target === viewAnnotazioneModal) {
+    closeViewAnnotazioneModal();
+  }
+  if (e.target === confirmDeleteAnnotazioneModal) {
+    closeConfirmDeleteAnnotazioneModal();
+  }
+});
 
 // ==========================================
 // UTILITY FUNCTIONS
