@@ -529,7 +529,12 @@ body {
   display: none;
   text-align: center;
   color: var(--error-dark);
-  font-size: 14px;
+  font-size: 14px !important;
+  font-weight: 500;
+}
+
+.error-messages p {
+  font-size: 14px !important;
   font-weight: 500;
 }
 

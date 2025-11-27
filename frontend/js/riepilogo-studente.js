@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (response.ok) {
           localStorage.removeItem("token");
           window.location.href = "/";
-        } 
+        }
       } catch (error) {
         console.error("Errore logout:", error);
       }
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (response.ok) {
           localStorage.removeItem("token");
           window.location.href = "/";
-        } 
+        }
       } catch (error) {
         console.error("Errore eliminazione profilo:", error);
       }
@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // ===== VALIDAZIONE EMAIL FAMIGLIA (MOVE QUI!) =====
     if (!errorMsg && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFam)) {
       errorField = editEmailFamiglia;
-      errorMsg = "Email famiglia non valida (es: famiglia@example.com)";
+      errorMsg = "Email non valida (es: famiglia@example.com)";
     }
 
     // Se c'è un errore, mostra e ritorna

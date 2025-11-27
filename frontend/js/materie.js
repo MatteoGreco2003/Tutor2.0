@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       materieList.innerHTML = `
         <div class="empty-state">
           <i class="fas fa-inbox"></i>
-          <p>Nessuna materia ancora</p>
+          <p>Nessuna materia registrata</p>
         </div>
       `;
       return;

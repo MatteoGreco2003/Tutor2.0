@@ -1027,6 +1027,7 @@ body {
 
 .flatpickr-day.today {
   border: 2px solid #a259ff !important;
+  background: #efe3fd !important;
   color: #a259ff !important;
   font-weight: 700 !important;
 }
@@ -1047,7 +1048,8 @@ body {
   cursor: pointer;
 }
 
-#verificaError {
+#verificaError,
+#editVerificaError {
   max-width: 500px;
   margin: 20px auto;
   padding: 10px;
