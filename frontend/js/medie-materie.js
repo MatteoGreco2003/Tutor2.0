@@ -186,7 +186,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     } catch (error) {
       console.error("Errore durante il logout:", error);
-      alert("Errore durante il logout");
     }
   });
 
@@ -236,14 +235,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         if (response.ok) {
           localStorage.removeItem("token");
-          alert("Profilo eliminato con successo");
           window.location.href = "/";
-        } else {
-          alert(data.message || "Errore nell'eliminazione del profilo");
         }
       } catch (error) {
         console.error("Errore eliminazione profilo:", error);
-        alert("Errore di connessione al server");
       }
     });
 

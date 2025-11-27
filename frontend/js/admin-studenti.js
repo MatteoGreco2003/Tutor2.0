@@ -213,11 +213,9 @@ function openDeleteStudenteModal(studenteID) {
         deleteStudenteModal.classList.remove("show");
         document.body.classList.remove("modal-open");
         await loadStudenti();
-      } else {
-        alert("Errore nell'eliminazione dello studente");
       }
     } catch (error) {
-      alert("Errore di connessione");
+      console.error("Errore di connessione");
     }
   };
 }

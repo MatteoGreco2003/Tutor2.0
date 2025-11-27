@@ -422,12 +422,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
         materiaInEliminazione = null;
         await fetchMaterie();
-      } else {
-        alert(data.message || "Errore nell'eliminazione della materia");
       }
     } catch (error) {
       console.error("Errore eliminazione materia:", error);
-      alert("Errore di connessione");
     }
   });
 
@@ -446,7 +443,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         window.location.href = "/";
       }
     } catch (error) {
-      alert("Errore durante il logout");
+      console.error("Errore durante il logout");
     }
   });
 
@@ -488,11 +485,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         const data = await response.json();
         if (response.ok) {
           localStorage.removeItem("token");
-          alert("Profilo eliminato con successo");
           window.location.href = "/";
         }
       } catch (error) {
-        alert("Errore di connessione");
+        console.error("Errore di connessione");
       }
     });
 

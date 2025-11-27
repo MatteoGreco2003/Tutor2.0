@@ -233,11 +233,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             verificaToDeleteID = null;
             await loadVerifiche(); // Aggiorna la lista
             document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-          } else {
-            alert(data.message || "Errore nell'eliminazione");
           }
         } catch (error) {
-          alert("Errore di connessione al server");
+          console.error("Errore di connessione al server");
         }
       });
 
@@ -536,12 +534,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           localStorage.removeItem("token");
           // Reindirizza a login
           window.location.href = "/";
-        } else {
-          alert("Errore durante il logout");
         }
       } catch (error) {
         console.error("Errore logout:", error);
-        alert("Errore durante il logout");
       }
     });
 
@@ -602,17 +597,11 @@ document.addEventListener("DOMContentLoaded", async function () {
           // Elimina token
           localStorage.removeItem("token");
 
-          // Alert di successo
-          alert("Profilo eliminato con successo");
-
           // Reindirizza al login
           window.location.href = "/";
-        } else {
-          alert(data.message || "Errore nell'eliminazione del profilo");
         }
       } catch (error) {
         console.error("Errore eliminazione profilo:", error);
-        alert("Errore di connessione al server");
       }
     });
 
@@ -905,11 +894,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         editVerificaModal.style.display = "flex";
         document.body.classList.add("modal-open");
-      } else {
-        alert(data.message || "Errore dati verifica");
       }
     } catch {
-      alert("Errore di connessione");
+      console.error("Errore di connessione");
     }
   }
 

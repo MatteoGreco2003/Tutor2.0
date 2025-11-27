@@ -31,12 +31,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (response.ok) {
           localStorage.removeItem("token");
           window.location.href = "/";
-        } else {
-          alert("Errore durante il logout");
         }
       } catch (error) {
         console.error("Errore logout:", error);
-        alert("Errore durante il logout");
       }
     });
 
@@ -80,12 +77,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (response.ok) {
           localStorage.removeItem("token");
           window.location.href = "/";
-        } else {
-          alert(data.message || "Errore nell'eliminazione del profilo");
         }
       } catch (error) {
         console.error("Errore eliminazione profilo:", error);
-        alert("Errore di connessione al server");
       }
     });
 
