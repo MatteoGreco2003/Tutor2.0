@@ -37,6 +37,43 @@ body {
    HEADER
    ========================================== */
 
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--dark-text);
+  z-index: 1001;
+}
+
+.hamburger-btn svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.active svg line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+  transform-origin: 12px 6px;
+}
+
+.hamburger-btn.active svg line.middle-line {
+  opacity: 0;
+  stroke-width: 0;
+}
+
+.hamburger-btn.active svg line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+  transform-origin: 12px 18px;
+}
+
 .header {
   position: fixed;
   top: 0;
@@ -670,4 +707,642 @@ body.modal-open {
   background-color: #fee2e2;
   color: #991b1b;
   border: 1px solid #fca5a5;
+}
+
+/* =========================================
+   RESPONSIVE BREAKPOINTS
+   ========================================= */
+
+/* Tablet large (1024px - 1365px) */
+@media (max-width: 1365px) and (min-width: 1025px) {
+  .main-content {
+    padding: 30px;
+  }
+
+  .profile-card {
+    padding: 25px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .studenti-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .modal-content {
+    max-width: 450px;
+    padding: 35px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 25px;
+  }
+
+  .profile-card {
+    padding: 20px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    margin-bottom: 0;
+  }
+
+  .student-count {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
+  .edit-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .studenti-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .studente-card {
+    padding: 15px;
+  }
+
+  .studente-nome {
+    font-size: 14px;
+  }
+
+  .studente-info p {
+    font-size: 12px;
+  }
+
+  .modifyPassword h3 {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .modal-content {
+    max-width: 450px;
+    padding: 30px;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 13px;
+    padding: 7px 8px;
+  }
+}
+
+/* Mobile landscape / Tablet vertical (576px - 768px) */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 20px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    position: fixed;
+    top: 75px;
+    left: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    z-index: 900;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .profile-card {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .card-title {
+    font-size: 15px;
+  }
+
+  .student-count {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .edit-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .info-label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .info-value {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .email .info-value {
+    width: 100%;
+    text-align: left;
+    padding: 8px;
+  }
+
+  #personalEmail {
+    width: 100%;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .studenti-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .studente-card {
+    padding: 14px;
+  }
+
+  .studente-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .studente-nome {
+    font-size: 13px;
+  }
+
+  .badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .studente-info {
+    gap: 6px;
+  }
+
+  .studente-info p {
+    font-size: 11px;
+  }
+
+  .modifyPassword {
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+
+  .modifyPassword h3 {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .modifyPassword button {
+    width: 100%;
+  }
+
+  .modal {
+    padding: 20px;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-width: 95%;
+    padding: 25px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+
+  .close {
+    font-size: 24px;
+    height: 30px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 12px;
+    padding: 7px 8px;
+    margin-bottom: 0;
+  }
+
+  .password-input-box input {
+    padding-right: 40px;
+  }
+
+  .toggle-password {
+    font-size: 16px;
+    right: 12px;
+  }
+
+  .error-messages {
+    font-size: 12px;
+    padding: 8px;
+    margin: 12px 0;
+  }
+
+  .btn-save,
+  .btn-annulla {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .empty-state {
+    padding: 15px !important;
+  }
+
+  .empty-state-message {
+    font-size: 14px;
+  }
+
+  .empty-state-submessage {
+    font-size: 12px;
+  }
+}
+
+/* Mobile small (fino a 576px) */
+@media (max-width: 576px) {
+  .header {
+    padding: 10px 16px;
+  }
+
+  .header-title {
+    font-size: 13px;
+  }
+
+  .user-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 15px;
+    gap: 20px;
+  }
+
+  .profile-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .card-header {
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .student-count {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .edit-btn {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .edit-btn i {
+    font-size: 13px;
+  }
+
+  .info-grid {
+    gap: 10px;
+  }
+
+  .info-label {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+
+  .info-value {
+    font-size: 12px;
+    padding: 7px;
+  }
+
+  .email {
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+
+  .email .info-value {
+    width: 100%;
+    text-align: center;
+    padding: 7px;
+  }
+
+  #personalEmail {
+    width: auto;
+    padding: 7px 15px;
+    font-size: 12px;
+  }
+
+  .studenti-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .studente-card {
+    padding: 12px;
+  }
+
+  .studente-header {
+    gap: 6px;
+  }
+
+  .studente-nome {
+    font-size: 12px;
+  }
+
+  .badge {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  .studente-info {
+    gap: 5px;
+  }
+
+  .studente-info p {
+    font-size: 10px;
+  }
+
+  .modifyPassword {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+
+  .modifyPassword h3 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .modifyPassword button {
+    width: 100%;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+    max-height: 90vh;
+  }
+
+  .modal-content h2 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .modal-content p {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-row {
+    gap: 8px;
+  }
+
+  .form-group {
+    margin-bottom: 8px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 11px;
+    padding: 6px 7px;
+  }
+
+  .password-input-box input {
+    padding-right: 36px;
+  }
+
+  .toggle-password {
+    font-size: 14px;
+    right: 10px;
+  }
+
+  .error-messages {
+    font-size: 11px;
+    padding: 6px;
+    margin: 10px 0;
+  }
+
+  .btn-save,
+  .btn-annulla {
+    padding: 7px 12px;
+    font-size: 12px;
+    flex: 1;
+  }
+
+  .btn-annulla {
+    margin: 0;
+  }
+
+  .empty-state {
+    padding: 12px !important;
+  }
+
+  .empty-state-message {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .empty-state-submessage {
+    font-size: 11px;
+  }
+}
+
+/* Mobile extra small (fino a 360px) */
+@media (max-width: 360px) {
+  .header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .user-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .main-content {
+    padding: 12px;
+    gap: 15px;
+  }
+
+  .profile-card {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-size: 13px;
+  }
+
+  .edit-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .info-value {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .studente-card {
+    padding: 10px;
+  }
+
+  .studente-nome {
+    font-size: 11px;
+  }
+
+  .studente-info p {
+    font-size: 9px;
+  }
+
+  .modal-content {
+    padding: 16px;
+  }
+
+  .modal-content h2 {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+
+  .btn-save,
+  .btn-annulla {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }

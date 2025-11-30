@@ -59,6 +59,42 @@ body.modal-open {
    LAYOUT CORE (Header, Sidebar, Container)
    ======================================== */
 
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--dark-text);
+}
+
+.hamburger-btn svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.active svg line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+  transform-origin: 12px 6px;
+}
+
+.hamburger-btn.active svg line.middle-line {
+  opacity: 0;
+  stroke-width: 0;
+}
+
+.hamburger-btn.active svg line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+  transform-origin: 12px 18px;
+}
+
 .header {
   position: fixed;
   top: 0;
@@ -921,4 +957,551 @@ h3 {
 ::-webkit-scrollbar-thumb {
   background: #c5b6e0;
   border-radius: 14px;
+}
+
+/* =========================================
+   RESPONSIVE BREAKPOINTS
+   ========================================= */
+
+/* Tablet large (1024px - 1365px) */
+@media (max-width: 1365px) and (min-width: 1025px) {
+  .main-content {
+    padding: 30px;
+  }
+
+  .section {
+    padding: 25px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  .actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .action-btn {
+    padding: 25px 15px;
+    font-size: 14px;
+  }
+
+  .action-btn i {
+    font-size: 32px;
+  }
+
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .student-table {
+    font-size: 13px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 12px;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 25px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+
+  .actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 20px 12px;
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .action-btn i {
+    font-size: 28px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 12px;
+  }
+
+  .student-count {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .student-table {
+    font-size: 12px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 10px 8px;
+  }
+
+  .table-actions button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 30px;
+  }
+
+  #viewStudenteModal .modal-content {
+    min-width: 90%;
+  }
+}
+
+/* Mobile landscape / Tablet vertical (576px - 768px) */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 20px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    position: fixed;
+    top: 75px;
+    left: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    z-index: 900;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .section {
+    padding: 18px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 18px 15px;
+    font-size: 12px;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .action-btn i {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .student-count {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .student-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .student-table {
+    font-size: 11px;
+    min-width: 600px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 8px 6px;
+  }
+
+  .table-actions {
+    gap: 4px;
+  }
+
+  .table-actions button {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .profile-field label {
+    font-size: 10px;
+  }
+
+  .profile-field p {
+    font-size: 13px;
+    padding: 10px 12px;
+    min-height: 35px;
+  }
+
+  #profile-email-professori p {
+    font-size: 12px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 25px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .modal form label {
+    font-size: 14px;
+  }
+
+  .modal form input[type="text"],
+  .modal form input[type="email"],
+  .modal form select,
+  .modal form textarea {
+    font-size: 13px;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+  }
+
+  .modal form select {
+    height: auto;
+    min-height: 100px;
+  }
+
+  #viewStudenteModal .modal-content {
+    min-width: 95%;
+    max-height: 80vh;
+  }
+
+  #removeStudentModal .modal-content,
+  #addStudentModal .modal-content {
+    min-width: 95%;
+  }
+}
+
+/* Mobile small (fino a 576px) */
+@media (max-width: 576px) {
+  .header {
+    padding: 10px 16px;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+
+  .user-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .section {
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+
+  h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .action-btn {
+    padding: 15px 12px;
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .action-btn i {
+    font-size: 20px;
+  }
+
+  .section-header {
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+  }
+
+  .student-count {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .student-count strong {
+    font-size: 16px;
+    min-width: 25px;
+  }
+
+  .student-table {
+    font-size: 10px;
+    min-width: 500px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 6px 4px;
+  }
+
+  .table-actions {
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+
+  .table-actions button {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .profile-section h3 {
+    font-size: 12px;
+  }
+
+  .profile-field label {
+    font-size: 9px;
+  }
+
+  .profile-field p {
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 30px;
+  }
+
+  #profile-email-professori p {
+    font-size: 11px;
+  }
+
+  .modal-content {
+    width: 98%;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .modal form label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .modal form input[type="text"],
+  .modal form input[type="email"],
+  .modal form select,
+  .modal form textarea {
+    font-size: 12px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .modal form select {
+    min-height: 80px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 15px;
+  }
+
+  .plan-btn {
+    min-width: auto;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .btn-annulla,
+  .btn-close {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .empty-state-message {
+    font-size: 14px;
+  }
+
+  .empty-state-submessage {
+    font-size: 12px;
+  }
+}
+
+/* Mobile extra small (fino a 360px) */
+@media (max-width: 360px) {
+  .header {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .user-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .section {
+    padding: 12px;
+  }
+
+  .page-title {
+    font-size: 14px;
+  }
+
+  h3 {
+    font-size: 12px;
+  }
+
+  .action-btn {
+    padding: 12px 10px;
+    font-size: 10px;
+    gap: 6px;
+  }
+
+  .action-btn i {
+    font-size: 18px;
+  }
+
+  .student-table {
+    font-size: 9px;
+    min-width: 450px;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 4px 3px;
+  }
+
+  .table-actions button {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+  }
+
+  .modal-content {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .modal-content h2 {
+    font-size: 16px;
+  }
+
+  .close {
+    font-size: 24px;
+  }
 }

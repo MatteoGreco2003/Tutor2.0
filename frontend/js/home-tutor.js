@@ -8,6 +8,31 @@ window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
+// ===== HAMBURGER MENU =====
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const sidebar = document.querySelector(".sidebar");
+
+hamburgerBtn?.addEventListener("click", () => {
+  hamburgerBtn.classList.toggle("active");
+  sidebar.classList.toggle("active");
+});
+
+// Chiudi sidebar quando clicchi su un link
+document.querySelectorAll(".sidebar-item").forEach((item) => {
+  item.addEventListener("click", () => {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+  });
+});
+
+// Chiudi sidebar quando clicchi fuori
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".sidebar") && !e.target.closest(".hamburger-btn")) {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+  }
+});
+
 // ========== SETUP ON LOAD ==========
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== AUTENTICAZIONE =====
