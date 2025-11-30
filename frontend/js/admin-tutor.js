@@ -497,6 +497,10 @@ function setupAssegnaStudenteModal() {
 
   // Carica lista studenti disponibili (escluso quelli già associati)
   async function loadStudentiForAssignment(tutor) {
+    // RESET - Pulisci la select prima di popolarla
+    selectStudente.innerHTML =
+      '<option value="" disabled selected>Seleziona Studente</option>';
+
     try {
       const response = await fetch("/admin/student", {
         headers: { Authorization: `Bearer ${token}` },
@@ -521,15 +525,11 @@ function setupAssegnaStudenteModal() {
           (s) => !studenteAssociatiIds.includes(s._id)
         );
 
-        // Popola la select
-        selectStudente.innerHTML =
-          '<option value="">Seleziona Studente</option>';
-
         if (studentiDisponibili.length === 0) {
-          selectStudente.innerHTML +=
+          selectStudente.innerHTML =
             '<option value="" disabled selected>ℹ️ Tutti gli studenti sono già associati a questo tutor</option>';
           selectStudente.disabled = false;
-          submitBtn.disabled = true; // ← QUI è già disabilitato
+          submitBtn.disabled = true;
         } else {
           studentiDisponibili.forEach((studente) => {
             const option = document.createElement("option");
@@ -543,6 +543,8 @@ function setupAssegnaStudenteModal() {
       }
     } catch (error) {
       console.error("Errore caricamento studenti:", error);
+      errorDiv.textContent = "❌ Errore nel caricamento degli studenti";
+      errorDiv.style.display = "block";
     }
   }
 
@@ -597,7 +599,7 @@ function setupAssegnaStudenteModal() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ studenteID: studenteId }), // ← CAMBIA: "studenteID" (maiuscolo)
+          body: JSON.stringify({ studenteID: studenteId }),
         }
       );
 
@@ -606,8 +608,11 @@ function setupAssegnaStudenteModal() {
       if (response.ok) {
         assegnaModal.classList.remove("show");
         document.body.classList.remove("modal-open");
-        await loadTutor();
+        await loadTutor(); // Ricarica tabella
+
+        // AGGIUNGI QUESTA LINEA - Aggiorna la select per prossima apertura
         currentTutorId = null;
+
         assegnaForm.reset();
       } else {
         errorDiv.textContent = `❌ ${
@@ -659,11 +664,12 @@ function setupRimuoviStudenteModal() {
 
   // Carica lista studenti associati (solo quelli da rimuovere)
   function loadStudentiPerRimozione(tutor) {
+    // RESET - Pulisci la select prima di popolarla
     selectStudenteRimuovi.innerHTML =
-      '<option value="">Seleziona Studente</option>';
+      '<option value="" disabled selected>Seleziona Studente</option>';
 
     if (!tutor.studentiAssociati || tutor.studentiAssociati.length === 0) {
-      selectStudenteRimuovi.innerHTML +=
+      selectStudenteRimuovi.innerHTML =
         '<option value="" disabled selected>ℹ️ Nessuno studente associato</option>';
       selectStudenteRimuovi.disabled = false;
       submitBtn.disabled = true;
@@ -751,7 +757,7 @@ function setupRimuoviStudenteModal() {
       if (response.ok) {
         rimuoviModal.classList.remove("show");
         document.body.classList.remove("modal-open");
-        await loadTutor();
+        await loadTutor(); // Ricarica tabella
         currentTutorId = null;
         rimuoviForm.reset();
       } else {

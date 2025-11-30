@@ -2,6 +2,60 @@
 // MATERIE - TUTOR 2.0
 // ==========================================
 
+// ===== DISABILITA BACK BUTTON ALL'INIZIO =====
+window.history.pushState(null, null, window.location.href);
+window.addEventListener("popstate", function () {
+  window.history.pushState(null, null, window.location.href);
+});
+
+// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) {
+    console.warn("Hamburger menu elements not found");
+    return;
+  }
+
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+  });
+
+  sidebarOverlay.addEventListener("click", () => {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+    sidebarOverlay.classList.remove("active");
+  });
+
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== VERIFICA TOKEN =====
   const token = localStorage.getItem("token");
@@ -98,31 +152,37 @@ document.addEventListener("DOMContentLoaded", async function () {
     materieList.innerHTML = "";
     if (materie.length === 0) {
       materieList.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <p>Nessuna materia registrata</p>
-        </div>
-      `;
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>Nessuna materia registrata</p>
+      </div>
+    `;
       return;
     }
     materie.forEach((materia) => {
       const item = document.createElement("div");
       item.className = "materia-item";
+
+      // Determina se mostrare testo nei bottoni
+      const isMobile = window.innerWidth <= 576;
+      const modificaText = isMobile ? "" : " Modifica";
+      const eliminaText = isMobile ? "" : " Elimina";
+
       item.innerHTML = `
-        <input type="text" class="materia-input" value="${materia.nome}" disabled>
-        <div class="btn-materia">
-          <button class="btn-modifica" data-id="${materia._id}" title="Modifica">
-            <i class="fas fa-pencil"></i> Modifica
-          </button>
-          <button class="btn-rimuovi" data-id="${materia._id}" title="Elimina">
-            <i class="fas fa-trash"></i> Elimina
-          </button>
-        </div>
-      `;
+      <input type="text" class="materia-input" value="${materia.nome}" disabled>
+      <div class="btn-materia">
+        <button class="btn-modifica" data-id="${materia._id}" title="Modifica">
+          <i class="fas fa-pencil"></i>${modificaText}
+        </button>
+        <button class="btn-rimuovi" data-id="${materia._id}" title="Elimina">
+          <i class="fas fa-trash"></i>${eliminaText}
+        </button>
+      </div>
+    `;
       materieList.appendChild(item);
     });
 
-    // Aggiungi event listeners ai bottoni modifica
+    // Event listeners...
     document.querySelectorAll(".btn-modifica").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -134,7 +194,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
     });
 
-    // Aggiungi event listeners ai bottoni elimina
     document.querySelectorAll(".btn-rimuovi").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -492,6 +551,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
+  // ===== RELOAD MATERIE AL RESIZE =====
+  window.addEventListener("resize", () => {
+    if (materieAttuali.length > 0) {
+      renderMaterie(materieAttuali);
+    }
+  });
   // ===== CARICA MATERIE ALL'AVVIO =====
   fetchMaterie();
 });

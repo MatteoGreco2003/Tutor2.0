@@ -985,3 +985,48 @@ body.modal-open {
 #confirmDeleteAnnotazioneModal .btn-danger {
   flex: 1;
 }
+
+/* ========================================
+   MODAL BODY SCROLLABLE - PER ANNOTAZIONI LUNGHE
+   ======================================== */
+
+.modal-body-scrollable {
+  max-height: 60vh; /* Occupa max il 60% della viewport height */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 0;
+}
+
+/* Scrollbar styling per modal body */
+.modal-body-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body-scrollable::-webkit-scrollbar-track {
+  background: rgba(158, 63, 253, 0.05);
+  border-radius: 10px;
+}
+
+.modal-body-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(158, 63, 253, 0.3);
+  border-radius: 10px;
+}
+
+.modal-body-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(158, 63, 253, 0.6);
+}
+
+/* Testo dettaglio annotazione nella modal */
+#viewAnnotazioneText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--dark-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#viewAnnotazioneModal .section-content,
+#confirmDeleteAnnotazioneModal .section-content {
+  min-height: auto;
+  padding: 32px 0 32px 0; /* ← CAMBIO: era 32px 0 32px 0 */
+}

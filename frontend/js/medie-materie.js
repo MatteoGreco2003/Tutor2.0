@@ -2,6 +2,54 @@
 // MEDIE MATERIE - TUTOR 2.0
 // ==========================================
 
+// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) {
+    console.warn("Hamburger menu elements not found");
+    return;
+  }
+
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+  });
+
+  sidebarOverlay.addEventListener("click", () => {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+    sidebarOverlay.classList.remove("active");
+  });
+
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== VERIFICA TOKEN =====
   const token = localStorage.getItem("token");

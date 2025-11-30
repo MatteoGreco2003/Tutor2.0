@@ -8,6 +8,59 @@ window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
+// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) {
+    console.warn("Hamburger menu elements not found");
+    return;
+  }
+
+  // Toggle sidebar on hamburger click
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+  });
+
+  // Close sidebar clicking overlay
+  sidebarOverlay.addEventListener("click", () => {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+    sidebarOverlay.classList.remove("active");
+  });
+
+  // Close sidebar clicking on a link
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    });
+  });
+
+  // Close sidebar on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
+  });
+}
+
+// Initialize immediately
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
+
 // ==========================================
 // CARICAMENTO PAGINA
 // ==========================================
@@ -705,6 +758,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     newEmailGroup.className = "email-school-group";
     newEmailGroup.id = `emailSchoolGroup${index}`;
 
+    // Determina se mostrare solo icona o testo
+    const isMobile = window.innerWidth <= 576;
+    const removeText = isMobile ? "" : "Elimina";
+    const removeIcon = isMobile ? '<i class="fas fa-trash"></i>' : "";
+
     newEmailGroup.innerHTML = `
     <div class="form-group">
       <input
@@ -719,14 +777,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       type="button" 
       class="btn-remove-email" 
       data-index="${index}"
+      title="Elimina"
     >
-      Rimuovi
+      ${removeIcon}${removeText}
     </button>
   `;
 
     emailSchoolContainer.appendChild(newEmailGroup);
 
-    // Listener rimuovi
     const removeBtn = newEmailGroup.querySelector(".btn-remove-email");
     removeBtn.addEventListener("click", () => {
       removeEmailField(newEmailGroup);
@@ -787,6 +845,22 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("editSchoolBtn")
     .addEventListener("click", openEditSchoolModal);
+
+  // ===== RELOAD EMAIL AL RESIZE =====
+  window.addEventListener("resize", () => {
+    if (emailSchoolCount > 0) {
+      const emails = Array.from(document.querySelectorAll(".emailSchool")).map(
+        (input) => input.value
+      );
+      emailSchoolContainer.innerHTML = "";
+      emailSchoolCount = 0;
+      emails.forEach((email, index) => {
+        emailSchoolCount++;
+        addEmailField(email, emailSchoolCount);
+      });
+      updateAddSchoolBtnState();
+    }
+  });
 
   // Chiudi modale
   document.getElementById("closeEditSchool").addEventListener("click", () => {

@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         </div>
         <div class="legend-item">
           <div class="legend-dot" style="background-color: #9ca3af;"></div>
-          <span>Non votato</span>
+          <span>Senza voto</span>
         </div>
       </div>
       <div class="legend-tip">
@@ -734,10 +734,24 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("addVerificaBtn")
     .addEventListener("click", async () => {
-      resetInsertVerificaForm();
+      // Prima carica le materie
       await loadMaterie();
+
+      // Controlla se ci sono materie disponibili
+      const materieOptions = materiaSelect.querySelectorAll("option");
+      const hasMaterie = materieOptions.length > 1; // > 1 perché c'è sempre l'option "Seleziona"
+
+      if (!hasMaterie) {
+        // Apri la modal "Nessuna materia"
+        document.getElementById("noMaterieModal").style.display = "flex";
+        document.body.classList.add("modal-open");
+        return; // Esci, non aprire la modal di inserimento
+      }
+
+      // Se ci sono materie, prosegui normalmente
+      resetInsertVerificaForm();
       modal.style.display = "flex";
-      document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+      document.body.classList.add("modal-open");
     });
 
   document
@@ -766,6 +780,36 @@ document.addEventListener("DOMContentLoaded", async function () {
       selectValutazione.value = "";
     } else {
       selectValutazione.disabled = false;
+    }
+  });
+
+  // ===== GESTIONE MODAL NESSUNA MATERIA =====
+  const noMaterieModal = document.getElementById("noMaterieModal");
+
+  document
+    .getElementById("closeNoMaterie")
+    .addEventListener("click", function () {
+      noMaterieModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    });
+
+  document
+    .getElementById("cancelNoMaterie")
+    .addEventListener("click", function () {
+      noMaterieModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    });
+
+  document
+    .getElementById("goToSubjectBtn")
+    .addEventListener("click", function () {
+      window.location.href = "/subject";
+    });
+
+  window.addEventListener("click", function (event) {
+    if (event.target === noMaterieModal) {
+      noMaterieModal.style.display = "none";
+      document.body.classList.remove("modal-open");
     }
   });
 

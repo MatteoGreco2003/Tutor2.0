@@ -143,39 +143,41 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Carica lista studenti disponibili (escluso quelli già associati)
     async function loadStudentiForAddition() {
+      // RESET - Pulisci la select prima di popolarla
+      selectStudenteToAdd.innerHTML =
+        '<option value="" disabled selected>Seleziona Studente</option>';
+
       try {
-        const response = await fetch("/admin/student", {
+        // Chiamata 1: Ottieni TUTTI gli studenti
+        const allResponse = await fetch("/admin/student", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const data = await response.json();
+        // Chiamata 2: Ottieni SOLO gli studenti già associati
+        const associatiResponse = await fetch("/tutor/studenti", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (response.ok && Array.isArray(data.studenti)) {
-          allStudenti = data.studenti;
+        const allData = await allResponse.json();
+        const associatiData = await associatiResponse.json();
 
-          // Ottieni ID degli studenti già associati dal DOM
-          const tableBody = document.getElementById("tutorStudentTableBody");
-          currentStudentiAssociati = Array.from(
-            tableBody.querySelectorAll("tr")
-          ).map((row) => {
-            const email =
-              row.querySelector("td:nth-child(2)")?.textContent || "";
-            // Trova lo studente per email
-            const studente = allStudenti.find((s) => s.email === email);
-            return studente ? studente._id : null;
-          });
+        if (allResponse.ok && Array.isArray(allData.studenti)) {
+          allStudenti = allData.studenti;
+          const studentiAssociati =
+            associatiResponse.ok && Array.isArray(associatiData.studenti)
+              ? associatiData.studenti
+              : [];
 
-          // Filtra i studenti (escludi quelli già associati)
+          // Ottieni gli ID degli studenti associati
+          currentStudentiAssociati = studentiAssociati.map((s) => s.id);
+
+          // Filtra: mostra solo studenti NON associati
           const studentiDisponibili = allStudenti.filter(
             (s) => !currentStudentiAssociati.includes(s._id)
           );
 
-          // Popola la select
-          selectStudenteToAdd.innerHTML =
-            '<option value="">Seleziona Studente</option>';
-
           if (studentiDisponibili.length === 0) {
-            selectStudenteToAdd.innerHTML +=
+            selectStudenteToAdd.innerHTML =
               '<option value="" disabled selected>ℹ️ Tutti gli studenti sono già associati</option>';
             submitBtn.disabled = true;
           } else {
@@ -250,6 +252,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           addStudentModal.classList.remove("show");
           document.body.classList.remove("modal-open");
           await loadStudenti(); // Ricarica tabella
+
+          // AGGIUNGI QUESTA LINEA - Aggiorna la select per prossima apertura
+          await loadStudentiForAddition();
+
           addStudentForm.reset();
         } else {
           errorDiv.textContent = `❌ ${data.message || "Errore nell'aggiunta"}`;
@@ -291,6 +297,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Carica lista studenti associati (solo quelli da rimuovere)
     async function loadStudentiForRemoval() {
+      // RESET - Pulisci la select prima di popolarla
+      selectStudenteToRemove.innerHTML =
+        '<option value="" disabled selected>Seleziona Studente</option>';
+
       try {
         const response = await fetch("/tutor/studenti", {
           headers: { Authorization: `Bearer ${token}` },
@@ -298,11 +308,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const data = await response.json();
 
-        selectStudenteToRemove.innerHTML =
-          '<option value="">Seleziona Studente</option>';
-
         if (!response.ok || !data.studenti || data.studenti.length === 0) {
-          selectStudenteToRemove.innerHTML +=
+          selectStudenteToRemove.innerHTML =
             '<option value="" disabled selected>ℹ️ Nessuno studente associato</option>';
           submitBtn.disabled = true;
           return;
@@ -379,6 +386,10 @@ document.addEventListener("DOMContentLoaded", async function () {
           removeStudentModal.classList.remove("show");
           document.body.classList.remove("modal-open");
           await loadStudenti(); // Ricarica tabella
+
+          // AGGIUNGI QUESTA LINEA - Aggiorna la select per prossima apertura
+          await loadStudentiForRemoval();
+
           removeStudentForm.reset();
         } else {
           errorDiv.textContent = `❌ ${

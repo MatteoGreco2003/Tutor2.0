@@ -870,6 +870,14 @@ body.modal-open {
   overflow-y: auto;
 }
 
+#rimuoviStudenteModal .modal-content {
+  min-width: 60%;
+}
+
+#assegnaStudenteModal .modal-content {
+  min-width: 60%;
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-50px);

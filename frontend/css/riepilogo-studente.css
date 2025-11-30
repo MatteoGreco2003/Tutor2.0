@@ -590,7 +590,7 @@ body {
 .email-school-group {
   display: flex;
   gap: 10px;
-  align-items: flex-end;
+  align-items: center;
   margin-bottom: 10px;
 }
 
@@ -599,20 +599,43 @@ body {
   margin-bottom: 0;
 }
 
+.email-school-group input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #eee;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.email-school-group input:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
+}
+
 .email-school-group .btn-remove-email {
   background: #ff4444;
   color: var(--white);
   border: none;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  height: 36px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.email-school-group .btn-remove-email i {
+  font-size: 14px;
+  margin: 0;
+  display: none;
 }
 
 .email-school-group .btn-remove-email:hover {
@@ -648,4 +671,391 @@ body {
 
 body.modal-open {
   overflow: hidden;
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--dark-text);
+}
+
+.hamburger-btn svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn svg line {
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.active svg line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+  transform-origin: 12px 6px;
+}
+
+.hamburger-btn.active svg line.middle-line {
+  opacity: 0;
+  stroke-width: 0;
+}
+
+.hamburger-btn.active svg line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+  transform-origin: 12px 18px;
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay {
+  position: fixed;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 75px);
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 850;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.active {
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* =========================================
+  BREAKPOINT RESPONSIVE
+   ========================================= */
+
+/* Tablet large (1024px - 1365px) */
+@media (max-width: 1365px) and (min-width: 1025px) {
+  .main-content {
+    padding: 30px;
+  }
+
+  .profile-card {
+    padding: 25px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 25px;
+  }
+
+  .profile-card {
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .info-grid {
+    gap: 15px;
+  }
+
+  .form-row {
+    gap: 12px;
+  }
+}
+
+/* Mobile landscape / Tablet vertical (576px - 768px) */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 20px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    position: fixed;
+    top: 75px;
+    left: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    z-index: 900;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .profile-card {
+    padding: 18px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 12px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .edit-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .info-value {
+    font-size: 14px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .modal-content {
+    padding: 25px;
+    max-width: 90%;
+  }
+
+  .email-school-group {
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
+/* Mobile small (fino a 576px) */
+@media (max-width: 576px) {
+  .header {
+    padding: 10px 16px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .user-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .hamburger-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hamburger-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .profile-card {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .card-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+
+  .card-title {
+    font-size: 13px;
+  }
+
+  .edit-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .info-label {
+    font-size: 11px;
+  }
+
+  .info-value {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .modifyPassword {
+    margin-top: 15px;
+    padding-top: 15px;
+  }
+
+  .modifyPassword h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .email-school-group {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .email-school-group .btn-remove-email {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .email-school-group .btn-remove-email i {
+    display: inline;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .family-title {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+  }
+
+  .btn-save,
+  .btn-annulla {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .family-section-edit {
+    padding: 10px 0;
+  }
+
+  .family-section-edit h3 {
+    font-size: 12px;
+  }
+}
+
+/* Mobile extra small (fino a 360px) */
+@media (max-width: 360px) {
+  .header {
+    gap: 6px;
+  }
+
+  .header-left {
+    gap: 6px;
+  }
+
+  .user-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 10px;
+  }
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .profile-card {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 12px;
+  }
+
+  .info-value {
+    font-size: 12px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-content h2 {
+    font-size: 16px;
+  }
+  .email-school-group {
+    flex-direction: row;
+  }
+  .email-school-group .btn-remove-email {
+    width: 32px;
+    height: 32px;
+  }
+
+  .email-school-group .btn-remove-email i {
+    font-size: 12px;
+  }
 }
