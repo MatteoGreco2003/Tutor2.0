@@ -20,6 +20,59 @@ window.addEventListener("popstate", function (event) {
   window.history.pushState(null, null, window.location.href);
 });
 
+// ===== HAMBURGER MENU TOGGLE =====
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) {
+    console.warn("Hamburger menu elements not found");
+    return;
+  }
+
+  // Toggle sidebar on hamburger click
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+  });
+
+  // Close sidebar clicking overlay
+  sidebarOverlay.addEventListener("click", () => {
+    hamburgerBtn.classList.remove("active");
+    sidebar.classList.remove("active");
+    sidebarOverlay.classList.remove("active");
+  });
+
+  // Close sidebar clicking on a link
+  const sidebarItems = document.querySelectorAll(".sidebar-item");
+  sidebarItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    });
+  });
+
+  // Close sidebar on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
+  });
+}
+
+// Initialize immediately, don't wait for DOMContentLoaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
+
 // ==========================================
 // CARICAMENTO PAGINA
 // ==========================================
