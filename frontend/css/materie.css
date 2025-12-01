@@ -13,6 +13,13 @@
   --border-radius: 8px;
 }
 
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100vh; /* Forza altezza fissa */
+  position: fixed; /* Blocca completamente */
+  width: 100%;
+}
+
 /* ===== HAMBURGER BUTTON ===== */
 .hamburger-btn {
   display: none;
@@ -54,25 +61,24 @@
 }
 
 /* ===== SIDEBAR OVERLAY ===== */
-.sidebar-overlay {
+.sidebar-overlay,
+#sidebarOverlay {
   position: fixed;
-  top: 75px;
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - 75px);
-  background-color: rgba(0, 0, 0, 0);
-  z-index: 850;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  pointer-events: none;
+  z-index: 899; /* metti la sidebar a 900 */
 }
 
-.sidebar-overlay.active {
-  background-color: rgba(0, 0, 0, 0.5);
+.sidebar-overlay.active,
+#sidebarOverlay.active {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
 }
 
 /* ========== RESET BASE ========== */
@@ -932,6 +938,7 @@ body.modal-open {
 @media (max-width: 768px) {
   .header {
     padding: 12px 20px;
+    height: 70px;
   }
 
   .hamburger-btn {
@@ -940,17 +947,19 @@ body.modal-open {
 
   .sidebar {
     width: 250px;
+    top: 70px;
+    height: calc(100vh - 70px);
     transform: translateX(-100%);
     position: fixed;
     top: 75px;
     left: 0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;
-    transition: transform 0.3s ease;
   }
 
   .sidebar.active {
     transform: translateX(0);
+    z-index: 900;
   }
 
   .main-content {
@@ -1045,6 +1054,12 @@ body.modal-open {
 @media (max-width: 576px) {
   .header {
     padding: 10px 16px;
+    height: 65px;
+  }
+
+  .sidebar {
+    top: 65px;
+    height: calc(100vh - 65px);
   }
 
   .header-title {

@@ -25,6 +25,13 @@ function initHamburgerMenu() {
     hamburgerBtn.classList.toggle("active");
     sidebar.classList.toggle("active");
     sidebarOverlay.classList.toggle("active");
+
+    // ← NUOVO: Blocca/Sblocca scroll del body
+    if (sidebar.classList.contains("active")) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
   });
 
   // Close sidebar clicking overlay
@@ -32,6 +39,7 @@ function initHamburgerMenu() {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
     sidebarOverlay.classList.remove("active");
+    document.body.classList.remove("no-scroll"); // ← NUOVO
   });
 
   // Close sidebar clicking on a link
@@ -41,6 +49,7 @@ function initHamburgerMenu() {
       hamburgerBtn.classList.remove("active");
       sidebar.classList.remove("active");
       sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll"); // ← NUOVO
     });
   });
 
@@ -50,6 +59,7 @@ function initHamburgerMenu() {
       hamburgerBtn.classList.remove("active");
       sidebar.classList.remove("active");
       sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll"); // ← NUOVO
     }
   });
 }

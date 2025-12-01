@@ -33,6 +33,13 @@ body {
   overflow-x: hidden;
 }
 
+/* ===== UTILITIES PER SCROLL LOCK ===== */
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100vh; /* Forza altezza fissa */
+  position: fixed; /* Blocca completamente */
+  width: 100%;
+}
 /* ==========================================
    HEADER
    ========================================== */
@@ -385,6 +392,11 @@ body {
   margin-bottom: 15px;
 }
 
+#editFamilyModal .modal-content {
+  height: 80vh;
+  overflow-y: auto;
+}
+
 /* ==========================================
    SCHOOL SECTIONS
    ========================================== */
@@ -716,16 +728,18 @@ body.modal-open {
 /* ===== SIDEBAR OVERLAY ===== */
 .sidebar-overlay {
   position: fixed;
-  top: 75px;
+  position: fixed;
+  top: 0; /* Inizia dall'alto */
   left: 0;
   width: 100%;
-  height: calc(100vh - 75px);
-  background-color: rgba(0, 0, 0, 0);
+  height: 100%; /* Copre tutto */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 850;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
   pointer-events: none;
+  z-index: 899; /* ← Un po' meno della sidebar (900) */
 }
 
 .sidebar-overlay.active {
@@ -787,6 +801,7 @@ body.modal-open {
 @media (max-width: 768px) {
   .header {
     padding: 12px 20px;
+    height: 70px; /* ← AGGIUNGI: Altezza fissa header */
   }
 
   .hamburger-btn {
@@ -797,11 +812,14 @@ body.modal-open {
     width: 250px;
     transform: translateX(-100%);
     position: fixed;
-    top: 75px;
+    top: 70px;
     left: 0;
+    height: calc(100vh - 70px); /* Altezza corretta */
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;
     transition: transform 0.3s ease;
+    margin: 0; /* Rimuovi margini */
+    border-top: none; /* Rimuovi bordo top */
   }
 
   .sidebar.active {
@@ -868,6 +886,7 @@ body.modal-open {
 @media (max-width: 576px) {
   .header {
     padding: 10px 16px;
+    height: 65px; /* Altezza fissa header */
   }
 
   .header-title {
@@ -893,6 +912,11 @@ body.modal-open {
   .hamburger-btn svg {
     width: 20px;
     height: 20px;
+  }
+
+  .sidebar {
+    top: 65px; /* Corrisponde all'altezza header */
+    height: calc(100vh - 65px); /* Altezza corretta */
   }
 
   .main-content {
