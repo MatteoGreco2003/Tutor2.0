@@ -1,5 +1,5 @@
 // ==========================================
-// ADMIN PANEL - CORE/SHARED
+// ADMIN PANEL - CORE/SHARED (RESPONSIVE)
 // ==========================================
 
 const token = localStorage.getItem("token");
@@ -8,17 +8,14 @@ const token = localStorage.getItem("token");
 window.addEventListener("pageshow", (event) => {
   const token = localStorage.getItem("token");
 
-  // Se il token non esiste, torna a login
   if (!token) {
     window.location.href = "/";
     return;
   }
 });
 
-// Disabilita il back button tramite history
 window.history.pushState(null, null, window.location.href);
 window.addEventListener("popstate", function (event) {
-  // Non permettere di tornare indietro
   window.history.pushState(null, null, window.location.href);
 });
 
@@ -39,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     console.error("Errore:", error);
   }
+
+  // ===== SETUP HAMBURGER MENU =====
+  setupHamburgerMenu();
 
   // ===== NAVIGAZIONE PAGINE =====
   const sidebarItems = document.querySelectorAll(".sidebar-item");
@@ -68,6 +68,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         } else if (pageName === "home") {
           loadStatistiche();
         }
+      }
+
+      // ✅ CHIUDI SIDEBAR SU MOBILE DOPO CLICK
+      if (window.innerWidth <= 1024) {
+        closeSidebarMobile();
       }
     });
   });
@@ -106,6 +111,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.addEventListener("click", (e) => {
     const viewStudenteModal = document.getElementById("viewStudenteModal");
     const deleteStudenteModal = document.getElementById("deleteStudenteModal");
+    const viewTutorModal = document.getElementById("viewTutorModal");
+    const deleteTutorModal = document.getElementById("deleteTutorModal");
+    const createTutorModal = document.getElementById("createTutorModal");
 
     if (e.target === viewStudenteModal) {
       viewStudenteModal.classList.remove("show");
@@ -113,6 +121,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     if (e.target === deleteStudenteModal) {
       deleteStudenteModal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+    }
+    if (e.target === viewTutorModal) {
+      viewTutorModal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+    }
+    if (e.target === deleteTutorModal) {
+      deleteTutorModal.classList.remove("show");
+      document.body.classList.remove("modal-open");
+    }
+    if (e.target === createTutorModal) {
+      createTutorModal.classList.remove("show");
       document.body.classList.remove("modal-open");
     }
   });
@@ -151,15 +171,73 @@ document.addEventListener("DOMContentLoaded", async function () {
   loadStatistiche();
 });
 
+// ===== HAMBURGER MENU MOBILE =====
+function setupHamburgerMenu() {
+  const menuToggle = document.querySelector(".menu-toggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  // Crea overlay se non esiste
+  if (!document.querySelector(".sidebar-overlay")) {
+    const overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay";
+    document.body.appendChild(overlay);
+
+    // Click su overlay chiude sidebar
+    overlay.addEventListener("click", closeSidebarMobile);
+  }
+
+  // Click su hamburger apre/chiude sidebar
+  menuToggle.addEventListener("click", () => {
+    toggleSidebarMobile();
+  });
+
+  // Chiudi sidebar quando risize della finestra
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1024) {
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.querySelector(".sidebar-overlay");
+      if (sidebar.classList.contains("active")) {
+        closeSidebarMobile();
+      }
+    }
+  });
+}
+
+function toggleSidebarMobile() {
+  const sidebar = document.querySelector(".sidebar");
+  const overlay = document.querySelector(".sidebar-overlay");
+  const menuToggle = document.querySelector(".menu-toggle");
+
+  sidebar.classList.toggle("active");
+  overlay.classList.toggle("active");
+  menuToggle.classList.toggle("active");
+
+  // Previene scroll del body quando sidebar è aperta
+  if (sidebar.classList.contains("active")) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+}
+
+function closeSidebarMobile() {
+  const sidebar = document.querySelector(".sidebar");
+  const overlay = document.querySelector(".sidebar-overlay");
+  const menuToggle = document.querySelector(".menu-toggle");
+
+  sidebar.classList.remove("active");
+  overlay.classList.remove("active");
+  menuToggle.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
 // ===== RESET FILTRI =====
 function resetAllFilters() {
-  // Reset filtri studenti
   const filterGrado = document.getElementById("filterGrado");
   const searchStudenti = document.getElementById("searchStudenti");
   if (filterGrado) filterGrado.value = "";
   if (searchStudenti) searchStudenti.value = "";
 
-  // Reset ricerca tutor
   const searchTutor = document.getElementById("searchTutor");
   if (searchTutor) searchTutor.value = "";
 }

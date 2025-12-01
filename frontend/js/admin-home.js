@@ -100,7 +100,9 @@ function displayRecentItems(allTutorList, allStudentiList) {
   }
 }
 
-// ===== GRAFICI =====
+// ==========================================
+// GRAFICI (versione definitiva e semplificata)
+// ==========================================
 let gradoChart = null;
 
 function displayCharts(allTutorList, allStudentiList) {
@@ -113,7 +115,7 @@ function displayCharts(allTutorList, allStudentiList) {
 
   const gradoCtx = document.getElementById("gradoChart")?.getContext("2d");
   if (gradoCtx) {
-    // Destroy previous chart if exists
+    // Distrugge il grafico precedente se esiste
     if (gradoChart) gradoChart.destroy();
 
     gradoChart = new Chart(gradoCtx, {
@@ -138,13 +140,13 @@ function displayCharts(allTutorList, allStudentiList) {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false, // <-- IMPORTANTE: Permette al CSS di gestire le dimensioni
         plugins: {
           legend: {
             position: "bottom",
             labels: {
               font: {
-                size: 12,
+                size: 12, // Dimensione base, il CSS la gestirà
               },
               padding: 15,
               usePointStyle: true,
@@ -153,5 +155,20 @@ function displayCharts(allTutorList, allStudentiList) {
         },
       },
     });
+  }
+
+  // ===== RIDISEGNA CHART QUANDO RESIZE DELLA FINESTRA =====
+  // Usa una variabile per evitare di aggiungere l'evento più volte
+  if (!window.chartResizeListenerAdded) {
+    let resizeTimeout;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        if (gradoChart) {
+          gradoChart.resize();
+        }
+      }, 150); // Debounce per performance
+    });
+    window.chartResizeListenerAdded = true;
   }
 }

@@ -3,7 +3,6 @@
 /* ========================================
    RESET & BASE STYLES
    ======================================== */
-
 * {
   font-family: "Poppins", sans-serif;
   margin: 0;
@@ -12,14 +11,11 @@
 }
 
 :root {
-  /* Primary & Accent Colors */
   --primary-purple: #9e3ffd;
   --primary-purple-dark: #7e32ca;
   --secondary-pink: #ffd7ef;
   --light-bg: #f8f0ff;
   --white: #ffffff;
-
-  /* Status Colors */
   --success-green: #10b981;
   --success-green-dark: #059669;
   --warning-orange: #f59e0b;
@@ -29,14 +25,10 @@
   --error-bg: #ffe6e6;
   --blue-accent: #116dff;
   --blue-accent-dark: #0066d9;
-
-  /* Text Colors */
   --dark-text: #16163f;
   --light-text: #73738c;
   --gray-border: #adb5bd;
   --gray-light: #f4f4f9;
-
-  /* Transitions */
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
 }
@@ -56,9 +48,8 @@ body.modal-open {
 }
 
 /* ========================================
-   LAYOUT CORE (Header, Sidebar, Container)
+   HEADER
    ======================================== */
-
 .header {
   position: fixed;
   top: 0;
@@ -71,12 +62,43 @@ body.modal-open {
   box-shadow: 0 4px 12px rgba(158, 63, 253, 0.08);
   border-bottom: 2px solid var(--primary-purple);
   z-index: 1000;
+  height: 75px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all var(--transition-normal);
+  color: var(--dark-text);
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-toggle:hover {
+  background-color: var(--light-bg);
+}
+
+.hamburger-icon,
+.close-icon {
+  transition: opacity var(--transition-normal);
+}
+
+.menu-toggle.active .hamburger-icon {
+  display: none;
+}
+
+.menu-toggle.active .close-icon {
+  display: block !important;
 }
 
 .admin-icon {
@@ -94,6 +116,7 @@ body.modal-open {
   );
   color: var(--white);
   font-weight: 600;
+  text-decoration: none;
 }
 
 .header-title {
@@ -119,26 +142,14 @@ body.modal-open {
   background-color: var(--primary-purple-dark);
 }
 
-/* Container & Main Layout */
+/* ========================================
+   LAYOUT CORE (Sidebar & Main Content)
+   ======================================== */
 .container {
   display: flex;
-  gap: 0;
   margin-top: 75px;
-}
-
-.main-content {
-  margin-left: 280px;
-  width: calc(100% - 280px);
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
   min-height: calc(100vh - 75px);
 }
-
-/* ========================================
-   SIDEBAR
-   ======================================== */
 
 .sidebar {
   position: fixed;
@@ -154,6 +165,7 @@ body.modal-open {
   display: flex;
   flex-direction: column;
   z-index: 100;
+  transition: transform var(--transition-normal);
 }
 
 .sidebar-item {
@@ -166,9 +178,9 @@ body.modal-open {
   gap: 12px;
   font-size: 14px;
   color: var(--light-text);
+  text-decoration: none;
   transition: all var(--transition-normal);
   border-left: 3px solid transparent;
-  text-decoration: none;
 }
 
 .sidebar-item:hover {
@@ -226,10 +238,19 @@ body.modal-open {
   transform: scale(1.2);
 }
 
+.main-content {
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-height: calc(100vh - 75px);
+}
+
 /* ========================================
    PAGE & SECTION LAYOUT
    ======================================== */
-
 .page {
   display: block;
 }
@@ -263,6 +284,7 @@ body.modal-open {
   border-bottom: 2px solid var(--light-bg);
   padding-bottom: 15px;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .page-title {
@@ -275,12 +297,12 @@ body.modal-open {
 /* ========================================
    FILTERS & SEARCH
    ======================================== */
-
 .filters-group {
   display: flex;
   gap: 15px;
   align-items: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .filter-select {
@@ -293,6 +315,7 @@ body.modal-open {
   cursor: pointer;
   transition: all var(--transition-normal);
   min-width: 300px;
+  flex: 1;
 }
 
 .filter-select:hover {
@@ -331,16 +354,12 @@ body.modal-open {
   gap: 15px;
   align-items: center;
   margin-left: auto;
-}
-
-.header-right .search-box {
-  min-width: 400px;
+  flex-wrap: wrap;
 }
 
 /* ========================================
    STATISTICS & CARDS
    ======================================== */
-
 .stats-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -378,6 +397,7 @@ body.modal-open {
   justify-content: center;
   font-size: 28px;
   color: var(--white);
+  flex-shrink: 0;
 }
 
 .stat-icon.tutor-icon {
@@ -421,7 +441,6 @@ body.modal-open {
 /* ========================================
    QUICK ACTIONS
    ======================================== */
-
 .quick-actions {
   margin-top: 40px;
 }
@@ -457,6 +476,7 @@ body.modal-open {
   align-items: center;
   gap: 10px;
   transition: all var(--transition-normal);
+  text-align: center;
 }
 
 .action-btn:hover {
@@ -471,7 +491,6 @@ body.modal-open {
 /* ========================================
    RECENT ITEMS
    ======================================== */
-
 .recent-section h3 {
   font-size: 18px;
   font-weight: 600;
@@ -555,9 +574,8 @@ body.modal-open {
 }
 
 /* ========================================
-   CHARTS SECTION
+   CHARTS SECTION (BASE)
    ======================================== */
-
 .charts-section h3 {
   font-size: 18px;
   font-weight: 600;
@@ -567,8 +585,9 @@ body.modal-open {
 
 .charts-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: 1fr; /* ← CAMBIATO: sempre 1 colonna */
   gap: 20px;
+  width: 100%; /* ← AGGIUNTO */
 }
 
 .chart-card {
@@ -577,6 +596,9 @@ body.modal-open {
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border-top: 4px solid var(--primary-purple);
+  width: 100%; /* ← AGGIUNTO */
+  max-width: 100%; /* ← AGGIUNTO */
+  box-sizing: border-box; /* ← AGGIUNTO */
 }
 
 .chart-card h4 {
@@ -589,22 +611,25 @@ body.modal-open {
 
 .chart-card canvas {
   max-height: 300px;
+  width: 100% !important; /* ← AGGIUNTO per forzare Chart.js */
+  height: auto !important; /* ← AGGIUNTO */
 }
 
 /* ========================================
    TABLES
    ======================================== */
-
 .table-container {
   overflow-x: auto;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   background-color: var(--white);
+  min-width: 800px;
 }
 
 .admin-table thead {
@@ -643,41 +668,6 @@ body.modal-open {
 .admin-table tbody tr:last-child td {
   border-bottom: none;
 }
-
-/* Table Column Width */
-.admin-table th:nth-child(1),
-.admin-table td:nth-child(1) {
-  width: 12%;
-}
-
-.admin-table th:nth-child(2),
-.admin-table td:nth-child(2) {
-  width: 12%;
-}
-
-.admin-table th:nth-child(3),
-.admin-table td:nth-child(3) {
-  width: 25%;
-}
-
-.admin-table th:nth-child(4),
-.admin-table td:nth-child(4) {
-  width: 16%;
-}
-
-.admin-table th:nth-child(5),
-.admin-table td:nth-child(5) {
-  width: 15%;
-}
-
-.admin-table th:nth-child(6),
-.admin-table td:nth-child(6) {
-  width: 10%;
-}
-
-/* ========================================
-   TABLE ACTIONS
-   ======================================== */
 
 .table-actions {
   display: flex;
@@ -735,9 +725,8 @@ body.modal-open {
 }
 
 /* ========================================
-   BUTTONS (Generic)
+   BUTTONS
    ======================================== */
-
 .add-btn {
   background: var(--primary-purple);
   color: var(--white);
@@ -836,7 +825,6 @@ body.modal-open {
 /* ========================================
    MODALS
    ======================================== */
-
 .modal {
   position: fixed;
   z-index: 1000;
@@ -848,6 +836,7 @@ body.modal-open {
   display: none;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
 .modal.show {
@@ -862,18 +851,17 @@ body.modal-open {
   max-width: 500px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   animation: slideIn 0.3s ease;
-}
-
-#viewStudenteModal .modal-content {
-  min-width: 75%;
-  max-height: 60vh;
+  max-height: 90vh;
   overflow-y: auto;
 }
 
-#rimuoviStudenteModal .modal-content {
-  min-width: 60%;
+#viewStudenteModal .modal-content,
+#viewTutorModal .modal-content {
+  max-width: 800px;
+  min-width: 75%;
 }
 
+#rimuoviStudenteModal .modal-content,
 #assegnaStudenteModal .modal-content {
   min-width: 60%;
 }
@@ -932,7 +920,6 @@ body.modal-open {
 /* ========================================
    PROFILE SECTIONS & FIELDS
    ======================================== */
-
 .profile-section {
   padding-top: 24px;
   padding-bottom: 24px;
@@ -962,7 +949,6 @@ body.modal-open {
   font-size: 18px;
 }
 
-/* Profile Grid - 3 colonne ordinato */
 .profile-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1012,7 +998,6 @@ body.modal-open {
   font-style: italic;
 }
 
-/* Email Professori - lista verticale */
 #profile-email-professori {
   display: flex;
   flex-direction: column;
@@ -1040,7 +1025,6 @@ body.modal-open {
 /* ========================================
    FORMS & INPUTS
    ======================================== */
-
 .modal form label {
   font-size: 15px;
   font-weight: 500;
@@ -1072,11 +1056,6 @@ body.modal-open {
   box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
 }
 
-.modal form textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1102,7 +1081,6 @@ body.modal-open {
 /* ========================================
    ERROR MESSAGES
    ======================================== */
-
 .error-msg {
   color: var(--error-red-dark);
   font-size: 14px;
@@ -1127,65 +1105,6 @@ body.modal-open {
   justify-content: center;
   gap: 8px;
   margin-bottom: 20px;
-}
-
-.error-container {
-  margin-bottom: 20px;
-}
-
-.input-error {
-  border: 2px solid var(--error-red) !important;
-  background-color: #fff5f5 !important;
-}
-
-/* ========================================
-   EMPTY STATES
-   ======================================== */
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--light-text);
-}
-
-.empty-state i {
-  font-size: 64px;
-  margin-bottom: 20px;
-  opacity: 0.3;
-}
-
-.empty-state p {
-  font-size: 16px;
-  margin: 0;
-}
-
-.empty-state-row {
-  text-align: center;
-  padding: 60px 20px !important;
-  color: var(--light-text);
-}
-
-.empty-state-row td {
-  padding: 60px 20px !important;
-}
-
-.empty-state-row i {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.3;
-  display: block;
-}
-
-.empty-state-message {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--dark-text);
-  margin-bottom: 8px;
-}
-
-.empty-state-submessage {
-  font-size: 13px;
-  color: var(--light-text);
 }
 
 /* ===== MODAL INPUT STYLING ===== */
@@ -1218,7 +1137,6 @@ body.modal-open {
   box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
 }
 
-/* ===== ICONE DENTRO INPUT ===== */
 .modal-content .input-box i {
   position: absolute;
   right: 0;
@@ -1234,7 +1152,6 @@ body.modal-open {
   z-index: 1;
 }
 
-/* ===== TOGGLE PASSWORD ===== */
 .modal-content .toggle-password {
   cursor: pointer;
   pointer-events: all;
@@ -1246,103 +1163,1049 @@ body.modal-open {
   color: var(--primary-purple);
 }
 
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  animation: fadeIn var(--transition-normal);
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* ========================================
-   VIEW TUTOR MODAL SPECIFIC STYLES
+   MEDIAQUERY - DESKTOP LARGE (1366px+)
    ======================================== */
+@media (min-width: 1366px) {
+  .main-content {
+    padding: 40px;
+  }
 
-#viewTutorModal .modal-content {
-  min-width: 75%;
-  max-height: 60vh;
-  overflow-y: auto;
+  .section {
+    padding: 30px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .charts-section h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .chart-card {
+    min-height: 400px;
+  }
+
+  .chart-card canvas {
+    max-height: 350px;
+  }
 }
 
-#viewTutorModal .modal-content h2 {
-  margin-bottom: 0;
+/* ========================================
+   MEDIAQUERY - TABLET LARGE (1025px - 1365px)
+   ======================================== */
+@media (max-width: 1365px) and (min-width: 1025px) {
+  .main-content {
+    padding: 30px;
+  }
+
+  .section {
+    padding: 25px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .recent-container {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .charts-section h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .chart-card {
+    min-height: 350px;
+  }
+
+  .chart-card canvas {
+    max-height: 300px;
+  }
 }
 
-#viewTutorModal .modal-body {
-  margin-bottom: 20px;
+/* ========================================
+   MEDIAQUERY - TABLET (768px - 1024px)
+   ======================================== */
+@media (max-width: 1024px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+    position: fixed;
+    top: 75px;
+    left: 0;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    z-index: 900;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 25px;
+  }
+
+  .header {
+    padding: 16px 20px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .filters-group {
+    gap: 12px;
+  }
+
+  .filter-select {
+    min-width: 200px;
+  }
+
+  .search-box {
+    min-width: 250px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-right {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 0;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 18px;
+    gap: 15px;
+  }
+
+  .stat-icon {
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+
+  .stat-number {
+    font-size: 26px;
+  }
+
+  .stat-content h3 {
+    font-size: 13px;
+  }
+
+  .actions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .action-btn {
+    padding: 16px;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .action-btn i {
+    font-size: 20px;
+  }
+
+  .recent-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .recent-card {
+    padding: 16px;
+  }
+
+  .charts-section {
+    margin-top: 30px;
+  }
+
+  .charts-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .chart-card {
+    min-height: 300px;
+  }
+
+  .chart-card canvas {
+    max-height: 250px;
+  }
+
+  .table-container {
+    font-size: 12px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 12px;
+  }
+
+  .admin-table th {
+    font-size: 12px;
+  }
+
+  .admin-table td {
+    font-size: 13px;
+  }
+
+  .table-actions button {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .modal-content {
+    padding: 25px;
+    max-width: 90%;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .modal-content p {
+    font-size: 14px;
+  }
 }
 
-#viewTutorModal .profile-section {
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--light-bg);
-  margin-bottom: 0;
+/* ========================================
+   MEDIAQUERY - MOBILE LANDSCAPE / TABLET VERTICAL (576px - 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+    height: 70px;
+  }
+
+  .header-left {
+    gap: 10px;
+  }
+
+  .menu-toggle {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+
+  .menu-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .admin-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .header-title {
+    font-size: 15px;
+  }
+
+  .logout-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .sidebar {
+    width: 240px;
+  }
+
+  .main-content {
+    margin-top: 0;
+    padding: 20px;
+  }
+
+  .container {
+    margin-top: 70px;
+    min-height: calc(100vh - 70px);
+  }
+
+  .section {
+    padding: 18px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+
+  .section-header {
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .filters-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-select,
+  .search-box {
+    width: 100%;
+    min-width: unset;
+    flex: unset;
+  }
+
+  .filter-select {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .search-box input {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .stat-content h3 {
+    font-size: 12px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  .recent-card {
+    padding: 14px;
+  }
+
+  .recent-card h4 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .recent-item {
+    padding: 10px;
+  }
+
+  .recent-item-name {
+    font-size: 13px;
+  }
+
+  .recent-item-email {
+    font-size: 11px;
+  }
+
+  .recent-item-date {
+    font-size: 10px;
+  }
+
+  .charts-section {
+    margin-top: 25px;
+    padding: 15px;
+  }
+
+  .charts-section h3 {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .chart-card {
+    padding: 15px;
+    min-height: 280px;
+    border-top: 3px solid var(--primary-purple);
+  }
+
+  .chart-card h4 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .chart-card canvas {
+    max-height: 220px;
+  }
+
+  .admin-table {
+    font-size: 11px;
+  }
+
+  .admin-table th {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .admin-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .table-actions {
+    gap: 6px;
+  }
+
+  .table-actions button {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .profile-field p {
+    font-size: 13px;
+    padding: 10px 12px;
+    min-height: 35px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    width: 100%;
+    max-width: unset;
+    margin: auto;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
+  .modal form label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .modal form input[type="text"],
+  .modal form input[type="email"],
+  .modal form input[type="password"],
+  .modal form select {
+    padding: 8px 10px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .add-btn,
+  .plan-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-width: unset;
+  }
+
+  .add-btn {
+    width: 100%;
+  }
+
+  .btn-annulla,
+  .btn-close {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .delete-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .modal-footer {
+    gap: 10px;
+    padding-top: 16px;
+  }
+
+  .error-msg {
+    font-size: 12px;
+    padding: 10px;
+  }
 }
 
-#viewTutorModal .profile-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+/* ========================================
+   MEDIAQUERY - MOBILE SMALL (480px - 576px)
+   ======================================== */
+@media (max-width: 576px) {
+  .header {
+    padding: 10px 12px;
+    height: 65px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .menu-toggle {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+  }
+
+  .menu-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .admin-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .header-title {
+    display: none;
+  }
+
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .container {
+    margin-top: 65px;
+    min-height: calc(100vh - 65px);
+  }
+
+  .section {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+
+  .page-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .filters-group {
+    gap: 8px;
+  }
+
+  .filter-select,
+  .search-box {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .stats-container {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .stat-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+
+  .stat-content h3 {
+    font-size: 11px;
+  }
+
+  .stat-number {
+    font-size: 22px;
+  }
+
+  .actions-grid {
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .action-btn i {
+    font-size: 18px;
+  }
+
+  .quick-actions h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .recent-section h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .recent-container {
+    gap: 12px;
+  }
+
+  .recent-card {
+    padding: 12px;
+  }
+
+  .recent-card h4 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .recent-item {
+    padding: 8px;
+    border-radius: 6px;
+  }
+
+  .recent-item-name {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .recent-item-email {
+    font-size: 10px;
+  }
+
+  .recent-item-date {
+    font-size: 9px;
+  }
+
+  .charts-section {
+    margin-top: 20px;
+    padding: 12px;
+  }
+
+  .charts-section h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .charts-container {
+    gap: 12px;
+  }
+
+  .chart-card {
+    padding: 12px;
+    min-height: 250px;
+  }
+
+  .chart-card h4 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .chart-card canvas {
+    max-height: 180px;
+  }
+
+  .admin-table {
+    font-size: 10px;
+    min-width: 600px;
+  }
+
+  .admin-table th {
+    padding: 8px;
+    font-size: 10px;
+  }
+
+  .admin-table td {
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .table-actions {
+    gap: 4px;
+  }
+
+  .table-actions button {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .profile-grid {
+    gap: 10px;
+  }
+
+  .profile-field label {
+    font-size: 10px;
+  }
+
+  .profile-field p {
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 32px;
+    border-radius: 6px;
+  }
+
+  .modal-content {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .modal-content h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+
+  .modal form label {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .modal form input[type="text"],
+  .modal form input[type="email"],
+  .modal form input[type="password"],
+  .modal form select {
+    padding: 8px 8px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content .input-box input {
+    padding: 10px 40px 10px 12px;
+    font-size: 12px;
+  }
+
+  .add-btn,
+  .plan-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .btn-annulla,
+  .btn-close {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .delete-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .modal-footer {
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  .close {
+    height: 30px;
+    font-size: 24px;
+  }
 }
 
-#viewTutorModal .profile-section h3 {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--dark-text);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+/* ========================================
+   MEDIAQUERY - MOBILE EXTRA SMALL (< 360px)
+   ======================================== */
+@media (max-width: 360px) {
+  .header {
+    padding: 8px 10px;
+    height: 60px;
+  }
 
-#viewTutorModal .profile-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
+  .header-left {
+    gap: 6px;
+  }
 
-#viewTutorModal .profile-field label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--light-text);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
+  .menu-toggle {
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+  }
 
-#viewTutorModal .profile-field p {
-  font-size: 14px;
-  color: var(--dark-text);
-  padding: 10px 12px;
-  background: var(--light-bg);
-  border-radius: 6px;
-  border-left: 3px solid var(--primary-purple);
-  margin-bottom: 10px;
-  word-break: break-word;
-  font-weight: 500;
-}
-.empty-state-small {
-  padding: 0;
-  margin-bottom: 0 !important;
-}
+  .menu-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
 
-#viewTutorModal .studenti-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+  .admin-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
 
-#viewTutorModal .studente-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--light-bg);
-  border-left: 3px solid var(--primary-purple);
-  border-radius: 6px;
-  font-size: 13px;
-  color: var(--dark-text);
-  font-weight: 500;
-}
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
 
-#viewTutorModal .studente-item i {
-  color: var(--primary-purple);
-  font-size: 14px;
-}
+  .main-content {
+    padding: 12px;
+  }
 
-.btn-remove-student {
-  background-color: var(--warning-orange);
-}
+  .container {
+    margin-top: 60px;
+  }
 
-.btn-remove-student:hover {
-  background-color: var(--warning-orange-dark);
-  transform: scale(1.1);
+  .section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .filter-select,
+  .search-box {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .stats-container {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .stat-content h3 {
+    font-size: 10px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .action-btn {
+    padding: 10px;
+    font-size: 10px;
+  }
+
+  .action-btn i {
+    font-size: 16px;
+  }
+
+  .quick-actions h3,
+  .recent-section h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .recent-card {
+    padding: 10px;
+  }
+
+  .recent-card h4 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .recent-item {
+    padding: 6px;
+  }
+
+  .recent-item-name {
+    font-size: 11px;
+  }
+
+  .recent-item-email {
+    font-size: 9px;
+  }
+
+  .charts-section {
+    margin-top: 15px;
+    padding: 10px;
+  }
+
+  .charts-section h3 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .chart-card {
+    padding: 10px;
+    min-height: 220px;
+    border-top: 2px solid var(--primary-purple);
+  }
+
+  .chart-card h4 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .chart-card canvas {
+    max-height: 150px;
+  }
+
+  .admin-table {
+    font-size: 9px;
+    min-width: 550px;
+  }
+
+  .admin-table th {
+    padding: 6px;
+    font-size: 9px;
+  }
+
+  .admin-table td {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .table-actions button {
+    width: 24px;
+    height: 24px;
+    font-size: 8px;
+  }
+
+  .modal-content {
+    padding: 14px;
+  }
+
+  .modal-content h2 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .modal-content p {
+    font-size: 11px;
+  }
+
+  .modal form label {
+    font-size: 11px;
+  }
+
+  .modal form input[type="text"],
+  .modal form input[type="email"],
+  .modal form input[type="password"],
+  .modal form select {
+    padding: 6px 6px;
+    font-size: 11px;
+  }
+
+  .add-btn,
+  .plan-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .btn-annulla,
+  .btn-close {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .close {
+    height: 26px;
+    font-size: 20px;
+  }
 }
