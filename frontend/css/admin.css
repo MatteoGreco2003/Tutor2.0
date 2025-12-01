@@ -724,6 +724,15 @@ body.modal-open {
   transform: scale(1.1);
 }
 
+.btn-remove-student {
+  background-color: var(--warning-orange);
+}
+
+.btn-remove-student:hover {
+  background-color: var(--warning-orange-dark);
+  transform: scale(1.1);
+}
+
 /* ========================================
    BUTTONS
    ======================================== */
