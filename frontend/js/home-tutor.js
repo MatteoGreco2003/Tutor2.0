@@ -9,29 +9,57 @@ window.addEventListener("popstate", function () {
 });
 
 // ===== HAMBURGER MENU =====
-const hamburgerBtn = document.getElementById("hamburgerBtn");
-const sidebar = document.querySelector(".sidebar");
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn"); // oppure .menu-toggle
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay"); // oppure .sidebar-overlay
 
-hamburgerBtn?.addEventListener("click", () => {
-  hamburgerBtn.classList.toggle("active");
-  sidebar.classList.toggle("active");
-});
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) return;
 
-// Chiudi sidebar quando clicchi su un link
-document.querySelectorAll(".sidebar-item").forEach((item) => {
-  item.addEventListener("click", () => {
-    hamburgerBtn.classList.remove("active");
-    sidebar.classList.remove("active");
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+    if (sidebar.classList.contains("active")) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
   });
-});
 
-// Chiudi sidebar quando clicchi fuori
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".sidebar") && !e.target.closest(".hamburger-btn")) {
+  sidebarOverlay.addEventListener("click", () => {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
-  }
-});
+    sidebarOverlay.classList.remove("active");
+    document.body.classList.remove("no-scroll");
+  });
+
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    }
+  });
+}
+
+// Initialize immediately, don't wait for DOMContentLoaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
 
 // ========== SETUP ON LOAD ==========
 document.addEventListener("DOMContentLoaded", async function () {

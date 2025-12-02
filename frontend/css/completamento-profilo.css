@@ -3,6 +3,7 @@
 /* ==========================================
    RESET E VARIABILI GLOBALI
    ========================================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +13,6 @@
   list-style: none;
 }
 
-/* ===== COLORI ===== */
 :root {
   --primary-purple: #9e3ffd;
   --primary-dark: #7c3aed;
@@ -24,17 +24,24 @@
   --error-bg: #ffe6e6;
   --error-color: #ff4444;
   --error-dark: #cc0000;
-  --success-bg: #e6ffe6;
-  --success-color: #44dd44;
-  --success-dark: #00aa00;
   --disabled-bg: #f0f0f0;
+  --transition-fast: 0.3s;
 }
 
-/* ===== BODY ===== */
+/* ==========================================
+   LAYOUT BASE
+   ========================================== */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(
@@ -84,7 +91,7 @@ body {
 
 .outro a {
   color: var(--white);
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .outro a:hover {
@@ -97,6 +104,7 @@ body {
 
 .profile-container {
   padding: 40px 20px;
+  width: 100%;
 }
 
 .profile-form-wrapper {
@@ -105,6 +113,7 @@ body {
   border-radius: 30px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   width: 950px;
+  margin: 0 auto;
   overflow: hidden;
 }
 
@@ -161,11 +170,10 @@ body {
   font-size: 14px;
   font-family: inherit;
   color: var(--dark-text);
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
 
-.form-group input::placeholder,
-.form-group select {
+.form-group input::placeholder {
   color: var(--light-text);
 }
 
@@ -176,7 +184,6 @@ body {
   box-shadow: 0 0 0 3px rgba(158, 63, 253, 0.1);
 }
 
-/* Input con errore */
 .form-group input.input-error,
 .form-group select.input-error {
   border: 2px solid var(--error-color);
@@ -249,7 +256,7 @@ select:disabled:hover {
 .email-professor-group {
   display: flex;
   gap: 10px;
-  align-items: flex-end;
+  align-items: stretch;
   margin-bottom: 10px;
   border-radius: 8px;
 }
@@ -268,8 +275,7 @@ select:disabled:hover {
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  transition: all 0.3s ease;
-  margin-top: 22px;
+  transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
@@ -295,7 +301,7 @@ select:disabled:hover {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
 
 .btn-secondary:hover {
@@ -314,7 +320,6 @@ select:disabled:hover {
   transform: none;
 }
 
-/* ===== BUTTON GROUP ===== */
 .button-group {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -329,7 +334,7 @@ select:disabled:hover {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -354,7 +359,6 @@ select:disabled:hover {
   background: var(--white);
   color: var(--dark-text);
   border: 1px solid var(--error-color);
-  box-shadow: none;
 }
 
 .btn-cancel:hover {
@@ -388,4 +392,332 @@ select:disabled:hover {
   font-size: 14px;
   font-weight: 500;
   margin: 5px 0;
+}
+
+/* ==========================================
+   RESPONSIVE - TABLET (1024px)
+   ========================================== */
+
+@media (max-width: 1023px) {
+  .profile-form-wrapper {
+    width: 95%;
+    padding: 30px;
+  }
+
+  .profile-header h1 {
+    font-size: 32px;
+  }
+
+  .profile-header h2 {
+    font-size: 20px;
+  }
+
+  .profile-header p {
+    font-size: 13px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-row .form-group:nth-child(1),
+  .form-row .form-group:nth-child(2) {
+    margin-bottom: 0;
+  }
+
+  #rowSchool {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-section h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .button-group {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 12px;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE - MOBILE LANDSCAPE (768px)
+   ========================================== */
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 20px 10px;
+  }
+
+  .profile-form-wrapper {
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .profile-header {
+    margin-bottom: 20px;
+  }
+
+  .profile-header h1 {
+    font-size: 28px;
+    margin-bottom: 3px;
+  }
+
+  .profile-header h2 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .profile-header p {
+    font-size: 12px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  #rowSchool {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+  }
+
+  .form-section h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .section-note {
+    font-size: 12px;
+    margin: -8px 0 12px 0;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 9px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+
+  .family-group h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  #emailFamigliaH3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .email-professor-group {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .email-professor-group .btn-remove-prof {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .btn-secondary {
+    padding: 9px 15px;
+    font-size: 13px;
+  }
+
+  .button-group {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 25px;
+  }
+
+  .btn {
+    padding: 10px 15px;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+
+  .error-message {
+    font-size: 13px;
+  }
+
+  .outro {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE - MOBILE PORTRAIT (480px)
+   ========================================== */
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 15px 8px;
+  }
+
+  .profile-form-wrapper {
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .profile-header {
+    margin-bottom: 15px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+
+  .profile-header h2 {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .profile-header p {
+    font-size: 11px;
+    padding: 0 5px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  #rowSchool {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+  }
+
+  .form-section h2 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .section-note {
+    font-size: 11px;
+    margin: -6px 0 10px 0;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px 9px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .family-group {
+    padding-bottom: 8px;
+  }
+
+  .family-group h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  #emailFamigliaH3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .optional {
+    font-size: 11px;
+  }
+
+  .email-professor-group {
+    flex-direction: row;
+    gap: 6px;
+    align-items: stretch;
+    margin-bottom: 8px;
+  }
+
+  .email-professor-group .form-group {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .email-professor-group .btn-remove-prof {
+    padding: 8px 10px;
+    font-size: 0;
+    width: auto;
+    min-width: 44px;
+    flex-shrink: 0;
+  }
+
+  .email-professor-group .btn-remove-prof::before {
+    content: "🗑️";
+    font-size: 14px;
+  }
+
+  .btn-secondary {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .button-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 9px 12px;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    width: 100%;
+  }
+
+  .error-message {
+    font-size: 12px;
+  }
+
+  .outro {
+    margin-top: 15px;
+    font-size: 11px;
+    padding: 0 5px;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE - SMALL MOBILE (360px)
+   ========================================== */
+
+@media (max-width: 360px) {
+  .profile-header h1 {
+    font-size: 20px;
+  }
+
+  .profile-header h2 {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 11px;
+    padding: 7px 8px;
+  }
+
+  .form-section h2 {
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
 }

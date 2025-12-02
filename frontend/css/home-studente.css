@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
 * {
   font-family: "Poppins", sans-serif;
   margin: 0;
@@ -34,12 +37,14 @@ body {
 
 body.no-scroll {
   overflow: hidden !important;
-  height: 100vh; /* Forza altezza fissa */
-  position: fixed; /* Blocca completamente */
+  height: 100vh;
+  position: fixed;
   width: 100%;
 }
 
-/* ===== HEADER ===== */
+/* ============================================
+   HEADER
+   ============================================ */
 .header {
   position: fixed;
   top: 0;
@@ -94,7 +99,9 @@ body.no-scroll {
   background-color: #7e32ca;
 }
 
-/* ===== HAMBURGER BUTTON ===== */
+/* ============================================
+   HAMBURGER BUTTON
+   ============================================ */
 .hamburger-btn {
   display: none;
   width: 36px;
@@ -134,14 +141,18 @@ body.no-scroll {
   transform-origin: 12px 18px;
 }
 
-/* ===== CONTAINER ===== */
+/* ============================================
+   LAYOUT: CONTAINER
+   ============================================ */
 .container {
   display: flex;
   gap: 0;
   margin-top: 75px;
 }
 
-/* ===== SIDEBAR ===== */
+/* ============================================
+   SIDEBAR
+   ============================================ */
 .sidebar {
   position: fixed;
   top: 75px;
@@ -208,7 +219,7 @@ body.no-scroll {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  z-index: 899; /* metti la sidebar a 900 */
+  z-index: 899;
 }
 
 .sidebar-overlay.active,
@@ -270,7 +281,9 @@ body.no-scroll {
   transform: scale(1.2);
 }
 
-/* ===== MAIN CONTENT ===== */
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
 .main-content {
   margin-left: 280px;
   width: calc(100% - 280px);
@@ -281,7 +294,9 @@ body.no-scroll {
   transition: all 0.3s ease;
 }
 
-/* ===== SECTIONS ===== */
+/* ============================================
+   SECTIONS
+   ============================================ */
 .section {
   background-color: var(--white);
   border-radius: 12px;
@@ -312,7 +327,9 @@ body.no-scroll {
   gap: 10px;
 }
 
-/* ===== VERIFICHE ===== */
+/* ============================================
+   VERIFICHE LIST
+   ============================================ */
 .verifiche-list {
   display: flex;
   flex-direction: column;
@@ -343,7 +360,9 @@ body.no-scroll {
   background: #7e32ca;
 }
 
-/* ===== CARD VERIFICA ===== */
+/* ============================================
+   VERIFICA ITEM CARD
+   ============================================ */
 .verifica-item {
   background: linear-gradient(
     135deg,
@@ -530,7 +549,9 @@ body.no-scroll {
   background: #7e32ca;
 }
 
-/* ===== CALENDARIO ===== */
+/* ============================================
+   CALENDAR
+   ============================================ */
 .calendar-section {
   background-color: var(--white);
   padding: 30px;
@@ -740,7 +761,9 @@ body.no-scroll {
   position: relative;
 }
 
-/* ===== MODAL GIORNO VERIFICHE ===== */
+/* ============================================
+   MODAL: DAY VERIFICATIONS
+   ============================================ */
 .day-verifiche-modal {
   min-width: 75%;
   display: flex;
@@ -823,6 +846,10 @@ body.no-scroll {
   gap: 10px;
 }
 
+#dayVerificheTitle {
+  margin-bottom: 0;
+}
+
 .materia-name {
   margin: 0;
   font-size: 14px;
@@ -892,7 +919,15 @@ body.no-scroll {
   min-width: 100px;
 }
 
-/* ===== MODALI ===== */
+/* ============================================
+   MODALS
+   ============================================ */
+#insertVerificaModal .modal-content,
+#editVerificaModal .modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
 .modal {
   position: fixed;
   z-index: 1000;
@@ -959,23 +994,6 @@ body.no-scroll {
   border-color: #888;
 }
 
-.delete-btn {
-  background: #ff4444;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.delete-btn:hover {
-  background-color: #cc0000;
-  border-color: #f87171;
-}
-
 .plan-btn {
   background: var(--primary-purple);
   color: white;
@@ -987,6 +1005,7 @@ body.no-scroll {
   cursor: pointer;
   transition: background 0.2s;
   min-width: 314.09px;
+  flex: 1;
 }
 
 .plan-btn:hover {
@@ -1020,6 +1039,9 @@ body.no-scroll {
   margin-right: 4px;
 }
 
+/* ============================================
+   FLATPICKR CALENDAR
+   ============================================ */
 .flatpickr-calendar {
   width: 420px !important;
   border-radius: 10px !important;
@@ -1030,7 +1052,8 @@ body.no-scroll {
   margin-top: 8px !important;
 }
 
-.flatpickr-innerContainer {
+.flatpickr-innerContainer,
+.flatpickr-rContainer {
   width: 100% !important;
   display: flex !important;
   align-items: center !important;
@@ -1038,10 +1061,6 @@ body.no-scroll {
 }
 
 .flatpickr-rContainer {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   flex-direction: column !important;
 }
 
@@ -1085,6 +1104,13 @@ body.no-scroll {
   gap: 0 !important;
 }
 
+.dayContainer {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .flatpickr-day {
   width: 57.72px !important;
   max-width: 57.72px !important;
@@ -1097,13 +1123,6 @@ body.no-scroll {
   cursor: pointer !important;
   border-radius: 8px !important;
   padding: 0 !important;
-}
-
-.dayContainer {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
 .flatpickr-day.selected,
@@ -1140,6 +1159,9 @@ body.no-scroll {
   cursor: pointer;
 }
 
+/* ============================================
+   ERRORS & VALIDATION
+   ============================================ */
 #verificaError,
 #editVerificaError {
   max-width: 500px;
@@ -1190,11 +1212,11 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* =========================================
-   BREAKPOINT RESPONSIVE
-   ========================================= */
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
 
-/* Tablet large (1024px - 1365px) */
+/* Tablet Large: 1024px - 1365px */
 @media (max-width: 1365px) and (min-width: 1025px) {
   .main-content {
     padding: 30px;
@@ -1224,7 +1246,7 @@ body.modal-open {
   }
 }
 
-/* Tablet (768px - 1024px) */
+/* Tablet: 768px - 1024px */
 @media (max-width: 1024px) {
   .sidebar {
     width: 240px;
@@ -1312,7 +1334,7 @@ body.modal-open {
   }
 }
 
-/* Mobile landscape / Tablet vertical (576px - 768px) */
+/* Mobile Landscape / Tablet Vertical: 576px - 768px */
 @media (max-width: 768px) {
   .header {
     padding: 12px 20px;
@@ -1330,7 +1352,6 @@ body.modal-open {
     height: calc(100vh - 70px);
     transform: translateX(-100%);
     position: fixed;
-    top: 75px;
     left: 0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;
@@ -1377,12 +1398,13 @@ body.modal-open {
     gap: 10px;
   }
 
-  .verifica-voto-wrapper {
-    min-width: auto;
-  }
-
   .verifica-buttons {
     gap: 4px;
+  }
+
+  .verifica-voto,
+  .verifica-voto.future {
+    font-size: 13px;
   }
 
   .verifica-buttons button {
@@ -1412,13 +1434,19 @@ body.modal-open {
   }
 
   .flatpickr-calendar {
-    width: 300px !important;
+    width: 80% !important;
+    margin: 0 12px !important;
+  }
+
+  .flatpickr-days {
+    width: 100% !important;
   }
 
   .flatpickr-day {
-    width: 42.86px !important;
-    max-width: 42.86px !important;
+    width: 14.28% !important;
+    max-width: 14.28% !important;
     height: 35px !important;
+    font-size: 12px !important;
   }
 
   .day-verifiche-modal {
@@ -1440,16 +1468,18 @@ body.modal-open {
   }
 }
 
-/* Mobile small (fino a 576px) */
+/* Mobile Small: up to 576px */
 @media (max-width: 576px) {
   .header {
     padding: 10px 16px;
     height: 65px;
   }
+
   .sidebar {
     top: 65px;
     height: calc(100vh - 65px);
   }
+
   .header-title {
     font-size: 14px;
   }
@@ -1503,16 +1533,18 @@ body.modal-open {
     gap: 8px;
   }
 
+  .verifica-voto,
+  .verifica-voto.future {
+    font-size: 12px;
+  }
+
   .verifica-buttons button {
     width: 30px;
     height: 30px;
     font-size: 11px;
   }
 
-  .verifica-materia {
-    font-size: 12px;
-  }
-
+  .verifica-materia,
   .verifica-giorno {
     font-size: 12px;
   }
@@ -1561,13 +1593,23 @@ body.modal-open {
   }
 
   .flatpickr-calendar {
-    width: 280px !important;
+    max-width: calc(100% - 24px) !important;
+    margin: 0 0 !important;
+  }
+
+  .flatpickr-days {
+    width: 100% !important;
   }
 
   .flatpickr-day {
-    width: 40px !important;
-    max-width: 40px !important;
-    height: 32px !important;
+    width: 14.28% !important;
+    max-width: 14.28% !important;
+    height: 30px !important;
+    font-size: 11px !important;
+  }
+
+  .flatpickr-weekday {
+    font-size: 10px !important;
   }
 
   .day-verifiche-modal {
@@ -1593,6 +1635,12 @@ body.modal-open {
 
   .modal-content h2 {
     font-size: 18px;
+  }
+
+  .close-btn {
+    font-size: 16px;
+    width: 25px;
+    height: 25px;
   }
 
   .modal-content p {
@@ -1658,7 +1706,7 @@ body.modal-open {
   }
 }
 
-/* Mobile extra small (fino a 360px) */
+/* Mobile Extra Small: up to 360px */
 @media (max-width: 360px) {
   .header {
     gap: 8px;

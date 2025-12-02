@@ -1,6 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
-/* ===== RESET E VARIABILI GLOBALI ===== */
+/* ============================================================================
+   RESET E VARIABILI GLOBALI
+   ========================================================================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -10,21 +13,35 @@
   list-style: none;
 }
 
-/* ===== COLORI ===== */
+/* ===== VARIABILI COLORI ===== */
 :root {
+  /* Colori primari */
   --primary-purple: #9e3ffd;
   --primary-dark: #7c3aed;
+
+  /* Colori neutrali */
   --light-bg: #f0e6ff;
   --white: #fff;
   --dark-text: #333;
   --light-text: #888;
+
+  /* Colori feedback */
   --error-bg: #ffe6e6;
   --error-color: #ff4444;
   --error-dark: #cc0000;
   --success-bg: #e6ffe6;
   --success-color: #44dd44;
   --success-dark: #00aa00;
+
+  /* Transizioni */
+  --transition-fast: 0.3s;
+  --transition-medium: 0.6s ease-in-out;
+  --transition-slow: 1.8s ease-in-out;
 }
+
+/* ============================================================================
+   LAYOUT BASE
+   ========================================================================== */
 
 html,
 body {
@@ -34,7 +51,6 @@ body {
   padding: 0;
 }
 
-/* ===== BODY ===== */
 body {
   display: flex;
   justify-content: center;
@@ -56,7 +72,10 @@ body {
   overflow: hidden;
 }
 
-/* ===== INTRO/OUTRO ===== */
+/* ============================================================================
+   INTRO / OUTRO
+   ========================================================================== */
+
 .intro {
   margin-top: 15px;
   margin-bottom: 20px;
@@ -85,14 +104,16 @@ body {
   color: var(--white);
 }
 
-/* ===== CONTAINER PRINCIPALE ===== */
+/* ============================================================================
+   CONTAINER PRINCIPALE
+   ========================================================================== */
+
 .container {
   position: relative;
   width: 950px;
   height: 650px;
   background: var(--white);
-  /* Rimuovi margin: 20px; */
-  margin: auto; /* Centra il container */
+  margin: auto;
   border-radius: 30px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -108,7 +129,10 @@ body {
   margin: 15px 0;
 }
 
-/* ===== FORM BOX ===== */
+/* ============================================================================
+   FORM BOX
+   ========================================================================== */
+
 form {
   width: 100%;
 }
@@ -127,7 +151,7 @@ form {
   text-align: center;
   padding: 40px;
   z-index: 1;
-  transition: 0.6s ease-in-out 1.2s;
+  transition: var(--transition-medium) 1.2s;
   visibility: hidden;
 }
 
@@ -143,7 +167,10 @@ form {
   visibility: visible;
 }
 
-/* ===== INPUT BOX ===== */
+/* ============================================================================
+   INPUT BOX
+   ========================================================================== */
+
 .input-box {
   position: relative;
   margin: 30px 0;
@@ -159,7 +186,7 @@ form {
   font-size: 16px;
   color: var(--dark-text);
   font-weight: 500;
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .input-box input::placeholder {
@@ -185,14 +212,16 @@ form {
   position: relative;
 }
 
-/* Icona toggle password */
 .toggle-password {
   cursor: pointer;
   user-select: none;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
 
-/* ===== LINK E CHECKBOX ===== */
+/* ============================================================================
+   LINK E CHECKBOX
+   ========================================================================== */
+
 .forget-link {
   margin: -15px 0 15px;
 }
@@ -200,7 +229,7 @@ form {
 .forget-link a {
   font-size: 14.5px;
   color: var(--dark-text);
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .forget-link a:hover {
@@ -222,14 +251,17 @@ form {
 
 .check-box a {
   color: var(--primary-purple);
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .check-box a:hover {
   text-decoration: underline;
 }
 
-/* ===== BUTTON ===== */
+/* ============================================================================
+   BUTTON
+   ========================================================================== */
+
 .btn {
   width: 100%;
   height: 48px;
@@ -241,7 +273,7 @@ form {
   font-weight: 600;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .btn:hover {
@@ -254,7 +286,10 @@ form {
   transform: translateY(0);
 }
 
-/* ===== TOGGLE BOX ===== */
+/* ============================================================================
+   TOGGLE BOX
+   ========================================================================== */
+
 .toggle-box {
   position: absolute;
   width: 100%;
@@ -270,7 +305,7 @@ form {
   background: var(--primary-purple);
   border-radius: 150px;
   z-index: 2;
-  transition: 1.8s ease-in-out;
+  transition: var(--transition-slow);
 }
 
 .container.active .toggle-box::before {
@@ -287,7 +322,7 @@ form {
   justify-content: center;
   align-items: center;
   z-index: 2;
-  transition: 0.6s ease-in-out;
+  transition: var(--transition-medium);
 }
 
 .toggle-panel.toggle-left {
@@ -332,7 +367,10 @@ form {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ===== MESSAGGI DI ERRORE ===== */
+/* ============================================================================
+   MESSAGGI ERRORE
+   ========================================================================== */
+
 .error-messages {
   margin: 15px 0;
   padding: 10px;
@@ -354,7 +392,6 @@ form {
   font-weight: 500;
 }
 
-/* Input con errore */
 .input-error {
   border: 2px solid var(--error-color) !important;
   background-color: #fff5f5 !important;
@@ -365,7 +402,26 @@ form {
   box-shadow: 0 0 5px rgba(255, 68, 68, 0.5);
 }
 
-/* ===== MODALE ===== */
+/* ============================================================================
+   MESSAGGI SUCCESSO
+   ========================================================================== */
+
+.success-message {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: var(--success-bg);
+  border: 1px solid var(--success-color);
+  border-radius: 5px;
+  color: var(--success-dark);
+  font-weight: 500;
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+
+/* ============================================================================
+   MODALE
+   ========================================================================== */
+
 .modal {
   position: fixed;
   z-index: 1000;
@@ -389,16 +445,6 @@ form {
   }
 }
 
-.modal-content {
-  background-color: var(--white);
-  padding: 40px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease;
-}
-
 @keyframes slideUp {
   from {
     transform: translateY(20px);
@@ -408,6 +454,16 @@ form {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.modal-content {
+  background-color: var(--white);
+  padding: 40px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
 }
 
 .modal-content h2 {
@@ -430,14 +486,13 @@ form {
   font-weight: bold;
   cursor: pointer;
   color: #999;
-  transition: 0.3s;
+  transition: var(--transition-fast);
 }
 
 .close:hover {
   color: var(--dark-text);
 }
 
-/* ===== MODALE BUTTON GROUP ===== */
 .modal-button-group {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -460,15 +515,305 @@ form {
   transform: translateY(-2px);
 }
 
-/* ===== MESSAGGI DI SUCCESSO ===== */
-.success-message {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: var(--success-bg);
-  border: 1px solid var(--success-color);
-  border-radius: 5px;
-  color: var(--success-dark);
-  font-weight: 500;
-  text-align: center;
-  animation: slideUp 0.3s ease;
+/* ============================================================================
+   RESPONSIVE - SCHERMI MEDI (1024px)
+   ========================================================================== */
+
+@media (max-height: 830px) {
+  .intro,
+  .outro {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .container {
+    width: 95%;
+    height: 600px;
+    margin: auto;
+  }
+
+  .intro h1 {
+    font-size: 28px;
+  }
+
+  .intro p {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .outro p {
+    font-size: 13px;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE - SCHERMI PICCOLI (768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .form-box {
+    padding: 20px;
+  }
+
+  .container h1 {
+    font-size: 28px;
+    margin: -5px 0;
+  }
+
+  .container p {
+    font-size: 13px;
+    margin: 12px 0;
+  }
+
+  .input-box {
+    margin: 20px 0;
+  }
+
+  .input-box input {
+    padding: 10px 40px 10px 15px;
+    font-size: 14px;
+  }
+
+  .input-box i {
+    right: 15px;
+    font-size: 18px;
+  }
+
+  .forget-link {
+    margin: -10px 0 10px;
+  }
+
+  .forget-link a {
+    font-size: 13px;
+  }
+
+  .check-box {
+    margin: -10px 0 10px;
+    font-size: 13px;
+  }
+
+  .check-box input {
+    margin-right: 6px;
+  }
+
+  .check-box a {
+    font-size: 13px;
+  }
+
+  .btn {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+
+  .toggle-panel p {
+    margin-bottom: 15px;
+    font-size: 13px;
+  }
+
+  .toggle-panel .btn {
+    width: 140px;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .modal-content {
+    padding: 30px;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .modal-content p {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .close {
+    font-size: 24px;
+  }
+
+  .modal-button-group {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .error-message {
+    font-size: 13px;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE - SCHERMI MOLTO PICCOLI (650px)
+   ========================================================================== */
+
+@media screen and (max-width: 650px) {
+  .container {
+    height: calc(100vh - 40px);
+  }
+
+  .form-box {
+    bottom: 0;
+    width: 100%;
+    height: 70%;
+  }
+
+  .container.active .form-box {
+    right: 0;
+    bottom: 30%;
+  }
+
+  .toggle-box::before {
+    left: 0;
+    top: -270%;
+    width: 100%;
+    height: 300%;
+    border-radius: 20vw;
+  }
+
+  .container.active .toggle-box::before {
+    left: 0;
+    top: 70%;
+  }
+
+  .toggle-panel {
+    width: 100%;
+    height: 30%;
+  }
+
+  .toggle-panel.toggle-left {
+    top: 0;
+  }
+
+  .container.active .toggle-panel.toggle-left {
+    left: 0;
+    top: -30%;
+  }
+
+  .toggle-panel.toggle-right {
+    right: 0;
+    bottom: -30%;
+  }
+
+  .container.active .toggle-panel.toggle-right {
+    bottom: 0;
+  }
+
+  .check-box {
+    justify-content: center;
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE - MOBILE (480px)
+   ========================================================================== */
+
+@media screen and (max-width: 480px) {
+  .container h1 {
+    font-size: 22px;
+    margin: -3px 0;
+  }
+
+  .container p {
+    font-size: 12px;
+    margin: 8px 0;
+  }
+
+  .input-box {
+    margin: 15px 0;
+  }
+
+  .input-box input {
+    padding: 8px 35px 8px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+
+  .input-box i {
+    right: 12px;
+    font-size: 16px;
+  }
+
+  .forget-link a {
+    font-size: 12px;
+  }
+
+  .check-box {
+    margin: -8px 0 8px;
+    font-size: 12px;
+  }
+
+  .check-box input {
+    margin-right: 5px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .check-box a {
+    font-size: 12px;
+  }
+
+  .btn {
+    height: 38px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .form-box {
+    padding: 15px;
+  }
+
+  .toggle-panel h1 {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .toggle-panel p {
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .toggle-panel .btn {
+    width: 120px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .modal-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .close {
+    font-size: 20px;
+  }
+
+  .modal-button-group {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .error-message {
+    font-size: 12px;
+    margin: 3px 0;
+  }
 }

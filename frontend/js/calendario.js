@@ -1,3 +1,7 @@
+/**
+ * Calendario class
+ * Manages calendar rendering, month navigation, and verification tracking
+ */
 class Calendario {
   constructor(tableId, prevBtnId, nextBtnId, monthDisplayId) {
     this.table = document.getElementById(tableId);
@@ -6,22 +10,27 @@ class Calendario {
     this.monthDisplay = document.getElementById(monthDisplayId);
 
     this.currentDate = new Date();
-    this.verificheData = {}; // Mappa delle verifiche per giorno
+    this.verificheData = {}; // Map of verifications by day
 
     this.init();
   }
 
+  /**
+   * Initialize event listeners
+   */
   init() {
     this.prevBtn.addEventListener("click", () => this.prevMonth());
     this.nextBtn.addEventListener("click", () => this.nextMonth());
     this.render();
   }
 
-  // Render il calendario
+  /**
+   * Render the calendar table
+   */
   render() {
     this.table.innerHTML = "";
 
-    // Header con giorni della settimana
+    // Create header with days of week
     const headerRow = this.table.createTHead().insertRow();
     const days = ["L", "M", "M", "G", "V", "S", "D"];
     days.forEach((day) => {
@@ -30,10 +39,10 @@ class Calendario {
       headerRow.appendChild(th);
     });
 
-    // Aggiorna titolo mese
+    // Update month display
     this.updateMonthDisplay();
 
-    // Body del calendario
+    // Create calendar body
     const tbody = this.table.createTBody();
     const firstDay = new Date(
       this.currentDate.getFullYear(),
@@ -47,13 +56,13 @@ class Calendario {
     );
     const daysInMonth = lastDay.getDate();
 
-    // Converti domenica (0) a 6, lunedì (1) a 0, ecc.
+    // Convert Sunday (0) to 6, Monday (1) to 0, etc.
     let startingDayOfWeek = firstDay.getDay() - 1;
     if (startingDayOfWeek < 0) startingDayOfWeek = 6;
 
     let date = 1;
 
-    // Crea le righe del calendario
+    // Create calendar rows (6 weeks)
     for (let i = 0; i < 6; i++) {
       const row = tbody.insertRow();
 
@@ -61,10 +70,13 @@ class Calendario {
         const cell = row.insertCell();
 
         if (i === 0 && j < startingDayOfWeek) {
+          // Empty cells before first day
           cell.classList.add("empty");
         } else if (date > daysInMonth) {
+          // Empty cells after last day
           cell.classList.add("empty");
         } else {
+          // Valid date cell
           cell.textContent = date;
           const cellDate = new Date(
             this.currentDate.getFullYear(),
@@ -72,12 +84,12 @@ class Calendario {
             date
           );
 
-          // Evidenzia oggi
+          // Highlight today
           if (this.isToday(cellDate)) {
             cell.classList.add("today");
           }
 
-          // Controlla se c'è una verifica in questo giorno
+          // Check if there's a verification on this day
           if (this.verificheData[date]) {
             cell.classList.add("has-event");
           }
@@ -88,7 +100,7 @@ class Calendario {
       }
     }
 
-    // Richiama addBadgesToCalendar dopo il render
+    // Call addBadgesToCalendar after render
     setTimeout(() => {
       if (window.addBadgesToCalendar) {
         window.addBadgesToCalendar();
@@ -96,6 +108,9 @@ class Calendario {
     }, 100);
   }
 
+  /**
+   * Update month and year display
+   */
   updateMonthDisplay() {
     const monthNames = [
       "GENNAIO",
@@ -111,21 +126,33 @@ class Calendario {
       "NOVEMBRE",
       "DICEMBRE",
     ];
+
     const month = monthNames[this.currentDate.getMonth()];
     const year = this.currentDate.getFullYear();
     this.monthDisplay.textContent = `${month} ${year}`;
   }
 
+  /**
+   * Navigate to previous month
+   */
   prevMonth() {
     this.currentDate.setMonth(this.currentDate.getMonth() - 1);
     this.render();
   }
 
+  /**
+   * Navigate to next month
+   */
   nextMonth() {
     this.currentDate.setMonth(this.currentDate.getMonth() + 1);
     this.render();
   }
 
+  /**
+   * Check if given date is today
+   * @param {Date} date - Date to check
+   * @returns {boolean} True if date is today
+   */
   isToday(date) {
     const today = new Date();
     return (
@@ -135,24 +162,34 @@ class Calendario {
     );
   }
 
+  /**
+   * Handle date click event
+   * @param {number} day - Day of month
+   */
   onDateClick(day) {
-    // Qui puoi aggiungere una modale per aggiungere verifiche
+    // Placeholder for modal or additional functionality
   }
 
-  // Aggiungi una verifica a un giorno
+  /**
+   * Add a verification to a specific day
+   * @param {number} day - Day of month
+   */
   addVerifica(day) {
     this.verificheData[day] = true;
     this.render();
   }
 
-  // Rimuovi una verifica
+  /**
+   * Remove a verification from a specific day
+   * @param {number} day - Day of month
+   */
   removeVerifica(day) {
     delete this.verificheData[day];
     this.render();
   }
 }
 
-// Inizializza il calendario quando la pagina carica
+// Initialize calendar when page loads
 document.addEventListener("DOMContentLoaded", () => {
   new Calendario(
     "calendarTable",

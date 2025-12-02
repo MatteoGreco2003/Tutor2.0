@@ -3,29 +3,57 @@
 // ==========================================
 
 // ===== HAMBURGER MENU =====
-const hamburgerBtn = document.getElementById("hamburgerBtn");
-const sidebar = document.querySelector(".sidebar");
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById("hamburgerBtn"); // oppure .menu-toggle
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay"); // oppure .sidebar-overlay
 
-hamburgerBtn?.addEventListener("click", () => {
-  hamburgerBtn.classList.toggle("active");
-  sidebar.classList.toggle("active");
-});
+  if (!hamburgerBtn || !sidebar || !sidebarOverlay) return;
 
-// Chiudi sidebar quando clicchi su un link
-document.querySelectorAll(".sidebar-item").forEach((item) => {
-  item.addEventListener("click", () => {
-    hamburgerBtn.classList.remove("active");
-    sidebar.classList.remove("active");
+  hamburgerBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    hamburgerBtn.classList.toggle("active");
+    sidebar.classList.toggle("active");
+    sidebarOverlay.classList.toggle("active");
+    if (sidebar.classList.contains("active")) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
   });
-});
 
-// Chiudi sidebar quando clicchi fuori
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".sidebar") && !e.target.closest(".hamburger-btn")) {
+  sidebarOverlay.addEventListener("click", () => {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
-  }
-});
+    sidebarOverlay.classList.remove("active");
+    document.body.classList.remove("no-scroll");
+  });
+
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hamburgerBtn.classList.remove("active");
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+      document.body.classList.remove("no-scroll");
+    }
+  });
+}
+
+// Initialize immediately, don't wait for DOMContentLoaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHamburgerMenu);
+} else {
+  initHamburgerMenu();
+}
 
 document.addEventListener("DOMContentLoaded", async function () {
   // ===== AUTENTICAZIONE =====
@@ -170,7 +198,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             return {
               ...studente,
-              insufficienti: checkData.hasInsufficenze || false,
+              hasInsufficenze: checkData.hasInsufficenze || false,
+              totaleInsufficenze: checkData.totaleInsufficenze || 0,
+              totaleMaterie: checkData.materieInsufficenti?.length || 0,
             };
           } catch (error) {
             console.error(
@@ -193,10 +223,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         let html = '<div class="studenti-grid">';
         studentiConInsufficenze.forEach((studente) => {
-          const sufficienza = studente.insufficienti ? "INS" : "SUF";
-          const sufficienzaClass = studente.insufficienti
-            ? "insufficiente"
-            : "sufficiente";
+          let sufficienza = "SUF";
+          let sufficienzaClass = "sufficiente";
+
+          if (studente.totaleInsufficenze > 0) {
+            sufficienza = "INS";
+            sufficienzaClass = "insufficiente";
+          } else if (studente.totaleMaterie === 0) {
+            sufficienza = "SV";
+            sufficienzaClass = "senza-valutazione";
+          }
 
           html += `
             <div class="studente-card">

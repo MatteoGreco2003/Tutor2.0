@@ -865,7 +865,6 @@ body.modal-open {
     height: calc(100vh - 70px);
     transform: translateX(-100%);
     position: fixed;
-    top: 75px;
     left: 0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;

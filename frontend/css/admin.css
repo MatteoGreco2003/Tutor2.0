@@ -156,7 +156,7 @@ body.modal-open {
   top: 75px;
   left: 0;
   width: 280px;
-  height: calc(100vh - 75px);
+  height: calc(100vh - 70px);
   background-color: var(--white);
   padding: 24px 0;
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
@@ -1292,7 +1292,7 @@ body.modal-open {
     width: 250px;
     transform: translateX(-100%);
     position: fixed;
-    top: 75px;
+    top: 70px;
     left: 0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;
@@ -1495,6 +1495,7 @@ body.modal-open {
 
   .sidebar {
     width: 240px;
+    top: 70px;
   }
 
   .main-content {
@@ -1739,7 +1740,6 @@ body.modal-open {
 @media (max-width: 576px) {
   .header {
     padding: 10px 12px;
-    height: 65px;
   }
 
   .header-left {
@@ -2017,7 +2017,6 @@ body.modal-open {
 @media (max-width: 360px) {
   .header {
     padding: 8px 10px;
-    height: 60px;
   }
 
   .header-left {

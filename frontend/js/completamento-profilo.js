@@ -2,39 +2,23 @@
 // COMPLETAMENTO PROFILO - TUTOR 2.0
 // ==========================================
 
-// ===== VERIFICA SESSIONE ALL'APERTURA PAGINA =====
-/**
- * Controlla se i dati di registrazione sono salvati
- * Se no, reindirizza al login
- *
- * Usa 'pageshow' invece di 'load' per catturare anche
- * quando l'utente torna indietro dal browser (back button)
- */
+/* ===== VERIFICA SESSIONE ALL'APERTURA PAGINA ===== */
 window.addEventListener("pageshow", (event) => {
   const registrationData = sessionStorage.getItem("registrationData");
-
-  // Se sessionStorage è vuoto, reindirizza a login
   if (!registrationData) {
     window.location.href = "/";
   }
 });
 
-// ===== DISABILITA IL BACK/FORWARD CACHE (bfcache) =====
-/**
- * Questo impedisce che la pagina venga salvata in cache
- * quando l'utente naviga altrove
- */
+/* ===== DISABILITA IL BACK/FORWARD CACHE ===== */
 window.addEventListener("pagehide", () => {
-  // Non fare nulla, ma questo disabilita il bfcache
+  // Disabilita bfcache
 });
 
-// ===== ELEMENTI DOM =====
+/* ===== DOM ELEMENTS ===== */
 const profileForm = document.getElementById("profileForm");
 const cancelBtn = document.getElementById("cancelBtn");
 const gradoScolasticoSelect = document.getElementById("gradoScolastico");
-const indirizzoScolasticoGroup = document.getElementById(
-  "indirizzoScolasticoGroup"
-);
 const indirizzoScolasticoSelect = document.getElementById(
   "indirizzoScolastico"
 );
@@ -45,40 +29,22 @@ const emailProfessoriContainer = document.getElementById(
 
 let emailProfCount = 0;
 
-// ==========================================
-// LOGICA CONDIZIONALE: INDIRIZZO SCOLASTICO
-// ==========================================
-
-/**
- * Abilita/Disabilita il campo indirizzo scolastico
- * a seconda della selezione del grado scolastico
- */
+/* ===== LOGICA CONDIZIONALE: INDIRIZZO SCOLASTICO ===== */
 gradoScolasticoSelect.addEventListener("change", (e) => {
-  if (e.target.value === "Superiori") {
-    indirizzoScolasticoSelect.disabled = false;
-    indirizzoScolasticoSelect.required = true;
-  } else {
-    indirizzoScolasticoSelect.disabled = true;
-    indirizzoScolasticoSelect.required = false;
+  const isSuperiori = e.target.value === "Superiori";
+  indirizzoScolasticoSelect.disabled = !isSuperiori;
+  indirizzoScolasticoSelect.required = isSuperiori;
+  if (!isSuperiori) {
     indirizzoScolasticoSelect.value = "";
   }
 });
 
-// Inizialmente disabilitato
 indirizzoScolasticoSelect.disabled = true;
 
-// ==========================================
-// GESTIONE EMAIL PROFESSORI
-// ==========================================
-
-/**
- * Aggiungi campo email professore
- * Max 5 email
- */
+/* ===== GESTIONE EMAIL PROFESSORI ===== */
 addProfessorBtn.addEventListener("click", () => {
   if (emailProfCount < 5) {
     emailProfCount++;
-
     const newEmailGroup = document.createElement("div");
     newEmailGroup.className = "email-professor-group";
     newEmailGroup.id = `emailGroup${emailProfCount}`;
@@ -91,90 +57,67 @@ addProfessorBtn.addEventListener("click", () => {
           placeholder="Email Professore ${emailProfCount}"
         />
       </div>
-      <button 
-        type="button" 
-        class="btn-remove-prof" 
-        data-index="${emailProfCount}"
-      >
+      <button type="button" class="btn-remove-prof" data-index="${emailProfCount}">
         Rimuovi
       </button>
     `;
 
     emailProfessoriContainer.appendChild(newEmailGroup);
-
-    // Aggiungi listener al bottone rimuovi
-    const removeBtn = newEmailGroup.querySelector(".btn-remove-prof");
-    removeBtn.addEventListener("click", () => {
-      removeProfessor(newEmailGroup);
-    });
+    newEmailGroup
+      .querySelector(".btn-remove-prof")
+      .addEventListener("click", () => {
+        removeProfessor(newEmailGroup);
+      });
 
     renumberProfessors();
-
-    // Disabilita bottone se raggiungi 5
-    if (emailProfCount >= 5) {
-      addProfessorBtn.disabled = true;
-      addProfessorBtn.style.opacity = "0.5";
-    }
+    updateAddButtonState();
   }
 });
 
 /**
  * Rimuovi campo email professore
- * @param {HTMLElement} group - Elemento del gruppo email
  */
 function removeProfessor(group) {
   if (group) {
     group.remove();
     renumberProfessors();
-
-    // Riabilita bottone se scendi sotto 5
-    if (emailProfCount < 5) {
-      addProfessorBtn.disabled = false;
-      addProfessorBtn.style.opacity = "1";
-    }
+    updateAddButtonState();
   }
 }
 
 /**
  * Rinumera tutti i campi email professori
- * (mantenere coerenza tra ID e placeholder)
  */
 function renumberProfessors() {
   const allGroups = document.querySelectorAll(".email-professor-group");
-
   allGroups.forEach((group, index) => {
     const newIndex = index + 1;
     const input = group.querySelector(".emailProf");
-
     input.id = `emailProf${newIndex}`;
     input.placeholder = `Email Professore ${newIndex}`;
     group.id = `emailGroup${newIndex}`;
   });
-
   emailProfCount = allGroups.length;
 }
 
-// ===== BOTTONE ANNULLA =====
 /**
- * Annulla completamento profilo e torna a login
- * Distrugge i dati di registrazione dal sessionStorage
- * e disabilita il back button con history.replaceState
+ * Abilita/disabilita bottone aggiungi in base al numero di email
  */
-cancelBtn.addEventListener("click", () => {
-  // Pulisci sessionStorage (dati di registrazione)
-  sessionStorage.removeItem("registrationData");
+function updateAddButtonState() {
+  const isDisabled = emailProfCount >= 5;
+  addProfessorBtn.disabled = isDisabled;
+  addProfessorBtn.style.opacity = isDisabled ? "0.5" : "1";
+}
 
-  // Reindirizza
+/* ===== BOTTONE ANNULLA ===== */
+cancelBtn.addEventListener("click", () => {
+  sessionStorage.removeItem("registrationData");
   window.location.href = "/";
 });
 
-// ==========================================
-// SUBMIT FORM
-// ==========================================
-
+/* ===== SUBMIT FORM ===== */
 profileForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
   clearErrors();
   const errors = validateForm();
 
@@ -185,12 +128,10 @@ profileForm.addEventListener("submit", (e) => {
   }
 });
 
-// ==========================================
-// VALIDAZIONI
-// ==========================================
+/* ===== UTILITY FUNCTIONS ===== */
 
 /**
- * Funzioni di validazione supporto
+ * Valida email
  */
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -199,8 +140,6 @@ function isValidEmail(email) {
 
 /**
  * Valida telefono italiano (10 cifre)
- * @param {string} phone - Numero di telefono
- * @returns {boolean} - True se valido
  */
 function isValidPhone(phone) {
   const phoneRegex = /^[0-9]{10}$/;
@@ -209,8 +148,6 @@ function isValidPhone(phone) {
 
 /**
  * Capitalizza prima lettera
- * @param {string} text - Testo da capitalizzare
- * @returns {string} - Testo capitalizzato
  */
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -218,7 +155,6 @@ function capitalize(text) {
 
 /**
  * Aggiunge classe di errore all'input
- * @param {string} inputId - ID dell'input
  */
 function addInputError(inputId) {
   const input = document.getElementById(inputId);
@@ -238,8 +174,6 @@ function clearInputErrors() {
 
 /**
  * Valida il form completo
- * Restituisce array di errori (mostra solo il primo)
- * @returns {array} - Array di messaggi di errore
  */
 function validateForm() {
   const errors = [];
@@ -288,8 +222,7 @@ function validateForm() {
     }
   }
 
-  // ===== GENITORE 1 (OBBLIGATORIO) =====
-
+  // 6. GENITORE 1 (OBBLIGATORIO)
   const genitore1Nome = document.getElementById("genitore1Nome").value.trim();
   if (!genitore1Nome || genitore1Nome.length < 2) {
     errors.push("Nome Genitore 1 deve contenere almeno 2 caratteri");
@@ -315,8 +248,7 @@ function validateForm() {
     return errors;
   }
 
-  // ===== EMAIL FAMIGLIA (OBBLIGATORIA) =====
-
+  // 7. EMAIL FAMIGLIA (OBBLIGATORIA)
   const emailFamiglia = document.getElementById("emailFamiglia").value.trim();
   if (!isValidEmail(emailFamiglia)) {
     errors.push("Email Famiglia non valida (es: famiglia@example.com)");
@@ -324,8 +256,7 @@ function validateForm() {
     return errors;
   }
 
-  // ===== EMAIL PROFESSORI (OPZIONALI - valida solo se compilati) =====
-
+  // 8. EMAIL PROFESSORI (OPZIONALI - valida solo se compilati)
   const emailProfInputs = document.querySelectorAll(".emailProf");
   for (let input of emailProfInputs) {
     if (input.value.trim() !== "") {
@@ -345,8 +276,6 @@ function validateForm() {
 
 /**
  * Mostra messaggio di errore (solo il primo)
- * Scroll automatico all'errore
- * @param {array} errors - Array di messaggi di errore
  */
 function showErrors(errors) {
   const errorContainer = document.getElementById("profileErrors");
@@ -359,7 +288,6 @@ function showErrors(errors) {
     errorContainer.appendChild(errorDiv);
   }
 
-  // Scroll all'errore
   errorContainer.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
@@ -371,16 +299,12 @@ function clearErrors() {
   clearInputErrors();
 }
 
-// ==========================================
-// SUBMIT DATI AL BACKEND
-// ==========================================
+/* ===== SUBMIT DATI AL BACKEND ===== */
 
 /**
  * Invia i dati del profilo al backend
- * Combina dati di registrazione (sessionStorage) + dati profilo (form)
  */
 async function submitProfile() {
-  // Recupera dati registrazione da sessionStorage
   const registrationData = JSON.parse(
     sessionStorage.getItem("registrationData")
   );
@@ -391,7 +315,6 @@ async function submitProfile() {
     return;
   }
 
-  // Prepara dati con capitalizzazione
   const formData = {
     // Dati registrazione
     email: registrationData.email,
@@ -443,23 +366,17 @@ async function submitProfile() {
   try {
     const response = await fetch("/auth/register-complete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
 
     const data = await response.json();
 
     if (response.ok) {
-      // Salva token se restituito dal backend
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
-
-      // Pulisci sessionStorage
       sessionStorage.removeItem("registrationData");
-
       window.location.href = "/home-studenti";
     } else {
       showErrors([data.message || "Errore nel completamento del profilo"]);

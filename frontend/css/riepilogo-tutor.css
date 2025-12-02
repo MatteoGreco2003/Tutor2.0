@@ -33,6 +33,13 @@ body {
   overflow-x: hidden;
 }
 
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100vh; /* Forza altezza fissa */
+  position: fixed; /* Blocca completamente */
+  width: 100%;
+}
+
 /* ==========================================
    HEADER
    ========================================== */
@@ -192,6 +199,26 @@ body {
   margin-top: auto;
   padding: 20px 12px 0 12px;
   border-top: 2px solid var(--light-bg);
+}
+
+.sidebar-overlay,
+#sidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 899; /* metti la sidebar a 900 */
+}
+
+.sidebar-overlay.active,
+#sidebarOverlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .delete-btn {
@@ -457,6 +484,12 @@ body {
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.badge-senza-valutazione {
+  background-color: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
 }
 
 .badge-sufficiente {
@@ -848,17 +881,19 @@ body.modal-open {
 @media (max-width: 768px) {
   .header {
     padding: 12px 20px;
+    height: 70px;
   }
 
   .hamburger-btn {
     display: flex;
+    order: -1;
   }
 
   .sidebar {
     width: 250px;
     transform: translateX(-100%);
     position: fixed;
-    top: 75px;
+    top: 70px;
     left: 0;
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
     z-index: 900;
@@ -867,6 +902,7 @@ body.modal-open {
 
   .sidebar.active {
     transform: translateX(0);
+    z-index: 900;
   }
 
   .main-content {
@@ -1063,6 +1099,12 @@ body.modal-open {
 @media (max-width: 576px) {
   .header {
     padding: 10px 16px;
+    height: 65px;
+  }
+
+  .sidebar {
+    top: 65px;
+    height: calc(100vh - 65px);
   }
 
   .header-title {
@@ -1267,7 +1309,7 @@ body.modal-open {
 /* Mobile extra small (fino a 360px) */
 @media (max-width: 360px) {
   .header {
-    padding: 8px 12px;
+    /* padding: 8px 12px; */
     gap: 8px;
   }
 
