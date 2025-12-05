@@ -1,33 +1,27 @@
-// ==========================================
-// MATERIE - TUTOR 2.0
-// ==========================================
-
-// ===== DISABILITA BACK BUTTON ALL'INIZIO =====
+// ========== DISABILITA BACK BUTTON ==========
 window.history.pushState(null, null, window.location.href);
 window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
-// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+// ========== HAMBURGER MENU ==========
 function initHamburgerMenu() {
-  const hamburgerBtn = document.getElementById("hamburgerBtn"); // oppure .menu-toggle
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
   const sidebar = document.querySelector(".sidebar");
-  const sidebarOverlay = document.getElementById("sidebarOverlay"); // oppure .sidebar-overlay
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
 
   if (!hamburgerBtn || !sidebar || !sidebarOverlay) return;
 
+  // Toggle menu
   hamburgerBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     hamburgerBtn.classList.toggle("active");
     sidebar.classList.toggle("active");
     sidebarOverlay.classList.toggle("active");
-    if (sidebar.classList.contains("active")) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
+    document.body.classList.toggle("no-scroll");
   });
 
+  // Chiudi menu al click overlay
   sidebarOverlay.addEventListener("click", () => {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
@@ -35,6 +29,7 @@ function initHamburgerMenu() {
     document.body.classList.remove("no-scroll");
   });
 
+  // Chiudi menu al click su item
   document.querySelectorAll(".sidebar-item").forEach((item) => {
     item.addEventListener("click", () => {
       hamburgerBtn.classList.remove("active");
@@ -44,6 +39,7 @@ function initHamburgerMenu() {
     });
   });
 
+  // Chiudi menu con ESC
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       hamburgerBtn.classList.remove("active");
@@ -60,26 +56,24 @@ if (document.readyState === "loading") {
   initHamburgerMenu();
 }
 
+// ========== MAIN APP ==========
 document.addEventListener("DOMContentLoaded", async function () {
-  // ===== VERIFICA TOKEN =====
+  // Verifica token
   const token = localStorage.getItem("token");
-
   if (!token) {
     window.location.href = "/";
     return;
   }
 
-  // ===== CONTROLLA TOKEN QUANDO PAGINA RITORNA VISIBILE =====
+  // Controlla token se pagina ritorna visibile
   window.addEventListener("pageshow", (event) => {
     const checkToken = localStorage.getItem("token");
-
-    // Se il token non esiste, torna a login
     if (!checkToken) {
       window.location.href = "/";
-      return;
     }
   });
 
+  // ========== DOM ELEMENTS ==========
   const addBtn = document.getElementById("addMateriaBtn");
   const addMateriaModal = document.getElementById("addMateriaModal");
   const closeAddMateria = document.getElementById("closeAddMateria");
@@ -89,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const addMateriaErrors = document.getElementById("addMateriaErrors");
   const materieList = document.getElementById("materieList");
 
-  // MODALE MODIFICA
   const editMateriaModal = document.getElementById("editMateriaModal");
   const closeEditMateria = document.getElementById("closeEditMateria");
   const annullaEditMateria = document.getElementById("annullaEditMateria");
@@ -97,18 +90,23 @@ document.addEventListener("DOMContentLoaded", async function () {
   const materiaNomeEditInput = document.getElementById("materiaNomeEdit");
   const editMateriaErrors = document.getElementById("editMateriaErrors");
 
-  // MODALE ELIMINA
   const deleteMateriaModal = document.getElementById("deleteMateriaModal");
   const closeDeleteMateria = document.getElementById("closeDeleteMateria");
   const cancelDeleteMateria = document.getElementById("cancelDeleteMateria");
   const confirmDeleteMateria = document.getElementById("confirmDeleteMateria");
   const materiaNomeDelete = document.getElementById("materiaNomeDelete");
 
+  const deleteProfileModal = document.getElementById("deleteProfileModal");
+  const closeDeleteProfile = document.getElementById("closeDeleteProfile");
+  const cancelDeleteProfile = document.getElementById("cancelDeleteProfile");
+  const confirmDeleteProfile = document.getElementById("confirmDeleteProfile");
+
+  // ========== STATE ==========
   let materieAttuali = [];
   let materiaInModifica = null;
   let materiaInEliminazione = null;
 
-  // ===== CARICA NOME & COGNOME NELL'HEADER =====
+  // ========== CARICA DATI HEADER ==========
   try {
     const response = await fetch("/student/data", {
       method: "GET",
@@ -130,7 +128,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     window.location.href = "/";
   }
 
-  // ===== CARICA MATERIE DAL BACKEND =====
+  // ========== FETCH MATERIE ==========
   async function fetchMaterie() {
     try {
       const res = await fetch("/subject/data", {
@@ -151,42 +149,42 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // ===== RENDERIZZA LE MATERIE =====
+  // ========== RENDERIZZA MATERIE ==========
   function renderMaterie(materie) {
     materieList.innerHTML = "";
     if (materie.length === 0) {
       materieList.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <p>Nessuna materia registrata</p>
-      </div>
-    `;
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>Nessuna materia registrata</p>
+        </div>
+      `;
       return;
     }
+
     materie.forEach((materia) => {
       const item = document.createElement("div");
       item.className = "materia-item";
 
-      // Determina se mostrare testo nei bottoni
       const isMobile = window.innerWidth <= 576;
       const modificaText = isMobile ? "" : " Modifica";
       const eliminaText = isMobile ? "" : " Elimina";
 
       item.innerHTML = `
-      <input type="text" class="materia-input" value="${materia.nome}" disabled>
-      <div class="btn-materia">
-        <button class="btn-modifica" data-id="${materia._id}" title="Modifica">
-          <i class="fas fa-pencil"></i>${modificaText}
-        </button>
-        <button class="btn-rimuovi" data-id="${materia._id}" title="Elimina">
-          <i class="fas fa-trash"></i>${eliminaText}
-        </button>
-      </div>
-    `;
+        <input type="text" class="materia-input" value="${materia.nome}" disabled>
+        <div class="btn-materia">
+          <button class="btn-modifica" data-id="${materia._id}" title="Modifica">
+            <i class="fas fa-pencil"></i>${modificaText}
+          </button>
+          <button class="btn-rimuovi" data-id="${materia._id}" title="Elimina">
+            <i class="fas fa-trash"></i>${eliminaText}
+          </button>
+        </div>
+      `;
       materieList.appendChild(item);
     });
 
-    // Event listeners...
+    // Aggiungi event listeners ai bottoni
     document.querySelectorAll(".btn-modifica").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -210,108 +208,83 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  // ===== APRI MODALE MODIFICA =====
+  // ========== MODALE MODIFICA - APRI ==========
   function apriBtnModificaModal(materia) {
     materiaInModifica = materia;
     materiaNomeEditInput.value = materia.nome;
     editMateriaErrors.innerHTML = "";
     materiaNomeEditInput.classList.remove("input-error");
     editMateriaModal.classList.add("show");
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   }
 
-  // ===== APRI MODALE ELIMINA =====
+  // ========== MODALE ELIMINA - APRI ==========
   function apriMaterialeEliminaModal(materia) {
     materiaInEliminazione = materia;
     materiaNomeDelete.textContent = materia.nome;
     deleteMateriaModal.classList.add("show");
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   }
 
-  // ===== MODALE AGGIUNGI: APRI =====
+  // ========== MODALE AGGIUNGI - APRI ==========
   addBtn.addEventListener("click", () => {
     resetAddMateriaForm();
     addMateriaModal.classList.add("show");
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   });
 
-  // ===== MODALE AGGIUNGI: CHIUDI (X) =====
-  closeAddMateria.addEventListener("click", () => {
+  // ========== MODALE AGGIUNGI - CHIUDI ==========
+  const closeAddMateriaModal = () => {
     addMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
     resetAddMateriaForm();
-  });
+  };
 
-  // ===== MODALE AGGIUNGI: CHIUDI (Annulla) =====
-  annullaAddMateria.addEventListener("click", () => {
-    addMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-    resetAddMateriaForm();
-  });
-
-  // ===== MODALE AGGIUNGI: CHIUDI (click fuori) =====
+  closeAddMateria.addEventListener("click", closeAddMateriaModal);
+  annullaAddMateria.addEventListener("click", closeAddMateriaModal);
   window.addEventListener("click", (event) => {
     if (event.target === addMateriaModal) {
-      addMateriaModal.classList.remove("show");
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-      resetAddMateriaForm();
+      closeAddMateriaModal();
     }
   });
 
-  // ===== MODALE MODIFICA: CHIUDI (X) =====
-  closeEditMateria.addEventListener("click", () => {
+  // ========== MODALE MODIFICA - CHIUDI ==========
+  const closeEditMateriaModal = () => {
     editMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
     resetEditMateriaForm();
-  });
+  };
 
-  // ===== MODALE MODIFICA: CHIUDI (Annulla) =====
-  annullaEditMateria.addEventListener("click", () => {
-    editMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-    resetEditMateriaForm();
-  });
-
-  // ===== MODALE MODIFICA: CHIUDI (click fuori) =====
+  closeEditMateria.addEventListener("click", closeEditMateriaModal);
+  annullaEditMateria.addEventListener("click", closeEditMateriaModal);
   window.addEventListener("click", (event) => {
     if (event.target === editMateriaModal) {
-      editMateriaModal.classList.remove("show");
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-      resetEditMateriaForm();
+      closeEditMateriaModal();
     }
   });
 
-  // ===== MODALE ELIMINA: CHIUDI (X) =====
-  closeDeleteMateria.addEventListener("click", () => {
+  // ========== MODALE ELIMINA - CHIUDI ==========
+  const closeDeleteMateriaModal = () => {
     deleteMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
     materiaInEliminazione = null;
-  });
+  };
 
-  // ===== MODALE ELIMINA: CHIUDI (Annulla) =====
-  cancelDeleteMateria.addEventListener("click", () => {
-    deleteMateriaModal.classList.remove("show");
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-    materiaInEliminazione = null;
-  });
-
-  // ===== MODALE ELIMINA: CHIUDI (click fuori) =====
+  closeDeleteMateria.addEventListener("click", closeDeleteMateriaModal);
+  cancelDeleteMateria.addEventListener("click", closeDeleteMateriaModal);
   window.addEventListener("click", (event) => {
     if (event.target === deleteMateriaModal) {
-      deleteMateriaModal.classList.remove("show");
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-      materiaInEliminazione = null;
+      closeDeleteMateriaModal();
     }
   });
 
-  // ===== RESETTA FORM AGGIUNGI =====
+  // ========== RESET FORM ==========
   function resetAddMateriaForm() {
     addMateriaForm.reset();
     addMateriaErrors.innerHTML = "";
     materiaNomeInput.classList.remove("input-error");
   }
 
-  // ===== RESETTA FORM MODIFICA =====
   function resetEditMateriaForm() {
     if (materiaInModifica) {
       materiaNomeEditInput.value = materiaInModifica.nome;
@@ -320,15 +293,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     materiaNomeEditInput.classList.remove("input-error");
   }
 
-  // ===== SUBMIT FORM AGGIUNGI MATERIA =====
+  // ========== FUNZIONE ERRORI ==========
+  function mostraErrori(container, errors) {
+    container.innerHTML = "";
+    errors.forEach((err) => {
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "error-message";
+      errorDiv.textContent = "⚠️ " + err;
+      container.appendChild(errorDiv);
+    });
+  }
+
+  // ========== SUBMIT AGGIUNGI MATERIA ==========
   addMateriaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const nome = materiaNomeInput.value.trim();
-
-    addMateriaErrors.innerHTML = "";
-    materiaNomeInput.classList.remove("input-error");
-
     const errors = [];
 
     if (nome.length < 2) {
@@ -344,13 +324,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     if (errors.length > 0) {
-      addMateriaErrors.innerHTML = "";
-      errors.forEach((err) => {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-message";
-        errorDiv.textContent = "⚠️ " + err;
-        addMateriaErrors.appendChild(errorDiv);
-      });
+      mostraErrori(addMateriaErrors, errors);
       return;
     }
 
@@ -367,28 +341,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await res.json();
 
       if (res.ok) {
-        addMateriaModal.classList.remove("show");
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-        resetAddMateriaForm();
+        closeAddMateriaModal();
         await fetchMaterie();
       } else {
-        addMateriaErrors.innerHTML = "";
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-message";
-        errorDiv.textContent = "⚠️ " + (data.message || "Errore nell'aggiunta");
-        addMateriaErrors.appendChild(errorDiv);
+        mostraErrori(addMateriaErrors, [
+          data.message || "Errore nell'aggiunta",
+        ]);
       }
     } catch (error) {
       console.error("Errore aggiunta materia:", error);
-      addMateriaErrors.innerHTML = "";
-      const errorDiv = document.createElement("div");
-      errorDiv.className = "error-message";
-      errorDiv.textContent = "⚠️ Errore di connessione";
-      addMateriaErrors.appendChild(errorDiv);
+      mostraErrori(addMateriaErrors, ["Errore di connessione"]);
     }
   });
 
-  // ===== SUBMIT FORM MODIFICA MATERIA =====
+  // ========== SUBMIT MODIFICA MATERIA ==========
   editMateriaForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -396,10 +362,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const nome = materiaNomeEditInput.value.trim();
     const materiaId = materiaInModifica._id;
-
-    editMateriaErrors.innerHTML = "";
-    materiaNomeEditInput.classList.remove("input-error");
-
     const errors = [];
 
     if (nome.length < 2) {
@@ -418,13 +380,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     if (errors.length > 0) {
-      editMateriaErrors.innerHTML = "";
-      errors.forEach((err) => {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-message";
-        errorDiv.textContent = "⚠️ " + err;
-        editMateriaErrors.appendChild(errorDiv);
-      });
+      mostraErrori(editMateriaErrors, errors);
       return;
     }
 
@@ -441,29 +397,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await res.json();
 
       if (res.ok) {
-        editMateriaModal.classList.remove("show");
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-        resetEditMateriaForm();
+        closeEditMateriaModal();
         await fetchMaterie();
       } else {
-        editMateriaErrors.innerHTML = "";
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-message";
-        errorDiv.textContent =
-          "⚠️ " + (data.message || "Errore nella modifica");
-        editMateriaErrors.appendChild(errorDiv);
+        mostraErrori(editMateriaErrors, [
+          data.message || "Errore nella modifica",
+        ]);
       }
     } catch (error) {
       console.error("Errore modifica materia:", error);
-      editMateriaErrors.innerHTML = "";
-      const errorDiv = document.createElement("div");
-      errorDiv.className = "error-message";
-      errorDiv.textContent = "⚠️ Errore di connessione";
-      editMateriaErrors.appendChild(errorDiv);
+      mostraErrori(editMateriaErrors, ["Errore di connessione"]);
     }
   });
 
-  // ===== CONFERMA ELIMINA MATERIA =====
+  // ========== ELIMINA MATERIA ==========
   confirmDeleteMateria.addEventListener("click", async () => {
     if (!materiaInEliminazione) return;
 
@@ -478,12 +425,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        deleteMateriaModal.classList.remove("show");
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-        materiaInEliminazione = null;
+        closeDeleteMateriaModal();
         await fetchMaterie();
       }
     } catch (error) {
@@ -491,7 +434,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ===== LOGOUT / DISCONNETTITI =====
+  // ========== LOGOUT ==========
   document.querySelector(".logout-btn").addEventListener("click", async () => {
     try {
       const response = await fetch("/auth/logout", {
@@ -510,57 +453,52 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ===== MODALE ELIMINA PROFILO =====
-  const deleteProfileModal = document.getElementById("deleteProfileModal");
+  // ========== MODALE ELIMINA PROFILO ==========
+  const closeDeleteProfileModal = () => {
+    deleteProfileModal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  };
+
   document.querySelector(".delete-btn").addEventListener("click", () => {
     deleteProfileModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   });
-  document
-    .getElementById("closeDeleteProfile")
-    .addEventListener("click", () => {
-      deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-    });
-  document
-    .getElementById("cancelDeleteProfile")
-    .addEventListener("click", () => {
-      deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
-    });
+
+  closeDeleteProfile.addEventListener("click", closeDeleteProfileModal);
+  cancelDeleteProfile.addEventListener("click", closeDeleteProfileModal);
+
   window.addEventListener("click", (event) => {
     if (event.target === deleteProfileModal) {
-      deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      closeDeleteProfileModal();
     }
   });
-  document
-    .getElementById("confirmDeleteProfile")
-    .addEventListener("click", async () => {
-      try {
-        const response = await fetch("/student/profile", {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.removeItem("token");
-          window.location.href = "/";
-        }
-      } catch (error) {
-        console.error("Errore di connessione");
-      }
-    });
 
-  // ===== RELOAD MATERIE AL RESIZE =====
+  confirmDeleteProfile.addEventListener("click", async () => {
+    try {
+      const response = await fetch("/student/profile", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error("Errore di connessione");
+    }
+  });
+
+  // ========== RELOAD AL RESIZE ==========
   window.addEventListener("resize", () => {
     if (materieAttuali.length > 0) {
       renderMaterie(materieAttuali);
     }
   });
-  // ===== CARICA MATERIE ALL'AVVIO =====
+
+  // ========== CARICA MATERIE INIZIALI ==========
   fetchMaterie();
 });

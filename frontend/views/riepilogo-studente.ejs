@@ -12,10 +12,10 @@
     />
   </head>
   <body>
-    <!-- Header -->
+    <!-- ===== HEADER ===== -->
     <div class="header">
       <div class="header-left">
-        <!-- Hamburger Button (visibile solo su mobile) -->
+        <!-- Hamburger Menu (Mobile) -->
         <button id="hamburgerBtn" class="hamburger-btn" aria-label="Menu">
           <svg
             width="24"
@@ -71,24 +71,20 @@
       <button class="logout-btn">Disconnettiti</button>
     </div>
 
-    <!-- Overlay (per chiudere sidebar cliccando fuori) -->
+    <!-- Overlay (Sidebar) -->
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <!-- Main Container -->
+    <!-- ===== MAIN CONTAINER ===== -->
     <div class="container">
-      <!-- Sidebar -->
+      <!-- SIDEBAR -->
       <aside class="sidebar">
-        <a href="/home-studenti" class="sidebar-item" data-page="home"
-          >🏠 Home</a
-        >
-        <a
-          href="/profilo-studente"
-          class="sidebar-item active"
-          data-page="profilo"
+        <a href="/home-studenti" class="sidebar-item">🏠 Home</a>
+        <a href="/profilo-studente" class="sidebar-item active"
           >👤 Profilo Studente</a
         >
         <a href="/subject" class="sidebar-item">📑 Materie</a>
         <a href="/avg-materie" class="sidebar-item">📚 Media Materie</a>
+
         <div class="sidebar-footer">
           <div class="sidebar-button">
             <button class="delete-btn">🗑️ Elimina profilo</button>
@@ -107,9 +103,9 @@
         </div>
       </aside>
 
-      <!-- Main Content -->
+      <!-- ===== MAIN CONTENT ===== -->
       <main class="main-content">
-        <!-- DATI PERSONALI -->
+        <!-- SEZIONE: Dati Personali -->
         <div class="profile-card">
           <div class="card-header">
             <h2 class="card-title">📋 Profilo Studente</h2>
@@ -138,7 +134,7 @@
               </div>
             </div>
 
-            <!-- EMAIL (non modificabile) -->
+            <!-- Email (read-only) -->
             <div class="email">
               <div class="info-item">
                 <label class="info-label">Email</label>
@@ -146,7 +142,7 @@
               </div>
             </div>
 
-            <!-- MODIFICA PASSWORD -->
+            <!-- Modifica Password -->
             <div class="modifyPassword">
               <h3>🔐 Sicurezza</h3>
               <button class="edit-btn" id="editPasswordBtn">
@@ -156,7 +152,7 @@
           </div>
         </div>
 
-        <!-- DATI FAMIGLIA -->
+        <!-- SEZIONE: Famiglia -->
         <div class="profile-card">
           <div class="card-header">
             <h2 class="card-title">👨‍👩‍👧 Famiglia</h2>
@@ -206,7 +202,7 @@
           </div>
         </div>
 
-        <!-- DATI SCUOLA -->
+        <!-- SEZIONE: Scuola -->
         <div class="profile-card">
           <div class="card-header">
             <h2 class="card-title">🏫 Scuola</h2>
@@ -229,7 +225,7 @@
       </main>
     </div>
 
-    <!-- Modale Elimina Profilo -->
+    <!-- ===== MODALE: Elimina Profilo ===== -->
     <div id="deleteProfileModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeDeleteProfile">&times;</span>
@@ -252,18 +248,17 @@
       </div>
     </div>
 
-    <!-- Modale Modifica Dati Personali -->
+    <!-- ===== MODALE: Modifica Dati Personali ===== -->
     <div id="editPersonalModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeEditPersonal">&times;</span>
         <h2>Modifica dati personali</h2>
         <p>
-          Aggiorna i tuoi dati personali. <br />
+          Aggiorna i tuoi dati personali.<br />
           Le modifiche avranno effetto sul tuo account.
         </p>
 
         <form id="editPersonalForm" novalidate>
-          <!-- Nome e Cognome -->
           <div class="form-row">
             <div class="form-group">
               <label for="editNome">Nome</label>
@@ -287,7 +282,6 @@
             </div>
           </div>
 
-          <!-- Telefono -->
           <div class="form-group">
             <label for="editTelefono">Numero di telefono</label>
             <input
@@ -299,7 +293,6 @@
             />
           </div>
 
-          <!-- Grado e indirizzo -->
           <div class="form-row">
             <div class="form-group">
               <label for="editGradoScolastico">Grado scolastico</label>
@@ -328,10 +321,8 @@
             </div>
           </div>
 
-          <!-- Errori -->
           <div id="editPersonalErrors" class="error-messages"></div>
 
-          <!-- Bottoni -->
           <div style="display: flex; gap: 14px; margin-top: 20px">
             <button type="submit" class="btn-save">Salva modifiche</button>
             <button type="button" class="btn-annulla" id="cancelEditPersonal">
@@ -342,7 +333,7 @@
       </div>
     </div>
 
-    <!-- Modale Modifica Password -->
+    <!-- ===== MODALE: Modifica Password ===== -->
     <div id="editPasswordModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeEditPassword">&times;</span>
@@ -419,14 +410,14 @@
       </div>
     </div>
 
-    <!-- Modale Modifica Dati Famiglia -->
+    <!-- ===== MODALE: Modifica Dati Famiglia ===== -->
     <div id="editFamilyModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeEditFamily">&times;</span>
         <h2>Modifica dati famiglia</h2>
         <p>
-          Aggiorna i contatti e l'email della famiglia.
-          <br />Le modifiche avranno effetto sul tuo account.
+          Aggiorna i contatti e l'email della famiglia.<br />
+          Le modifiche avranno effetto sul tuo account.
         </p>
 
         <form id="editFamilyForm" novalidate>
@@ -521,10 +512,8 @@
             </div>
           </div>
 
-          <!-- Errori -->
           <div id="editFamilyErrors" class="error-messages"></div>
 
-          <!-- Bottoni -->
           <div style="display: flex; gap: 14px; margin-top: 24px">
             <button type="submit" class="btn-save">Salva modifiche</button>
             <button type="button" class="btn-annulla" id="cancelEditFamily">
@@ -535,22 +524,20 @@
       </div>
     </div>
 
-    <!-- Modale Modifica Email Professori -->
+    <!-- ===== MODALE: Modifica Email Professori ===== -->
     <div id="editSchoolModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeEditSchool">&times;</span>
         <h2>Modifica Dati Professori</h2>
         <p>
-          Aggiungi, modifica o rimuovi le email.<br />Le modifiche avranno
-          effetto sul tuo account.<br />Puoi aggiungere fino a 5 email di
-          insegnanti
+          Aggiungi, modifica o rimuovi le email.<br />
+          Le modifiche avranno effetto sul tuo account.<br />
+          Puoi aggiungere fino a 5 email di insegnanti
         </p>
 
         <form id="editSchoolForm" novalidate>
-          <!-- Container email professori -->
           <div id="emailSchoolContainer"></div>
 
-          <!-- Bottone aggiungi -->
           <button
             type="button"
             id="addSchoolEmailBtn"
@@ -560,10 +547,8 @@
             Aggiungi Email
           </button>
 
-          <!-- Errori -->
           <div id="editSchoolErrors" class="error-messages"></div>
 
-          <!-- Bottoni -->
           <div style="display: flex; gap: 14px; margin-top: 24px">
             <button type="submit" class="btn-save">Salva modifiche</button>
             <button type="button" class="btn-annulla" id="cancelEditSchool">

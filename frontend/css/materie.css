@@ -588,6 +588,24 @@ body {
   margin: 5px 0;
 }
 
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--light-text);
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  font-size: 16px;
+  font-weight: 500;
+}
+
 /* ========== BOTTONI MODALE ========== */
 .btn-aggiungi {
   flex: 1;
@@ -892,6 +910,44 @@ body.modal-open {
   .section-title {
     font-size: 20px;
   }
+
+  .empty-state {
+    padding: 50px 20px;
+  }
+
+  .empty-state i {
+    font-size: 42px;
+    margin-bottom: 14px;
+  }
+
+  .empty-state p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .btn-modifica,
+  .btn-rimuovi {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    flex-shrink: 0 !important;
+    font-size: 0 !important;
+    gap: 0 !important;
+    white-space: normal !important;
+  }
+
+  .btn-modifica i,
+  .btn-rimuovi i {
+    font-size: 18px;
+    line-height: 1;
+    display: block;
+    margin: 0;
+  }
 }
 
 /* Tablet (768px - 1024px) */
@@ -922,15 +978,22 @@ body.modal-open {
     gap: 10px;
   }
 
-  .btn-modifica,
-  .btn-rimuovi {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-
   .btn-add-materia {
     padding: 8px 16px;
     font-size: 13px;
+  }
+
+  .empty-state {
+    padding: 45px 20px;
+  }
+
+  .empty-state i {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
   }
 }
 
@@ -971,12 +1034,6 @@ body.modal-open {
     padding: 18px;
   }
 
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
   .section-title {
     font-size: 16px;
   }
@@ -1006,10 +1063,7 @@ body.modal-open {
 
   .btn-modifica,
   .btn-rimuovi {
-    flex: none;
-    padding: 8px 12px;
-    font-size: 12px;
-    white-space: nowrap;
+    height: 38px;
   }
 
   .btn-add-materia {
@@ -1046,6 +1100,19 @@ body.modal-open {
   .btn-annulla {
     padding: 8px 14px;
     font-size: 12px;
+  }
+
+  .empty-state {
+    padding: 40px 15px;
+  }
+
+  .empty-state i {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
   }
 }
 
@@ -1093,10 +1160,6 @@ body.modal-open {
   .section {
     padding: 15px;
     border-radius: 10px;
-  }
-
-  .section-header {
-    margin-bottom: 12px;
   }
 
   .section-title {
@@ -1179,6 +1242,18 @@ body.modal-open {
     padding: 6px 8px;
   }
 
+  #addMateriaModal h2,
+  #editMateriaModal h2,
+  #deleteMateriaModal h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  #deleteMateriaModal p {
+    font-size: 13px;
+    margin-bottom: 15px;
+  }
+
   .btn-aggiungi,
   .btn-modifica-submit {
     padding: 8px 14px;
@@ -1191,6 +1266,19 @@ body.modal-open {
   }
 
   .error-message {
+    font-size: 12px;
+  }
+
+  .empty-state {
+    padding: 30px 12px;
+  }
+
+  .empty-state i {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .empty-state p {
     font-size: 12px;
   }
 }
@@ -1262,5 +1350,18 @@ body.modal-open {
 
   .modal-content h2 {
     font-size: 16px;
+  }
+
+  .empty-state {
+    padding: 25px 10px;
+  }
+
+  .empty-state i {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .empty-state p {
+    font-size: 11px;
   }
 }

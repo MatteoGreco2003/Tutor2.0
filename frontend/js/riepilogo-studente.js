@@ -1,14 +1,14 @@
 // ==========================================
-// RIEPILOGO PROFILO STUDENTE - TUTOR 2.0
+// RIEPILOGO PROFILO STUDENTE - TOPTUTOR 2.0
 // ==========================================
 
-// ===== DISABILITA BACK BUTTON ALL'INIZIO =====
+// ===== DISABILITA BACK BUTTON =====
 window.history.pushState(null, null, window.location.href);
 window.addEventListener("popstate", function () {
   window.history.pushState(null, null, window.location.href);
 });
 
-// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+// ===== HAMBURGER MENU INITIALIZATION =====
 function initHamburgerMenu() {
   const hamburgerBtn = document.getElementById("hamburgerBtn");
   const sidebar = document.querySelector(".sidebar");
@@ -19,47 +19,40 @@ function initHamburgerMenu() {
     return;
   }
 
-  // Toggle sidebar on hamburger click
+  // Toggle sidebar
   hamburgerBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     hamburgerBtn.classList.toggle("active");
     sidebar.classList.toggle("active");
     sidebarOverlay.classList.toggle("active");
-
-    // ← NUOVO: Blocca/Sblocca scroll del body
-    if (sidebar.classList.contains("active")) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
+    document.body.classList.toggle("no-scroll");
   });
 
-  // Close sidebar clicking overlay
+  // Close sidebar on overlay click
   sidebarOverlay.addEventListener("click", () => {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
     sidebarOverlay.classList.remove("active");
-    document.body.classList.remove("no-scroll"); // ← NUOVO
+    document.body.classList.remove("no-scroll");
   });
 
-  // Close sidebar clicking on a link
-  const sidebarItems = document.querySelectorAll(".sidebar-item");
-  sidebarItems.forEach((item) => {
+  // Close sidebar on link click
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
     item.addEventListener("click", () => {
       hamburgerBtn.classList.remove("active");
       sidebar.classList.remove("active");
       sidebarOverlay.classList.remove("active");
-      document.body.classList.remove("no-scroll"); // ← NUOVO
+      document.body.classList.remove("no-scroll");
     });
   });
 
-  // Close sidebar on escape key
+  // Close sidebar on Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       hamburgerBtn.classList.remove("active");
       sidebar.classList.remove("active");
       sidebarOverlay.classList.remove("active");
-      document.body.classList.remove("no-scroll"); // ← NUOVO
+      document.body.classList.remove("no-scroll");
     }
   });
 }
@@ -71,12 +64,8 @@ if (document.readyState === "loading") {
   initHamburgerMenu();
 }
 
-// ==========================================
-// CARICAMENTO PAGINA
-// ==========================================
-
+// ===== PAGE LOAD =====
 document.addEventListener("DOMContentLoaded", async function () {
-  // ===== VERIFICA TOKEN =====
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -84,18 +73,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  // ===== CONTROLLA TOKEN QUANDO PAGINA RITORNA VISIBILE =====
+  // Check token when page becomes visible
   window.addEventListener("pageshow", (event) => {
-    const checkToken = localStorage.getItem("token");
-
-    // Se il token non esiste, torna a login
-    if (!checkToken) {
+    if (!localStorage.getItem("token")) {
       window.location.href = "/";
-      return;
     }
   });
 
-  // ===== CARICA DATI STUDENTE =====
+  // Load student data
   try {
     const response = await fetch("/student/data", {
       method: "GET",
@@ -109,18 +94,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (response.ok && data.data) {
       populateProfileData(data.data);
-
-      // salviamo i dati correnti in una variabile globale per ricaricare la modale
       window._studentData = data.data;
 
-      // Aggiorna header
       const headerTitle = document.querySelector(".header-title");
       headerTitle.textContent = `${data.data.nome} ${data.data.cognome}`;
 
       const userIcon = document.querySelector(".user-icon");
       userIcon.textContent = data.data.nome.charAt(0).toUpperCase();
     } else {
-      console.error("Errore nel caricamento dati:", data.message);
+      console.error("Errore caricamento dati:", data.message);
       window.location.href = "/";
     }
   } catch (error) {
@@ -128,66 +110,58 @@ document.addEventListener("DOMContentLoaded", async function () {
     window.location.href = "/";
   }
 
-  // ==========================================
-  // PULSANTE DISCONNETTITI
-  // ==========================================
+  // ===== LOGOUT BUTTON =====
+  document.querySelector(".logout-btn").addEventListener("click", async () => {
+    try {
+      const response = await fetch("/auth/logout", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  document
-    .querySelector(".logout-btn")
-    .addEventListener("click", async function () {
-      try {
-        const response = await fetch("/auth/logout", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.ok) {
-          localStorage.removeItem("token");
-          window.location.href = "/";
-        }
-      } catch (error) {
-        console.error("Errore logout:", error);
+      if (response.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
       }
-    });
+    } catch (error) {
+      console.error("Errore logout:", error);
+    }
+  });
 
-  // ==========================================
-  // MODALE ELIMINA PROFILO
-  // ==========================================
-
+  // ===== DELETE PROFILE MODAL =====
   const deleteProfileModal = document.getElementById("deleteProfileModal");
 
-  document.querySelector(".delete-btn").addEventListener("click", function () {
+  document.querySelector(".delete-btn").addEventListener("click", () => {
     deleteProfileModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   });
 
   document
     .getElementById("closeDeleteProfile")
-    .addEventListener("click", function () {
+    .addEventListener("click", () => {
       deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     });
 
   document
     .getElementById("cancelDeleteProfile")
-    .addEventListener("click", function () {
+    .addEventListener("click", () => {
       deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     });
 
-  window.addEventListener("click", function (event) {
+  window.addEventListener("click", (event) => {
     if (event.target === deleteProfileModal) {
       deleteProfileModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     }
   });
 
   document
     .getElementById("confirmDeleteProfile")
-    .addEventListener("click", async function () {
+    .addEventListener("click", async () => {
       try {
         const response = await fetch("/student/profile", {
           method: "DELETE",
@@ -208,17 +182,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-  // ==========================================
-  // FUNZIONE GENERICA PER MOSTRARE ERRORI
-  // ==========================================
-
+  // ===== HELPER FUNCTIONS =====
   function showError(containerElement, fieldElement, message) {
     containerElement.innerHTML = `<span>⚠️ ${message}</span>`;
-    // Rimuovi bordo rosso da tutti gli input
     containerElement.parentElement?.parentElement
       ?.querySelectorAll("input, select")
       .forEach((el) => el.classList.remove("input-error"));
-    // Aggiungi bordo rosso solo al campo errato
     if (fieldElement) {
       fieldElement.classList.add("input-error");
     }
@@ -233,10 +202,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       .forEach((el) => el.classList.remove("input-error"));
   }
 
-  // ==========================================
-  // MODIFICA DATI PERSONALI
-  // ==========================================
-
+  // ===== EDIT PERSONAL DATA MODAL =====
   const editPersonalModal = document.getElementById("editPersonalModal");
   const editPersonalForm = document.getElementById("editPersonalForm");
   const editErrors = document.getElementById("editPersonalErrors");
@@ -266,45 +232,37 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     editPersonalModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   }
 
-  // abilita/disabilita indirizzo in base al grado
   editGrado.addEventListener("change", () => {
-    if (editGrado.value === "Superiori") {
-      editIndirizzo.disabled = false;
-    } else {
-      editIndirizzo.disabled = true;
-      editIndirizzo.value = "";
-    }
+    editIndirizzo.disabled = editGrado.value !== "Superiori";
+    if (editIndirizzo.disabled) editIndirizzo.value = "";
   });
 
-  // apri modale
   document
     .getElementById("editPersonalBtn")
     .addEventListener("click", openEditPersonalModal);
 
-  // chiudi modale (X / annulla / click fuori)
   document.getElementById("closeEditPersonal").addEventListener("click", () => {
     editPersonalModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
   });
 
   document
     .getElementById("cancelEditPersonal")
     .addEventListener("click", () => {
       editPersonalModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     });
 
   window.addEventListener("click", (e) => {
     if (e.target === editPersonalModal) {
       editPersonalModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     }
   });
 
-  // submit modale
   editPersonalForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     clearErrors(editPersonalForm);
@@ -317,7 +275,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       ? ""
       : editIndirizzo.value;
 
-    // VALIDAZIONI - MOSTRA SOLO IL PRIMO ERRORE
     if (nome.length < 2) {
       return showError(
         editErrors,
@@ -350,7 +307,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       );
     }
 
-    // Tutto ok, invia fetch
     try {
       const response = await fetch("/student/personal", {
         method: "PATCH",
@@ -370,23 +326,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.json();
 
       if (response.ok && data.data) {
-        // aggiorna "model" in memoria
-        window._studentData = {
-          ...window._studentData,
-          ...data.data,
-        };
-
-        // aggiorna UI card principale
+        window._studentData = { ...window._studentData, ...data.data };
         populateProfileData(window._studentData);
 
-        // aggiorna anche header
-        const headerTitle = document.querySelector(".header-title");
-        headerTitle.textContent = `${data.data.nome} ${data.data.cognome}`;
-        const userIcon = document.querySelector(".user-icon");
-        userIcon.textContent = data.data.nome.charAt(0).toUpperCase();
+        document.querySelector(
+          ".header-title"
+        ).textContent = `${data.data.nome} ${data.data.cognome}`;
+        document.querySelector(".user-icon").textContent = data.data.nome
+          .charAt(0)
+          .toUpperCase();
 
         editPersonalModal.style.display = "none";
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+        document.body.classList.remove("modal-open");
       } else {
         showError(editErrors, null, data.message || "Errore nel salvataggio");
       }
@@ -396,10 +347,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ==========================================
-  // MODIFICA PASSWORD
-  // ==========================================
-
+  // ===== EDIT PASSWORD MODAL =====
   const editPasswordModal = document.getElementById("editPasswordModal");
   const editPasswordForm = document.getElementById("editPasswordForm");
   const oldPasswordInput = document.getElementById("oldPassword");
@@ -407,17 +355,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   const confirmNewPasswordInput = document.getElementById("confirmNewPassword");
   const editPasswordErrors = document.getElementById("editPasswordErrors");
 
-  // funzione per resettare sempre la modale password
   function resetPasswordModal() {
     editPasswordForm.reset();
     clearErrors(editPasswordForm);
 
-    // ← AGGIUNGI QUESTA PARTE: forza tutti gli input password a nascondersi
     oldPasswordInput.type = "password";
     newPasswordInput.type = "password";
     confirmNewPasswordInput.type = "password";
 
-    // ← E aggiorna le icone
     document
       .querySelectorAll("#editPasswordModal .toggle-password")
       .forEach((icon) => {
@@ -426,39 +371,34 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
   }
 
-  // apri modale
   document.getElementById("editPasswordBtn").addEventListener("click", () => {
     resetPasswordModal();
     editPasswordModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   });
 
-  // chiudi (X)
   document.getElementById("closeEditPassword").addEventListener("click", () => {
     editPasswordModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
     resetPasswordModal();
   });
 
-  // chiudi (Annulla)
   document
     .getElementById("cancelEditPassword")
     .addEventListener("click", () => {
       editPasswordModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
       resetPasswordModal();
     });
 
-  // chiudi (click fuori)
   window.addEventListener("click", (e) => {
     if (e.target === editPasswordModal) {
       editPasswordModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
       resetPasswordModal();
     }
   });
 
-  // validazione password lato client
   function isValidPassword(pwd) {
     const hasMinLength = pwd.length >= 8;
     const hasUpperCase = /[A-Z]/.test(pwd);
@@ -467,7 +407,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     return hasMinLength && hasUpperCase && hasLowerCase && hasNumber;
   }
 
-  // submit cambio password
   editPasswordForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     clearErrors(editPasswordForm);
@@ -476,7 +415,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     const newPwd = newPasswordInput.value;
     const confirmPwd = confirmNewPasswordInput.value;
 
-    // VALIDAZIONI - MOSTRA SOLO IL PRIMO ERRORE
     if (!oldPwd) {
       return showError(
         editPasswordErrors,
@@ -495,7 +433,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       return showError(
         editPasswordErrors,
         newPasswordInput,
-        "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero (es: Password123)"
+        "Password deve contenere minimo 8 caratteri, almeno una maiuscola, una minuscola e un numero"
       );
     }
     if (!confirmPwd) {
@@ -513,7 +451,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       );
     }
 
-    // Tutto ok, invia fetch
     try {
       const response = await fetch("/student/password", {
         method: "PATCH",
@@ -531,7 +468,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (response.ok) {
         editPasswordModal.style.display = "none";
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+        document.body.classList.remove("modal-open");
         resetPasswordModal();
       } else {
         showError(
@@ -546,81 +483,64 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ===== MODIFICA DATI FAMIGLIA =====
+  // ===== EDIT FAMILY MODAL =====
   const editFamilyModal = document.getElementById("editFamilyModal");
   const editFamilyForm = document.getElementById("editFamilyForm");
   const editFamilyErrors = document.getElementById("editFamilyErrors");
-
-  // input genitore 1
   const editGen1Nome = document.getElementById("editGen1Nome");
   const editGen1Cognome = document.getElementById("editGen1Cognome");
   const editGen1Telefono = document.getElementById("editGen1Telefono");
-
-  // input genitore 2
   const editGen2Nome = document.getElementById("editGen2Nome");
   const editGen2Cognome = document.getElementById("editGen2Cognome");
   const editGen2Telefono = document.getElementById("editGen2Telefono");
-
-  // email famiglia
   const editEmailFamiglia = document.getElementById("editEmailFamiglia");
 
   function openEditFamilyModal() {
     const d = window._studentData;
 
-    // Genitore 1
     editGen1Nome.value = d?.genitore1?.nome || "";
     editGen1Cognome.value = d?.genitore1?.cognome || "";
     editGen1Telefono.value = d?.genitore1?.telefono || "";
 
-    // Genitore 2
     editGen2Nome.value = d?.genitore2?.nome || "";
     editGen2Cognome.value = d?.genitore2?.cognome || "";
     editGen2Telefono.value = d?.genitore2?.telefono || "";
 
-    // Email famiglia
     editEmailFamiglia.value = d?.emailFamiglia || "";
 
     clearFamilyInputErrors();
     editFamilyErrors.innerHTML = "";
     editFamilyModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   }
 
-  /**
-   * Pulisce bordo rosso da tutti gli input della modale famiglia
-   */
   function clearFamilyInputErrors() {
     document.querySelectorAll("#editFamilyForm input").forEach((input) => {
       input.classList.remove("input-error");
     });
   }
 
-  // Apri modale
   document
     .getElementById("editFamilyBtn")
     .addEventListener("click", openEditFamilyModal);
 
-  // Chiudi modale (X)
   document.getElementById("closeEditFamily").addEventListener("click", () => {
     editFamilyModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
   });
 
-  // Chiudi modale (Annulla)
   document.getElementById("cancelEditFamily").addEventListener("click", () => {
     editFamilyModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
   });
 
-  // Chiudi modale (click fuori)
   window.addEventListener("click", (e) => {
     if (e.target === editFamilyModal) {
       editFamilyModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     }
   });
 
-  // Submit modale
   editFamilyForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     clearFamilyInputErrors();
@@ -634,11 +554,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const gen2Telefono = editGen2Telefono.value.trim();
     const emailFam = editEmailFamiglia.value.trim();
 
-    // validazioni
     let errorField = null;
     let errorMsg = "";
 
-    // ===== VALIDAZIONE GENITORE 1 =====
     if (gen1Nome.length < 2) {
       errorField = editGen1Nome;
       errorMsg = "Nome Genitore 1 deve contenere almeno 2 caratteri";
@@ -647,10 +565,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       errorMsg = "Cognome Genitore 1 deve contenere almeno 2 caratteri";
     } else if (!/^[0-9]{10}$/.test(gen1Telefono.replace(/[^0-9]/g, ""))) {
       errorField = editGen1Telefono;
-      errorMsg = "Telefono Genitore 1 non valido (es: 3331234567)";
-    }
-    // ===== VALIDAZIONE GENITORE 2 (solo se ha almeno un campo compilato) =====
-    else if (gen2Nome || gen2Cognome || gen2Telefono) {
+      errorMsg = "Telefono Genitore 1 non valido";
+    } else if (gen2Nome || gen2Cognome || gen2Telefono) {
       if (gen2Nome && gen2Nome.length < 2) {
         errorField = editGen2Nome;
         errorMsg = "Nome Genitore 2 deve contenere almeno 2 caratteri";
@@ -662,20 +578,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         !/^[0-9]{10}$/.test(gen2Telefono.replace(/[^0-9]/g, ""))
       ) {
         errorField = editGen2Telefono;
-        errorMsg = "Telefono Genitore 2 non valido (es: 3331234567)";
+        errorMsg = "Telefono Genitore 2 non valido";
       }
-    }
-    // ===== VALIDAZIONE EMAIL FAMIGLIA (MOVE QUI!) =====
-    if (!errorMsg && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFam)) {
-      errorField = editEmailFamiglia;
-      errorMsg = "Email non valida (es: famiglia@example.com)";
     }
 
-    // Se c'è un errore, mostra e ritorna
+    if (!errorMsg && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFam)) {
+      errorField = editEmailFamiglia;
+      errorMsg = "Email non valida";
+    }
+
     if (errorMsg) {
-      if (errorField) {
-        errorField.classList.add("input-error");
-      }
+      if (errorField) errorField.classList.add("input-error");
       editFamilyErrors.innerHTML = `<p style="margin:0;">⚠️ ${errorMsg}</p>`;
       return;
     }
@@ -701,7 +614,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.json();
 
       if (response.ok && data.data) {
-        // Aggiorna model in memoria
         window._studentData = {
           ...window._studentData,
           genitore1: data.data.genitore1,
@@ -709,11 +621,9 @@ document.addEventListener("DOMContentLoaded", async function () {
           emailFamiglia: data.data.emailFamiglia,
         };
 
-        // Aggiorna UI
         populateProfileData(window._studentData);
-
         editFamilyModal.style.display = "none";
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+        document.body.classList.remove("modal-open");
       } else {
         editFamilyErrors.innerHTML = `⚠️ ${
           data.message || "Errore nel salvataggio"
@@ -725,7 +635,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // ===== MODIFICA EMAIL INSEGNANTI =====
+  // ===== EDIT SCHOOL MODAL =====
   const editSchoolModal = document.getElementById("editSchoolModal");
   const editSchoolForm = document.getElementById("editSchoolForm");
   const editSchoolErrors = document.getElementById("editSchoolErrors");
@@ -734,86 +644,67 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   let emailSchoolCount = 0;
 
-  /**
-   * Apri modale email insegnanti
-   */
   function openEditSchoolModal() {
     const emails = window._studentData.emailInsegnanti || [];
 
-    // Pulisci container
     emailSchoolContainer.innerHTML = "";
     emailSchoolCount = 0;
     editSchoolErrors.innerHTML = "";
 
-    // Aggiungi email esistenti
     emails.forEach((email, index) => {
       emailSchoolCount++;
       addEmailField(email, emailSchoolCount);
     });
 
-    // Abilita/disabilita bottone aggiungi
     updateAddSchoolBtnState();
-
     editSchoolModal.style.display = "flex";
-    document.body.classList.add("modal-open"); // ← BLOCCA SCROLL
+    document.body.classList.add("modal-open");
   }
 
-  /**
-   * Aggiungi un campo email
-   * @param {string} value - Valore email (opzionale)
-   * @param {number} index - Indice per ID e placeholder
-   */
   function addEmailField(value = "", index) {
     const newEmailGroup = document.createElement("div");
     newEmailGroup.className = "email-school-group";
     newEmailGroup.id = `emailSchoolGroup${index}`;
 
-    // Determina se mostrare solo icona o testo
     const isMobile = window.innerWidth <= 576;
     const removeText = isMobile ? "" : "Elimina";
     const removeIcon = isMobile ? '<i class="fas fa-trash"></i>' : "";
 
     newEmailGroup.innerHTML = `
-    <div class="form-group">
-      <input
-        type="email"
-        class="emailSchool"
-        id="emailSchool${index}"
-        placeholder="Email Professore ${index}"
-        value="${value}"
-      />
-    </div>
-    <button 
-      type="button" 
-      class="btn-remove-email" 
-      data-index="${index}"
-      title="Elimina"
-    >
-      ${removeIcon}${removeText}
-    </button>
-  `;
+      <div class="form-group">
+        <input
+          type="email"
+          class="emailSchool"
+          id="emailSchool${index}"
+          placeholder="Email Professore ${index}"
+          value="${value}"
+        />
+      </div>
+      <button 
+        type="button" 
+        class="btn-remove-email" 
+        data-index="${index}"
+        title="Elimina"
+      >
+        ${removeIcon}${removeText}
+      </button>
+    `;
 
     emailSchoolContainer.appendChild(newEmailGroup);
 
-    const removeBtn = newEmailGroup.querySelector(".btn-remove-email");
-    removeBtn.addEventListener("click", () => {
-      removeEmailField(newEmailGroup);
-    });
+    newEmailGroup
+      .querySelector(".btn-remove-email")
+      .addEventListener("click", () => {
+        removeEmailField(newEmailGroup);
+      });
   }
 
-  /**
-   * Rimuovi un campo email
-   * @param {HTMLElement} group - Elemento del gruppo
-   */
   function removeEmailField(group) {
     group.remove();
     renumberSchoolEmails();
     updateAddSchoolBtnState();
   }
 
-  /**
-   * Rinumera i campi email
-   */
   function renumberSchoolEmails() {
     const allGroups = document.querySelectorAll(".email-school-group");
 
@@ -829,9 +720,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     emailSchoolCount = allGroups.length;
   }
 
-  /**
-   * Abilita/disabilita bottone aggiungi in base a massimo 5
-   */
   function updateAddSchoolBtnState() {
     if (emailSchoolCount >= 5) {
       addSchoolEmailBtn.disabled = true;
@@ -842,7 +730,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Listener bottone aggiungi
   addSchoolEmailBtn.addEventListener("click", () => {
     if (emailSchoolCount < 5) {
       emailSchoolCount++;
@@ -851,12 +738,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Apri modale
   document
     .getElementById("editSchoolBtn")
     .addEventListener("click", openEditSchoolModal);
 
-  // ===== RELOAD EMAIL AL RESIZE =====
   window.addEventListener("resize", () => {
     if (emailSchoolCount > 0) {
       const emails = Array.from(document.querySelectorAll(".emailSchool")).map(
@@ -872,30 +757,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Chiudi modale
   document.getElementById("closeEditSchool").addEventListener("click", () => {
     editSchoolModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
   });
 
   document.getElementById("cancelEditSchool").addEventListener("click", () => {
     editSchoolModal.style.display = "none";
-    document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+    document.body.classList.remove("modal-open");
   });
 
   window.addEventListener("click", (e) => {
     if (e.target === editSchoolModal) {
       editSchoolModal.style.display = "none";
-      document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+      document.body.classList.remove("modal-open");
     }
   });
 
-  // Submit modale
   editSchoolForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     editSchoolErrors.innerHTML = "";
 
-    // Raccogli email compilate
     const emailInputs = document.querySelectorAll(".emailSchool");
     const emails = [];
     const errors = [];
@@ -903,7 +785,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     emailInputs.forEach((input, index) => {
       const email = input.value.trim();
 
-      // Se c'è un valore, validalo
       if (email !== "") {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -935,18 +816,14 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.json();
 
       if (response.ok && data.data) {
-        // Aggiorna model in memoria
         window._studentData = {
           ...window._studentData,
           emailInsegnanti: data.data.emailInsegnanti,
         };
 
-        // Aggiorna UI card principale
         populateProfileData(window._studentData);
-
-        // Chiudi modale
         editSchoolModal.style.display = "none";
-        document.body.classList.remove("modal-open"); // ← SBLOCCA SCROLL
+        document.body.classList.remove("modal-open");
       } else {
         editSchoolErrors.innerHTML = data.message || "Errore nel salvataggio";
       }
@@ -957,12 +834,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 });
 
-// ==========================================
-// FUNZIONE PER POPOLARE I DATI
-// ==========================================
-
+// ===== POPULATE PROFILE DATA =====
 function populateProfileData(studentData) {
-  // ===== DATI PERSONALI =====
   document.getElementById("personalNomeCognome").textContent =
     `${studentData.nome} ${studentData.cognome}` || "-";
   document.getElementById("personalEmail").textContent =
@@ -974,9 +847,7 @@ function populateProfileData(studentData) {
   document.getElementById("personalTelefono").textContent =
     studentData.telefono || "-";
 
-  // DATI FAMIGLIA
   if (studentData) {
-    // Genitore 1
     document.getElementById("familyGen1Nome").textContent =
       `${studentData.genitore1?.nome || ""} ${
         studentData.genitore1?.cognome || ""
@@ -984,7 +855,6 @@ function populateProfileData(studentData) {
     document.getElementById("familyGen1Tel").textContent =
       studentData.genitore1?.telefono || "-";
 
-    // Genitore 2
     document.getElementById("familyGen2Nome").textContent =
       `${studentData.genitore2?.nome || ""} ${
         studentData.genitore2?.cognome || ""
@@ -992,12 +862,10 @@ function populateProfileData(studentData) {
     document.getElementById("familyGen2Tel").textContent =
       studentData.genitore2?.telefono || "-";
 
-    // Email Famiglia
     document.getElementById("familyEmail").textContent =
       studentData.emailFamiglia || "-";
   }
 
-  // DATI SCUOLA
   if (studentData.emailInsegnanti && studentData.emailInsegnanti.length > 0) {
     const emailsContainer = document.getElementById("schoolEmails");
     emailsContainer.innerHTML = studentData.emailInsegnanti
@@ -1009,10 +877,7 @@ function populateProfileData(studentData) {
   }
 }
 
-// ==========================================
-// TOGGLE SHOW/HIDE PASSWORD (lucchetto/occhio)
-// ==========================================
-
+// ===== PASSWORD TOGGLE =====
 document.querySelectorAll(".toggle-password").forEach((icon) => {
   const inputId = icon.getAttribute("data-input");
   const input = document.getElementById(inputId);
@@ -1034,14 +899,9 @@ document.querySelectorAll(".toggle-password").forEach((icon) => {
 
   icon.addEventListener("click", () => {
     if (input.value.length > 0) {
-      if (input.type === "password") {
-        input.type = "text";
-      } else {
-        input.type = "password";
-      }
+      input.type = input.type === "password" ? "text" : "password";
     }
   });
 
-  // Inizializza
   updateIcon();
 });

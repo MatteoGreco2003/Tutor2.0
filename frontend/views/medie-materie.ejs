@@ -12,7 +12,7 @@
     />
   </head>
   <body>
-    <!-- Header -->
+    <!-- ========== HEADER ========== -->
     <div class="header">
       <div class="header-left">
         <!-- Hamburger Button (visibile solo su mobile) -->
@@ -61,17 +61,18 @@
       <button class="logout-btn">Disconnettiti</button>
     </div>
 
-    <!-- Overlay (per chiudere sidebar cliccando fuori) -->
+    <!-- Overlay per chiudere sidebar cliccando fuori -->
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <!-- Container -->
+    <!-- ========== CONTAINER ========== -->
     <div class="container">
-      <!-- Sidebar -->
+      <!-- SIDEBAR -->
       <aside class="sidebar">
         <a href="/home-studenti" class="sidebar-item">🏠 Home</a>
         <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
         <a href="/subject" class="sidebar-item">📑 Materie</a>
         <a href="/avg-materie" class="sidebar-item active">📚 Media Materie</a>
+
         <div class="sidebar-footer">
           <div class="sidebar-button">
             <button class="delete-btn">🗑️ Elimina profilo</button>
@@ -90,15 +91,16 @@
         </div>
       </aside>
 
-      <!-- Main Content -->
+      <!-- MAIN CONTENT -->
       <main class="main-content">
+        <!-- Sezione Media Materie -->
         <div class="section">
           <div class="section-header">
             <h2 class="section-title">La media delle tue materie</h2>
           </div>
 
           <div id="mediaList" class="media-list">
-            <!-- Caricato dinamicamente -->
+            <!-- Caricato dinamicamente da JS -->
           </div>
         </div>
 
@@ -131,7 +133,7 @@
       </main>
     </div>
 
-    <!-- Modale Elimina Profilo -->
+    <!-- ========== MODALE ELIMINA PROFILO ========== -->
     <div id="deleteProfileModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeDeleteProfile">&times;</span>
@@ -154,7 +156,7 @@
       </div>
     </div>
 
-    <!-- Modale Visualizza Verifiche -->
+    <!-- ========== MODALE VISUALIZZA VERIFICHE ========== -->
     <div id="visualizzaVerificheModal" class="modal">
       <div class="modal-content modal-verifiche-content">
         <div
@@ -172,7 +174,7 @@
         </div>
 
         <div class="verifiche-list-modal" id="verificheListModal">
-          <!-- Caricato dinamicamente -->
+          <!-- Caricato dinamicamente da JS -->
         </div>
 
         <div
@@ -193,7 +195,7 @@
         </div>
       </div>
     </div>
-  </body>
 
-  <script src="/js/medie-materie.js"></script>
+    <script src="/js/medie-materie.js"></script>
+  </body>
 </html>

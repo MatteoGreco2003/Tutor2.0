@@ -33,17 +33,14 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== UTILITIES PER SCROLL LOCK ===== */
 body.no-scroll {
   overflow: hidden !important;
-  height: 100vh; /* Forza altezza fissa */
-  position: fixed; /* Blocca completamente */
+  height: 100vh;
+  position: fixed;
   width: 100%;
 }
-/* ==========================================
-   HEADER
-   ========================================== */
 
+/* ===== HEADER ===== */
 .header {
   position: fixed;
   top: 0;
@@ -99,10 +96,7 @@ body.no-scroll {
   background-color: #7e32ca;
 }
 
-/* ==========================================
-   CONTAINER & SIDEBAR
-   ========================================== */
-
+/* ===== CONTAINER & SIDEBAR ===== */
 .container {
   display: flex;
   gap: 0;
@@ -150,12 +144,6 @@ body.no-scroll {
   color: var(--primary-purple);
   font-weight: 600;
   border-left-color: var(--primary-purple);
-}
-
-.sidebar-item i {
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
 }
 
 .sidebar-footer {
@@ -217,10 +205,7 @@ body.no-scroll {
   transform: scale(1.2);
 }
 
-/* ==========================================
-   MAIN CONTENT
-   ========================================== */
-
+/* ===== MAIN CONTENT ===== */
 .main-content {
   margin-left: 280px;
   width: calc(100% - 280px);
@@ -230,10 +215,7 @@ body.no-scroll {
   gap: 30px;
 }
 
-/* ==========================================
-   PROFILE CARDS
-   ========================================== */
-
+/* ===== PROFILE CARDS ===== */
 .profile-card {
   background-color: var(--white);
   border-radius: 12px;
@@ -290,14 +272,7 @@ body.no-scroll {
   transform: translateY(0);
 }
 
-.card-body {
-  color: var(--dark-text);
-}
-
-/* ==========================================
-   INFO GRID
-   ========================================== */
-
+/* ===== INFO GRID ===== */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -332,10 +307,9 @@ body.no-scroll {
   margin-top: 25px;
   padding-top: 20px;
   border-top: 1px solid var(--border-color);
-  justify-content: center;
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .modifyPassword h3 {
@@ -345,22 +319,13 @@ body.no-scroll {
   margin-bottom: 15px;
 }
 
-.modifyPassword button {
-  text-align: center;
-}
-
 .email {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-}
-
-.email .info-label {
-  text-align: center;
 }
 
 #personalEmail {
@@ -369,10 +334,7 @@ body.no-scroll {
   text-align: center;
 }
 
-/* ==========================================
-   FAMILY SECTIONS
-   ========================================== */
-
+/* ===== FAMILY SECTIONS ===== */
 .family-section {
   margin-bottom: 25px;
   padding-bottom: 20px;
@@ -397,19 +359,11 @@ body.no-scroll {
   overflow-y: auto;
 }
 
-/* ==========================================
-   SCHOOL SECTIONS
-   ========================================== */
-
-/* ===== AGGIORNA QUESTO SELETTORE =====*/
 #schoolEmails .info-value:not(:last-child) {
-  margin-bottom: 12px; /* o il valore che preferisci */
+  margin-bottom: 12px;
 }
 
-/* ==========================================
-   MODALE
-   ========================================== */
-
+/* ===== MODALE ===== */
 .modal {
   position: fixed;
   z-index: 1000;
@@ -418,10 +372,9 @@ body.no-scroll {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  display: none;
 }
 
 .modal-content {
@@ -441,9 +394,9 @@ body.no-scroll {
 }
 
 .modal-content p {
-  font-size: 16px; /* ← aggiungi per testo più leggibile */
-  line-height: 1.5; /* ← aggiungi per spaziatura linee */
-  margin-bottom: 20px; /* ← aggiungi spazio tra paragrafi */
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
 }
 
 .close {
@@ -494,7 +447,7 @@ body.no-scroll {
   background: #7e32ca;
 }
 
-/* ===== FORM MODALE GENERICO ===== */
+/* ===== FORM MODALE ===== */
 .form-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -531,7 +484,6 @@ body.no-scroll {
   box-shadow: 0 0 0 2px rgba(158, 63, 253, 0.15);
 }
 
-/* Errori modale */
 .error-messages {
   margin: 15px 0;
   padding: 10px;
@@ -541,12 +493,7 @@ body.no-scroll {
   display: none;
   text-align: center;
   color: var(--error-dark);
-  font-size: 14px !important;
-  font-weight: 500;
-}
-
-.error-messages p {
-  font-size: 14px !important;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -575,13 +522,12 @@ body.no-scroll {
   user-select: none;
 }
 
-/* Input con errore */
 .input-error {
   border: 2px solid var(--error-color) !important;
   background-color: #fff5f5 !important;
 }
 
-/* ===== SEZIONI FAMIGLIA MODALE ===== */
+/* ===== FAMILY FORM SECTIONS ===== */
 .family-section-edit {
   padding: 14px 0;
   border-bottom: 1px solid #f0f0f0;
@@ -598,7 +544,7 @@ body.no-scroll {
   margin-bottom: 12px;
 }
 
-/* ===== EMAIL PROFESSORI MODALE ===== */
+/* ===== EMAIL PROFESSORI ===== */
 .email-school-group {
   display: flex;
   gap: 10px;
@@ -644,12 +590,6 @@ body.no-scroll {
   white-space: nowrap;
 }
 
-.email-school-group .btn-remove-email i {
-  font-size: 14px;
-  margin: 0;
-  display: none;
-}
-
 .email-school-group .btn-remove-email:hover {
   background: #dd0000;
   transform: translateY(-2px);
@@ -685,7 +625,7 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* ===== HAMBURGER BUTTON ===== */
+/* ===== HAMBURGER MENU ===== */
 .hamburger-btn {
   display: none;
   width: 36px;
@@ -706,10 +646,6 @@ body.modal-open {
   transition: all 0.3s ease;
 }
 
-.hamburger-btn svg line {
-  transition: all 0.3s ease;
-}
-
 .hamburger-btn.active svg line:nth-child(1) {
   transform: translateY(6px) rotate(45deg);
   transform-origin: 12px 6px;
@@ -717,7 +653,6 @@ body.modal-open {
 
 .hamburger-btn.active svg line.middle-line {
   opacity: 0;
-  stroke-width: 0;
 }
 
 .hamburger-btn.active svg line:nth-child(3) {
@@ -728,30 +663,25 @@ body.modal-open {
 /* ===== SIDEBAR OVERLAY ===== */
 .sidebar-overlay {
   position: fixed;
-  position: fixed;
-  top: 0; /* Inizia dall'alto */
+  top: 0;
   left: 0;
   width: 100%;
-  height: 100%; /* Copre tutto */
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 850;
+  z-index: 899;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
   pointer-events: none;
-  z-index: 899; /* ← Un po' meno della sidebar (900) */
 }
 
 .sidebar-overlay.active {
-  background-color: rgba(0, 0, 0, 0.5);
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
 
-/* =========================================
-  BREAKPOINT RESPONSIVE
-   ========================================= */
+/* ===== RESPONSIVE BREAKPOINTS ===== */
 
 /* Tablet large (1024px - 1365px) */
 @media (max-width: 1365px) and (min-width: 1025px) {
@@ -801,7 +731,7 @@ body.modal-open {
 @media (max-width: 768px) {
   .header {
     padding: 12px 20px;
-    height: 70px; /* ← AGGIUNGI: Altezza fissa header */
+    height: 70px;
   }
 
   .hamburger-btn {
@@ -811,15 +741,10 @@ body.modal-open {
   .sidebar {
     width: 250px;
     transform: translateX(-100%);
-    position: fixed;
     top: 70px;
-    left: 0;
-    height: calc(100vh - 70px); /* Altezza corretta */
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 70px);
     z-index: 900;
     transition: transform 0.3s ease;
-    margin: 0; /* Rimuovi margini */
-    border-top: none; /* Rimuovi bordo top */
   }
 
   .sidebar.active {
@@ -834,12 +759,6 @@ body.modal-open {
 
   .profile-card {
     padding: 18px;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-bottom: 12px;
   }
 
   .card-title {
@@ -876,9 +795,8 @@ body.modal-open {
     max-width: 90%;
   }
 
-  .email-school-group {
-    flex-direction: row;
-    gap: 8px;
+  .error-messages {
+    font-size: 13px;
   }
 }
 
@@ -886,7 +804,7 @@ body.modal-open {
 @media (max-width: 576px) {
   .header {
     padding: 10px 16px;
-    height: 65px; /* Altezza fissa header */
+    height: 65px;
   }
 
   .header-title {
@@ -915,8 +833,8 @@ body.modal-open {
   }
 
   .sidebar {
-    top: 65px; /* Corrisponde all'altezza header */
-    height: calc(100vh - 65px); /* Altezza corretta */
+    top: 65px;
+    height: calc(100vh - 65px);
   }
 
   .main-content {
@@ -961,11 +879,6 @@ body.modal-open {
     margin-bottom: 10px;
   }
 
-  .email-school-group {
-    flex-direction: row;
-    gap: 6px;
-  }
-
   .email-school-group .btn-remove-email {
     width: 36px;
     height: 36px;
@@ -977,7 +890,6 @@ body.modal-open {
   .email-school-group .btn-remove-email i {
     display: inline;
     font-size: 14px;
-    margin: 0;
   }
 
   .family-title {
@@ -1071,9 +983,7 @@ body.modal-open {
   .modal-content h2 {
     font-size: 16px;
   }
-  .email-school-group {
-    flex-direction: row;
-  }
+
   .email-school-group .btn-remove-email {
     width: 32px;
     height: 32px;

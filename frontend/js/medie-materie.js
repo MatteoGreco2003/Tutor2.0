@@ -2,60 +2,57 @@
 // MEDIE MATERIE - TUTOR 2.0
 // ==========================================
 
-// ===== HAMBURGER MENU TOGGLE (FUORI da DOMContentLoaded) =====
+// ===== HAMBURGER MENU (inizializzazione fuori da DOMContentLoaded) =====
 function initHamburgerMenu() {
-  const hamburgerBtn = document.getElementById("hamburgerBtn"); // oppure .menu-toggle
+  const hamburgerBtn = document.getElementById("hamburgerBtn");
   const sidebar = document.querySelector(".sidebar");
-  const sidebarOverlay = document.getElementById("sidebarOverlay"); // oppure .sidebar-overlay
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
 
   if (!hamburgerBtn || !sidebar || !sidebarOverlay) return;
 
+  // Toggle menu
   hamburgerBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     hamburgerBtn.classList.toggle("active");
     sidebar.classList.toggle("active");
     sidebarOverlay.classList.toggle("active");
-    if (sidebar.classList.contains("active")) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
+    document.body.classList.toggle("no-scroll");
   });
 
-  sidebarOverlay.addEventListener("click", () => {
+  // Chiudi cliccando su overlay
+  sidebarOverlay.addEventListener("click", closeSidebar);
+
+  // Chiudi cliccando su item sidebar
+  document.querySelectorAll(".sidebar-item").forEach((item) => {
+    item.addEventListener("click", closeSidebar);
+  });
+
+  // Chiudi con tasto Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSidebar();
+  });
+
+  function closeSidebar() {
     hamburgerBtn.classList.remove("active");
     sidebar.classList.remove("active");
     sidebarOverlay.classList.remove("active");
     document.body.classList.remove("no-scroll");
-  });
-
-  document.querySelectorAll(".sidebar-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      hamburgerBtn.classList.remove("active");
-      sidebar.classList.remove("active");
-      sidebarOverlay.classList.remove("active");
-      document.body.classList.remove("no-scroll");
-    });
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      hamburgerBtn.classList.remove("active");
-      sidebar.classList.remove("active");
-      sidebarOverlay.classList.remove("active");
-      document.body.classList.remove("no-scroll");
-    }
-  });
+  }
 }
 
+// Inizializza menu al caricamento
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initHamburgerMenu);
 } else {
   initHamburgerMenu();
 }
 
+// ==========================================
+// LOGICA PRINCIPALE
+// ==========================================
+
 document.addEventListener("DOMContentLoaded", async function () {
-  // ===== VERIFICA TOKEN =====
+  // Recupera token da localStorage
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -63,43 +60,52 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  // ===== CONTROLLA TOKEN QUANDO PAGINA RITORNA VISIBILE =====
-  window.addEventListener("pageshow", (event) => {
-    const checkToken = localStorage.getItem("token");
-
-    if (!checkToken) {
+  // Verifica token quando la pagina diventa visibile (es. dopo tab switch)
+  window.addEventListener("pageshow", () => {
+    if (!localStorage.getItem("token")) {
       window.location.href = "/";
-      return;
     }
   });
 
+  // ===== ELEMENTI DOM =====
   const mediaList = document.getElementById("mediaList");
   const deleteProfileModal = document.getElementById("deleteProfileModal");
+  const visualizzaVerificheModal = document.getElementById(
+    "visualizzaVerificheModal"
+  );
+  const verificheListModal = document.getElementById("verificheListModal");
+  const modalVerificheTitle = document.getElementById("modalVerificheTitle");
 
   let allMaterieData = [];
+  let materiaSelezionata = null;
 
-  // ===== CARICA NOME & COGNOME NELL'HEADER =====
-  try {
-    const response = await fetch("/student/data", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (response.ok && data.data) {
-      document.querySelector(
-        ".header-title"
-      ).textContent = `${data.data.nome} ${data.data.cognome}`;
-      const userIcon = document.querySelector(".user-icon");
-      userIcon.textContent = data.data.nome.charAt(0).toUpperCase();
-      userIcon.style.backgroundColor = "#9e3ffd";
+  // ===== CARICA DATI STUDENTE E AGGIORNA HEADER =====
+  async function caricaDatiStudente() {
+    try {
+      const response = await fetch("/student/data", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+
+      if (response.ok && data.data) {
+        const { nome, cognome } = data.data;
+        document.querySelector(
+          ".header-title"
+        ).textContent = `${nome} ${cognome}`;
+
+        const userIcon = document.querySelector(".user-icon");
+        userIcon.textContent = nome.charAt(0).toUpperCase();
+      }
+    } catch (error) {
+      console.error("❌ Errore caricamento dati studente:", error);
     }
-  } catch (error) {
-    console.error("Errore caricamento dati studente:", error);
   }
 
+  // ===== CARICA MATERIE CON MEDIA =====
   async function fetchMaterieConMedia() {
     try {
       const res = await fetch("/test/materie-media", {
@@ -117,75 +123,85 @@ document.addEventListener("DOMContentLoaded", async function () {
         updateStats(data.materieConMedia);
       } else {
         console.error("❌ Errore nella risposta:", data);
-        mediaList.innerHTML = `<div class="empty-state">...`;
+        mostraEmptyState("Errore nel caricamento materie");
       }
     } catch (error) {
-      console.error("❌ Errore fetch:", error);
+      console.error("❌ Errore fetch materie:", error);
+      mostraEmptyState("Errore nel caricamento");
     }
   }
 
+  // ===== RENDERIZZA LISTA MATERIE =====
   function renderMaterieMedia(materie) {
     mediaList.innerHTML = "";
 
-    if (materie.length === 0) {
-      mediaList.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <p>Nessuna materia registrata</p>
-      </div>
-    `;
+    if (!materie || materie.length === 0) {
+      mostraEmptyState("Nessuna materia registrata");
       return;
     }
 
     materie.forEach((materia) => {
       const mediaValore = materia.media || 0;
-      const sufficienza = materia.sufficienza;
       const numeroVerifiche = materia.numeroVerifiche || 0;
 
-      // Mostra "S.V." se non ci sono voti, altrimenti mostra la media
+      // Determina come visualizzare la media
       const mediaDisplay =
         numeroVerifiche === 0 ? "SV" : mediaValore.toFixed(2);
 
-      // Determina il colore della sufficienza
+      // Determina stato sufficienza
       let sufficenzaClass = "no-voti";
       let sufficenzaTesto = "Nessun voto";
 
       if (numeroVerifiche > 0) {
         sufficenzaClass =
-          sufficienza === "Sufficiente" ? "sufficiente" : "insufficiente";
-        sufficenzaTesto = sufficienza;
+          materia.sufficienza === "Sufficiente"
+            ? "sufficiente"
+            : "insufficiente";
+        sufficenzaTesto = materia.sufficienza;
       }
 
+      // Crea elemento card
       const item = document.createElement("div");
       item.className = "media-item";
       item.innerHTML = `
-      <div class="media-info">
-        <div class="media-icon">${mediaDisplay}</div>
-        <div class="media-details">
-          <div class="media-materia">${materia.nome}</div>
-          <div class="media-verifiche">
-            <i class="fas fa-file-alt"></i> ${numeroVerifiche} ${
-        numeroVerifiche === 1 ? "verifica" : "verifiche"
-      }
+        <div class="media-info">
+          <div class="media-icon">${mediaDisplay}</div>
+          <div class="media-details">
+            <div class="media-materia">${materia.nome}</div>
+            <div class="media-verifiche">
+              <i class="fas fa-file-alt"></i> ${numeroVerifiche} 
+              ${numeroVerifiche === 1 ? "verifica" : "verifiche"}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="media-stats">
-        
-        <div class="sufficienza-badge ${sufficenzaClass}">
-          ${sufficenzaTesto}
+        <div class="media-stats">
+          <div class="sufficienza-badge ${sufficenzaClass}">
+            ${sufficenzaTesto}
+          </div>
+          <button 
+            class="btn-visualizza-verifiche" 
+            title="Visualizza verifiche" 
+            data-materia-id="${materia.id}"
+            ${numeroVerifiche === 0 ? "disabled" : ""}
+          >
+            Visualizza Verifiche
+          </button>
         </div>
-        <button class="btn-visualizza-verifiche" title="Visualizza verifiche" data-materia-id="${
-          materia.id
-        }" ${numeroVerifiche === 0 ? "disabled" : ""}>
-          Visualizza Verifiche
-        </button>
-      </div>
-    `;
+      `;
 
       mediaList.appendChild(item);
     });
+  }
+
+  // ===== MOSTRA EMPTY STATE =====
+  function mostraEmptyState(messaggio) {
+    mediaList.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>${messaggio}</p>
+      </div>
+    `;
   }
 
   // ===== AGGIORNA STATISTICHE GENERALI =====
@@ -222,7 +238,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       materieInsufficenti;
   }
 
-  // ===== LOGOUT / DISCONNETTITI =====
+  // ===== LOGOUT =====
   document.querySelector(".logout-btn").addEventListener("click", async () => {
     try {
       const response = await fetch("/auth/logout", {
@@ -232,46 +248,47 @@ document.addEventListener("DOMContentLoaded", async function () {
           "Content-Type": "application/json",
         },
       });
+
       if (response.ok) {
         localStorage.removeItem("token");
         window.location.href = "/";
       }
     } catch (error) {
-      console.error("Errore durante il logout:", error);
+      console.error("❌ Errore logout:", error);
     }
   });
 
-  // ===== MODALE ELIMINA PROFILO - APRI =====
+  // ========== MODALE ELIMINA PROFILO ==========
+
+  // Apri modale
   document.querySelector(".delete-btn").addEventListener("click", () => {
     deleteProfileModal.classList.add("show");
     document.body.classList.add("modal-open");
   });
 
-  // ===== MODALE ELIMINA PROFILO - CHIUDI (X) =====
+  // Chiudi con X
   document
     .getElementById("closeDeleteProfile")
-    .addEventListener("click", () => {
-      deleteProfileModal.classList.remove("show");
-      document.body.classList.remove("modal-open");
-    });
+    .addEventListener("click", chiudiDeleteModal);
 
-  // ===== MODALE ELIMINA PROFILO - CHIUDI (Annulla) =====
+  // Chiudi con Annulla
   document
     .getElementById("cancelDeleteProfile")
-    .addEventListener("click", () => {
-      deleteProfileModal.classList.remove("show");
-      document.body.classList.remove("modal-open");
-    });
+    .addEventListener("click", chiudiDeleteModal);
 
-  // ===== MODALE ELIMINA PROFILO - CHIUDI (click fuori) =====
+  // Chiudi cliccando fuori
   window.addEventListener("click", (event) => {
     if (event.target === deleteProfileModal) {
-      deleteProfileModal.classList.remove("show");
-      document.body.classList.remove("modal-open");
+      chiudiDeleteModal();
     }
   });
 
-  // ===== CONFERMA ELIMINA PROFILO =====
+  function chiudiDeleteModal() {
+    deleteProfileModal.classList.remove("show");
+    document.body.classList.remove("modal-open");
+  }
+
+  // Conferma eliminazione profilo
   document
     .getElementById("confirmDeleteProfile")
     .addEventListener("click", async () => {
@@ -290,26 +307,13 @@ document.addEventListener("DOMContentLoaded", async function () {
           window.location.href = "/";
         }
       } catch (error) {
-        console.error("Errore eliminazione profilo:", error);
+        console.error("❌ Errore eliminazione profilo:", error);
       }
     });
 
-  // ===== MODALE VISUALIZZA VERIFICHE =====
-  const visualizzaVerificheModal = document.getElementById(
-    "visualizzaVerificheModal"
-  );
-  const closeVisualizzaVerifiche = document.getElementById(
-    "closeVisualizzaVerifiche"
-  );
-  const chiudiVisualizzaVerifiche = document.getElementById(
-    "chiudiVisualizzaVerifiche"
-  );
-  const verificheListModal = document.getElementById("verificheListModal");
-  const modalVerificheTitle = document.getElementById("modalVerificheTitle");
+  // ========== MODALE VISUALIZZA VERIFICHE ==========
 
-  let materiaSelezionata = null;
-
-  // ===== APRI MODALE VISUALIZZA VERIFICHE =====
+  // Apri modale verifiche
   function apriVisualizzaVerificheModal(materiaId, materiaNome) {
     materiaSelezionata = materiaId;
     modalVerificheTitle.textContent = `Verifiche di ${materiaNome}`;
@@ -320,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.body.classList.add("modal-open");
   }
 
-  // ===== CHIUDI MODALE VISUALIZZA VERIFICHE =====
+  // Chiudi modale verifiche
   function chiudiVisualizzaVerificheModal() {
     visualizzaVerificheModal.classList.remove("show");
     document.body.classList.remove("modal-open");
@@ -328,14 +332,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     materiaSelezionata = null;
   }
 
-  closeVisualizzaVerifiche.addEventListener(
-    "click",
-    chiudiVisualizzaVerificheModal
-  );
-  chiudiVisualizzaVerifiche.addEventListener(
-    "click",
-    chiudiVisualizzaVerificheModal
-  );
+  // Event listener chiusura
+  document
+    .getElementById("closeVisualizzaVerifiche")
+    .addEventListener("click", chiudiVisualizzaVerificheModal);
+
+  document
+    .getElementById("chiudiVisualizzaVerifiche")
+    .addEventListener("click", chiudiVisualizzaVerificheModal);
 
   window.addEventListener("click", (event) => {
     if (event.target === visualizzaVerificheModal) {
@@ -343,6 +347,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
+  // ===== CARICA VERIFICHE PER MATERIA =====
   async function fetchVerifichePerMateria(materiaId) {
     try {
       const res = await fetch(`/test/materia/${materiaId}`, {
@@ -359,41 +364,26 @@ document.addEventListener("DOMContentLoaded", async function () {
         renderVerifichePerMateria(data.verifiche);
       } else {
         console.error("❌ Errore nella risposta:", data);
-        verificheListModal.innerHTML = `
-        <div class="empty-state-modal">
-          <i class="fas fa-inbox"></i>
-          <p>Nessuna verifica trovata</p>
-        </div>
-      `;
+        mostraEmptyStateModal("Nessuna verifica trovata");
       }
     } catch (error) {
       console.error("❌ Errore caricamento verifiche:", error);
-      verificheListModal.innerHTML = `
-      <div class="empty-state-modal">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>Errore nel caricamento</p>
-      </div>
-    `;
+      mostraEmptyStateModal("Errore nel caricamento");
     }
   }
 
-  // ===== RENDERIZZA VERIFICHE PER MATERIA =====
+  // ===== RENDERIZZA VERIFICHE NEL MODALE =====
   function renderVerifichePerMateria(verifiche) {
     verificheListModal.innerHTML = "";
 
     if (!verifiche || !Array.isArray(verifiche) || verifiche.length === 0) {
-      verificheListModal.innerHTML = `
-      <div class="empty-state-modal">
-        <i class="fas fa-inbox"></i>
-        <p>Nessuna verifica trovata</p>
-      </div>
-    `;
+      mostraEmptyStateModal("Nessuna verifica trovata");
       return;
     }
 
     verifiche.forEach((verifica) => {
       try {
-        // Formatta la data: "20 novembre 2025"
+        // Formatta data: "20 novembre 2025"
         const data = new Date(verifica.data);
         const giorno = data.getDate();
         const mesi = [
@@ -413,7 +403,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const mese = mesi[data.getMonth()];
         const anno = data.getFullYear();
 
-        // Voto formattato
+        // Formatta voto
         const voto =
           verifica.voto !== null && verifica.voto !== undefined
             ? verifica.voto
@@ -423,24 +413,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Argomento
         const argomento = verifica.argomento || "Argomento non disponibile";
 
+        // Crea card verifica
         const item = document.createElement("div");
         item.className = "verifica-item-modal";
         item.innerHTML = `
-        <!-- INTESTAZIONE: Data e Voto -->
-        <div class="verifica-header">
-          <div class="verifica-data-section">
-            <div class="verifica-data-giorno">${giorno}</div>
-            <div class="verifica-data-mese">${mese} ${anno}</div>
+          <div class="verifica-header">
+            <div class="verifica-data-section">
+              <div class="verifica-data-giorno">${giorno}</div>
+              <div class="verifica-data-mese">${mese} ${anno}</div>
+            </div>
+            <div class="verifica-voto-section">
+              <div class="verifica-voto-label">Voto</div>
+              <div class="verifica-voto-value ${votoClass}">${voto}</div>
+            </div>
           </div>
-          <div class="verifica-voto-section">
-            <div class="verifica-voto-label">Voto</div>
-            <div class="verifica-voto-value ${votoClass}">${voto}</div>
-          </div>
-        </div>
 
-        <!-- ARGOMENTO SOTTO -->
-        <div class="verifica-argomento-modal">${argomento}</div>
-      `;
+          <div class="verifica-argomento-modal">${argomento}</div>
+        `;
 
         verificheListModal.appendChild(item);
       } catch (errore) {
@@ -449,13 +438,23 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  // ===== AGGIUNGI EVENT LISTENER AI PULSANTI VISUALIZZA =====
+  // ===== MOSTRA EMPTY STATE NEL MODALE =====
+  function mostraEmptyStateModal(messaggio) {
+    verificheListModal.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>${messaggio}</p>
+      </div>
+    `;
+  }
+
+  // ===== EVENT LISTENER PULSANTI VISUALIZZA VERIFICHE =====
   document.addEventListener("click", (e) => {
     if (e.target.closest(".btn-visualizza-verifiche:not(:disabled)")) {
       const btn = e.target.closest(".btn-visualizza-verifiche");
       const materiaId = btn.getAttribute("data-materia-id");
 
-      // Trova il nome della materia dal DOM
+      // Recupera nome materia dal DOM
       const materiaItem = btn.closest(".media-item");
       const materiaNome =
         materiaItem.querySelector(".media-materia").textContent;
@@ -465,5 +464,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   // ===== CARICA DATI ALL'AVVIO =====
+  caricaDatiStudente();
   fetchMaterieConMedia();
 });

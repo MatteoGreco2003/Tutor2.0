@@ -12,10 +12,10 @@
     />
   </head>
   <body>
-    <!-- Header -->
+    <!-- ========== HEADER ========== -->
     <div class="header">
       <div class="header-left">
-        <!-- Hamburger Button (visibile solo su mobile) -->
+        <!-- Hamburger Button (visibile su mobile) -->
         <button id="hamburgerBtn" class="hamburger-btn" aria-label="Menu">
           <svg
             width="24"
@@ -54,17 +54,18 @@
             />
           </svg>
         </button>
-
         <a href="/home-studenti" class="user-icon">👤</a>
         <a href="/home-studenti" class="header-title">Nome Cognome</a>
       </div>
       <button class="logout-btn">Disconnettiti</button>
     </div>
 
-    <!-- Overlay (per chiudere sidebar cliccando fuori) -->
+    <!-- ========== SIDEBAR OVERLAY ========== -->
     <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
+    <!-- ========== LAYOUT CONTAINER ========== -->
     <div class="container">
+      <!-- ========== SIDEBAR ========== -->
       <aside class="sidebar">
         <a href="/home-studenti" class="sidebar-item">🏠 Home</a>
         <a href="/profilo-studente" class="sidebar-item">👤 Profilo Studente</a>
@@ -88,7 +89,7 @@
         </div>
       </aside>
 
-      <!-- Main Content -->
+      <!-- ========== MAIN CONTENT ========== -->
       <main class="main-content">
         <div class="section" id="materieSection">
           <div class="section-header">
@@ -103,12 +104,11 @@
       </main>
     </div>
 
-    <!-- Modale Aggiungi Materia -->
+    <!-- ========== MODALE AGGIUNGI MATERIA ========== -->
     <div id="addMateriaModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeAddMateria">&times;</span>
         <h2>Aggiungi una materia</h2>
-
         <form id="addMateriaForm" novalidate>
           <div style="margin-bottom: 16px">
             <label for="materiaNome">Nome materia</label>
@@ -121,11 +121,7 @@
               maxlength="50"
             />
           </div>
-
-          <!-- Messaggi di errore -->
           <div id="addMateriaErrors" class="error-messages"></div>
-
-          <!-- Bottoni -->
           <div style="display: flex; gap: 14px; margin-top: 20px">
             <button type="submit" class="btn-aggiungi">Aggiungi Materia</button>
             <button type="button" id="annullaAddMateria" class="btn-annulla">
@@ -136,12 +132,11 @@
       </div>
     </div>
 
-    <!-- Modale Modifica Materia -->
+    <!-- ========== MODALE MODIFICA MATERIA ========== -->
     <div id="editMateriaModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeEditMateria">&times;</span>
         <h2>Modifica materia</h2>
-
         <form id="editMateriaForm" novalidate>
           <div style="margin-bottom: 16px">
             <label for="materiaNomeEdit">Nome materia</label>
@@ -154,11 +149,7 @@
               maxlength="50"
             />
           </div>
-
-          <!-- Messaggi di errore -->
           <div id="editMateriaErrors" class="error-messages"></div>
-
-          <!-- Bottoni -->
           <div style="display: flex; gap: 14px; margin-top: 20px">
             <button type="submit" class="btn-modifica-submit">
               Modifica Materia
@@ -171,21 +162,19 @@
       </div>
     </div>
 
-    <!-- Modale Elimina Materia (Conferma) -->
+    <!-- ========== MODALE ELIMINA MATERIA (CONFERMA) ========== -->
     <div id="deleteMateriaModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeDeleteMateria">&times;</span>
         <h2>Elimina materia</h2>
-
         <p>
           Sei sicuro di eliminare la materia
           <strong id="materiaNomeDelete"></strong>?<br />
-          <span>
-            Questo comporterà anche l'eliminazione di tutte le tue verifiche
-            associate a questa materia.
-          </span>
+          <span
+            >Questo comporterà anche l'eliminazione di tutte le tue verifiche
+            associate a questa materia.</span
+          >
         </p>
-
         <div style="display: flex; gap: 14px; margin-top: 20px">
           <button id="confirmDeleteMateria" class="delete-btn">
             Elimina Materia
@@ -195,7 +184,7 @@
       </div>
     </div>
 
-    <!-- Modale Elimina Profilo (nascosta inizialmente) -->
+    <!-- ========== MODALE ELIMINA PROFILO ========== -->
     <div id="deleteProfileModal" class="modal">
       <div class="modal-content">
         <span class="close" id="closeDeleteProfile">&times;</span>
@@ -217,7 +206,7 @@
         </div>
       </div>
     </div>
-  </body>
 
-  <script src="/js/materie.js"></script>
+    <script src="/js/materie.js"></script>
+  </body>
 </html>
