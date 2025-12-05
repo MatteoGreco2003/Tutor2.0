@@ -1,7 +1,7 @@
 import Verifiche from "../models/Test.js";
 import Materie from "../models/Subject.js";
 
-// ===== CREA VERIFICA =====
+// ===== CREATE TEST =====
 export const createVerifica = async (req, res) => {
   try {
     const { materialID, data, argomento, voto, votoFuturo } = req.body;
@@ -13,8 +13,7 @@ export const createVerifica = async (req, res) => {
       });
     }
 
-    // Controlla che la materia appartenga allo studente
-    // ATTENZIONE: nel schema Subject è "studenteId" (minuscola)
+    // Verify subject belongs to student
     const materia = await Materie.findOne({
       _id: materialID,
       studenteId: studenteID,
@@ -26,6 +25,7 @@ export const createVerifica = async (req, res) => {
       });
     }
 
+    // If not future test, grade is required
     if (votoFuturo === false && (!voto || voto === null)) {
       return res.status(400).json({
         message: "Se la verifica non è futura, il voto è obbligatorio",
@@ -72,7 +72,7 @@ export const createVerifica = async (req, res) => {
   }
 };
 
-// ===== LEGGI VERIFICHE DELLO STUDENTE =====
+// ===== READ ALL STUDENT TESTS =====
 export const getVerificheStudente = async (req, res) => {
   try {
     const studenteID = req.user.userId;
@@ -80,6 +80,7 @@ export const getVerificheStudente = async (req, res) => {
 
     let query = { studenteID: studenteID };
 
+    // Filter by subject if provided
     if (materialID) {
       query.materialID = materialID;
     }
@@ -101,7 +102,7 @@ export const getVerificheStudente = async (req, res) => {
   }
 };
 
-// ===== LEGGI SINGOLA VERIFICA =====
+// ===== READ SINGLE TEST =====
 export const getVerifica = async (req, res) => {
   try {
     const { verificaID } = req.params;
@@ -130,13 +131,14 @@ export const getVerifica = async (req, res) => {
   }
 };
 
-// ===== AGGIORNA VERIFICA =====
+// ===== UPDATE TEST =====
 export const updateVerifica = async (req, res) => {
   try {
     const { verificaID } = req.params;
     const { data, argomento, voto, votoFuturo } = req.body;
     const studenteID = req.user.userId;
 
+    // Require at least one field to update
     if (!data && !argomento && voto === undefined && votoFuturo === undefined) {
       return res.status(400).json({
         message: "Fornisci almeno un campo da aggiornare",
@@ -149,6 +151,8 @@ export const updateVerifica = async (req, res) => {
     if (voto !== undefined) updateData.voto = voto;
     if (votoFuturo !== undefined) updateData.votoFuturo = votoFuturo;
     if (req.body.materialID) updateData.materialID = req.body.materialID;
+
+    // If not future test, grade is required
     if (votoFuturo === false && (!voto || voto === null)) {
       return res.status(400).json({
         message: "Se la verifica non è futura, il voto è obbligatorio",
@@ -189,7 +193,7 @@ export const updateVerifica = async (req, res) => {
   }
 };
 
-// ===== ELIMINA VERIFICA =====
+// ===== DELETE TEST =====
 export const deleteVerifica = async (req, res) => {
   try {
     const { verificaID } = req.params;
@@ -218,6 +222,7 @@ export const deleteVerifica = async (req, res) => {
   }
 };
 
+// ===== GET SUBJECTS WITH GRADE AVERAGE =====
 export const getMaterieConMedia = async (req, res) => {
   try {
     const studenteID = req.user.userId;
@@ -228,12 +233,13 @@ export const getMaterieConMedia = async (req, res) => {
       return res.json({ materieConMedia: [] });
     }
 
+    // Calculate average for each subject
     const materieConMedia = await Promise.all(
       materie.map(async (materia) => {
-        // ✅ CORRETTO: materialID (con la "l")
+        // Find all graded tests for this subject
         const verifiche = await Verifiche.find({
           studenteID: studenteID,
-          materialID: materia._id, // ← CAMBIATO da materiaID a materialID
+          materialID: materia._id,
           voto: { $ne: null },
         });
 
@@ -243,6 +249,7 @@ export const getMaterieConMedia = async (req, res) => {
           media = (sommaVoti / verifiche.length).toFixed(2);
         }
 
+        // Pass/fail status
         const sufficienza = media >= 6 ? "Sufficiente" : "Insufficiente";
 
         return {
@@ -262,6 +269,7 @@ export const getMaterieConMedia = async (req, res) => {
   }
 };
 
+// ===== GET TESTS BY SUBJECT =====
 export const getVerifichePerMateria = async (req, res) => {
   try {
     const studenteID = req.user.userId;
@@ -274,7 +282,6 @@ export const getVerifichePerMateria = async (req, res) => {
       .populate("materialID", "nome")
       .sort({ data: -1 });
 
-    // ✅ ASSICURATI DI RESTITUIRE 200 (OK)
     return res.status(200).json({ verifiche });
   } catch (error) {
     console.error("❌ ERRORE getVerifichePerMateria:", error.message);

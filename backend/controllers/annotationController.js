@@ -2,13 +2,13 @@ import Annotazioni from "../models/Annotation.js";
 import Tutor from "../models/Tutor.js";
 import Studenti from "../models/Student.js";
 
-// ===== LEGGI ANNOTAZIONI DELLO STUDENTE =====
+// ===== READ STUDENT ANNOTATIONS =====
 export const getAnnotazioni = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica che il tutor abbia questo studente associato
+    // Verify tutor has this student assigned
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -16,6 +16,7 @@ export const getAnnotazioni = async (req, res) => {
       });
     }
 
+    // Get all annotations for this tutor-student pair, newest first
     const annotazioni = await Annotazioni.find({
       tutorID: tutorID,
       studenteID: studenteID,
@@ -34,21 +35,21 @@ export const getAnnotazioni = async (req, res) => {
   }
 };
 
-// ===== CREA ANNOTAZIONE =====
+// ===== CREATE ANNOTATION =====
 export const createAnnotazione = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const { testo } = req.body;
     const tutorID = req.user.userId;
 
-    // Validazione
+    // Validate text not empty
     if (!testo || testo.trim() === "") {
       return res.status(400).json({
         message: "Testo annotazione obbligatorio",
       });
     }
 
-    // Verifica che il tutor abbia questo studente associato
+    // Verify tutor has this student assigned
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -56,7 +57,7 @@ export const createAnnotazione = async (req, res) => {
       });
     }
 
-    // Verifica che lo studente esista
+    // Verify student exists
     const studente = await Studenti.findById(studenteID);
     if (!studente) {
       return res.status(404).json({
@@ -64,7 +65,7 @@ export const createAnnotazione = async (req, res) => {
       });
     }
 
-    // Crea annotazione
+    // Create and save annotation
     const nuovaAnnotazione = new Annotazioni({
       tutorID: tutorID,
       studenteID: studenteID,
@@ -92,21 +93,21 @@ export const createAnnotazione = async (req, res) => {
   }
 };
 
-// ===== MODIFICA ANNOTAZIONE =====
+// ===== UPDATE ANNOTATION =====
 export const updateAnnotazione = async (req, res) => {
   try {
     const { studenteID, annotazioneID } = req.params;
     const { testo } = req.body;
     const tutorID = req.user.userId;
 
-    // Validazione
+    // Validate text not empty
     if (!testo || testo.trim() === "") {
       return res.status(400).json({
         message: "Testo annotazione obbligatorio",
       });
     }
 
-    // Verifica che il tutor abbia questo studente associato
+    // Verify tutor has this student assigned
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -114,7 +115,7 @@ export const updateAnnotazione = async (req, res) => {
       });
     }
 
-    // Trova annotazione
+    // Find annotation
     const annotazione = await Annotazioni.findById(annotazioneID);
     if (!annotazione) {
       return res.status(404).json({
@@ -122,20 +123,21 @@ export const updateAnnotazione = async (req, res) => {
       });
     }
 
-    // Verifica che appartiene al tutor
+    // Verify annotation belongs to tutor
     if (annotazione.tutorID.toString() !== tutorID) {
       return res.status(403).json({
         message: "Accesso negato: annotazione non tua",
       });
     }
 
-    // Verifica che sia dello studente corretto
+    // Verify annotation is for correct student
     if (annotazione.studenteID.toString() !== studenteID) {
       return res.status(403).json({
         message: "Accesso negato: annotazione di studente diverso",
       });
     }
 
+    // Update and save
     annotazione.testo = testo.trim();
     await annotazione.save();
 
@@ -151,13 +153,13 @@ export const updateAnnotazione = async (req, res) => {
   }
 };
 
-// ===== ELIMINA ANNOTAZIONE =====
+// ===== DELETE ANNOTATION =====
 export const deleteAnnotazione = async (req, res) => {
   try {
     const { studenteID, annotazioneID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica che il tutor abbia questo studente associato
+    // Verify tutor has this student assigned
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -165,7 +167,7 @@ export const deleteAnnotazione = async (req, res) => {
       });
     }
 
-    // Trova annotazione
+    // Find annotation
     const annotazione = await Annotazioni.findById(annotazioneID);
     if (!annotazione) {
       return res.status(404).json({
@@ -173,20 +175,21 @@ export const deleteAnnotazione = async (req, res) => {
       });
     }
 
-    // Verifica che appartiene al tutor
+    // Verify annotation belongs to tutor
     if (annotazione.tutorID.toString() !== tutorID) {
       return res.status(403).json({
         message: "Accesso negato: annotazione non tua",
       });
     }
 
-    // Verifica che sia dello studente corretto
+    // Verify annotation is for correct student
     if (annotazione.studenteID.toString() !== studenteID) {
       return res.status(403).json({
         message: "Accesso negato: annotazione di studente diverso",
       });
     }
 
+    // Delete annotation
     await Annotazioni.findByIdAndDelete(annotazioneID);
 
     res.status(200).json({

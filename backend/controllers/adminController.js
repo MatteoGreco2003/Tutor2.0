@@ -4,19 +4,19 @@ import Annotazioni from "../models/Annotation.js";
 import Materie from "../models/Subject.js";
 import Verifiche from "../models/Test.js";
 
-// ===== CREA TUTOR (ADMIN) =====
+// ===== CREATE TUTOR (ADMIN) =====
 export const createTutor = async (req, res) => {
   try {
     const { email, password, nome, cognome } = req.body;
 
-    // Validazione input
+    // Validate required fields
     if (!email || !password || !nome || !cognome) {
       return res.status(400).json({
         message: "Email, password, nome e cognome sono obbligatori",
       });
     }
 
-    // Validazione email
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -24,14 +24,14 @@ export const createTutor = async (req, res) => {
       });
     }
 
-    // Validazione password (minimo 8 caratteri)
+    // Validate password length
     if (password.length < 8) {
       return res.status(400).json({
         message: "Password minimo 8 caratteri",
       });
     }
 
-    // Controlla se email esiste già
+    // Check if email already exists
     const tutorEsistente = await Tutor.findOne({ email: email.toLowerCase() });
     if (tutorEsistente) {
       return res.status(409).json({
@@ -39,7 +39,7 @@ export const createTutor = async (req, res) => {
       });
     }
 
-    // Crea nuovo tutor
+    // Create and save new tutor (password auto-hashed by pre-save hook)
     const nuovoTutor = new Tutor({
       email: email.toLowerCase(),
       password: password,
@@ -64,6 +64,7 @@ export const createTutor = async (req, res) => {
   } catch (error) {
     console.error("Errore creazione tutor:", error);
 
+    // Handle duplicate email error from MongoDB
     if (error.code === 11000) {
       return res.status(409).json({
         message: "Email già registrata",
@@ -76,12 +77,13 @@ export const createTutor = async (req, res) => {
   }
 };
 
-// ===== LEGGI TUTTI I TUTOR (ADMIN) =====
+// ===== READ ALL TUTORS (ADMIN) =====
 export const getAllTutor = async (req, res) => {
   try {
+    // Populate student names, exclude password
     const tutor = await Tutor.find()
       .populate("studentiAssociati", "nome cognome email")
-      .select("-password") // Non restituire la password
+      .select("-password")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -97,7 +99,7 @@ export const getAllTutor = async (req, res) => {
   }
 };
 
-// ===== LEGGI SINGOLO TUTOR (ADMIN) =====
+// ===== READ SINGLE TUTOR (ADMIN) =====
 export const getTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
@@ -124,20 +126,20 @@ export const getTutor = async (req, res) => {
   }
 };
 
-// ===== AGGIORNA TUTOR (ADMIN) =====
+// ===== UPDATE TUTOR (ADMIN) =====
 export const updateTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
     const { nome, cognome, email } = req.body;
 
-    // Validazione: almeno un campo deve essere fornito
+    // Require at least one field to update
     if (!nome && !cognome && !email) {
       return res.status(400).json({
         message: "Fornisci almeno un campo da aggiornare",
       });
     }
 
-    // Se aggiorna email, validala
+    // Validate new email if provided
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
@@ -146,7 +148,7 @@ export const updateTutor = async (req, res) => {
         });
       }
 
-      // Controlla se email esiste già
+      // Check if new email already exists (exclude current tutor)
       const tutorEsistente = await Tutor.findOne({
         email: email.toLowerCase(),
         _id: { $ne: tutorID },
@@ -158,6 +160,7 @@ export const updateTutor = async (req, res) => {
       }
     }
 
+    // Build update data
     const updateData = {};
     if (nome) updateData.nome = nome.trim();
     if (cognome) updateData.cognome = cognome.trim();
@@ -186,25 +189,24 @@ export const updateTutor = async (req, res) => {
   }
 };
 
-// ===== ELIMINA TUTOR (ADMIN) - CON CASCATA =====
+// ===== DELETE TUTOR (ADMIN) - CASCADE DELETE =====
 export const deleteTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
 
     const tutor = await Tutor.findById(tutorID);
-
     if (!tutor) {
       return res.status(404).json({
         message: "Tutor non trovato",
       });
     }
 
-    // ===== STEP 1: ELIMINA TUTTE LE ANNOTAZIONI DEL TUTOR =====
+    // Delete all tutor's annotations
     const annotazioniEliminate = await Annotazioni.deleteMany({
       tutorID: tutorID,
     });
 
-    // ===== STEP 2: ELIMINA IL TUTOR =====
+    // Delete the tutor
     await Tutor.findByIdAndDelete(tutorID);
 
     res.status(200).json({
@@ -222,7 +224,7 @@ export const deleteTutor = async (req, res) => {
   }
 };
 
-// ===== ASSEGNA STUDENTE A TUTOR (ADMIN) =====
+// ===== ASSIGN STUDENT TO TUTOR (ADMIN) =====
 export const assegnaStudenteATutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
@@ -234,7 +236,7 @@ export const assegnaStudenteATutor = async (req, res) => {
       });
     }
 
-    // Controlla che tutor esista
+    // Verify tutor exists
     const tutor = await Tutor.findById(tutorID);
     if (!tutor) {
       return res.status(404).json({
@@ -242,7 +244,7 @@ export const assegnaStudenteATutor = async (req, res) => {
       });
     }
 
-    // Controlla che studente esista
+    // Verify student exists
     const studente = await Studenti.findById(studenteID);
     if (!studente) {
       return res.status(404).json({
@@ -250,14 +252,14 @@ export const assegnaStudenteATutor = async (req, res) => {
       });
     }
 
-    // Controlla se studente è già associato
+    // Check if already assigned
     if (tutor.studentiAssociati.includes(studenteID)) {
       return res.status(409).json({
         message: "Studente già associato a questo tutor",
       });
     }
 
-    // Aggiungi studente ai studentiAssociati del tutor
+    // Add student to tutor's list
     tutor.studentiAssociati.push(studenteID);
     await tutor.save();
 
@@ -278,7 +280,7 @@ export const assegnaStudenteATutor = async (req, res) => {
   }
 };
 
-// ===== RIMUOVI STUDENTE DA TUTOR (ADMIN) - CON CASCATA =====
+// ===== REMOVE STUDENT FROM TUTOR (ADMIN) - CASCADE DELETE =====
 export const rimuoviStudenteDaTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
@@ -297,13 +299,13 @@ export const rimuoviStudenteDaTutor = async (req, res) => {
       });
     }
 
-    // ===== STEP 1: RIMUOVI STUDENTE DALL'ARRAY =====
+    // Remove student from array
     tutor.studentiAssociati = tutor.studentiAssociati.filter(
       (id) => id.toString() !== studenteID
     );
     await tutor.save();
 
-    // ===== STEP 2: ELIMINA TUTTE LE ANNOTAZIONI COLLEGATE =====
+    // Delete related annotations
     const annotazioniEliminate = await Annotazioni.deleteMany({
       tutorID: tutorID,
       studenteID: studenteID,
@@ -329,7 +331,7 @@ export const rimuoviStudenteDaTutor = async (req, res) => {
   }
 };
 
-// ===== STATISTICHE TUTOR (ADMIN) =====
+// ===== TUTOR STATISTICS (ADMIN) =====
 export const getStatisticheTutor = async (req, res) => {
   try {
     const { tutorID } = req.params;
@@ -363,11 +365,11 @@ export const getStatisticheTutor = async (req, res) => {
   }
 };
 
-// ===== LEGGI TUTTI GLI STUDENTI (ADMIN) =====
+// ===== READ ALL STUDENTS (ADMIN) =====
 export const getAllStudenti = async (req, res) => {
   try {
     const studenti = await Studenti.find()
-      .select("-password") // Non restituire la password
+      .select("-password")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -383,7 +385,7 @@ export const getAllStudenti = async (req, res) => {
   }
 };
 
-// ===== LEGGI SINGOLO STUDENTE (ADMIN) =====
+// ===== READ SINGLE STUDENT (ADMIN) =====
 export const getStudente = async (req, res) => {
   try {
     const { studenteID } = req.params;
@@ -408,7 +410,7 @@ export const getStudente = async (req, res) => {
   }
 };
 
-// ===== ELIMINA STUDENTE (ADMIN) - CON CASCATA COMPLETA =====
+// ===== DELETE STUDENT (ADMIN) - COMPLETE CASCADE =====
 export const deleteStudente = async (req, res) => {
   try {
     const { studenteID } = req.params;
@@ -420,37 +422,35 @@ export const deleteStudente = async (req, res) => {
       });
     }
 
-    // ===== STEP 1: ELIMINA TUTTE LE MATERIE DELLO STUDENTE =====
-    const Materie = (await import("../models/Subject.js")).default;
-    const materieEliminategni = await Materie.deleteMany({
+    // Delete all student's subjects
+    const materieEliminate = await Materie.deleteMany({
       studenteId: studenteID,
     });
 
-    // ===== STEP 2: ELIMINA TUTTE LE VERIFICHE DELLO STUDENTE =====
-    const Verifiche = (await import("../models/Test.js")).default;
+    // Delete all student's tests
     const verificheEliminate = await Verifiche.deleteMany({
       studenteID: studenteID,
     });
 
-    // ===== STEP 3: ELIMINA TUTTE LE ANNOTAZIONI DELLO STUDENTE =====
+    // Delete all student's annotations
     const annotazioniEliminate = await Annotazioni.deleteMany({
       studenteID: studenteID,
     });
 
-    // ===== STEP 4: RIMUOVI LO STUDENTE DALL'ARRAY STUDENTI ASSOCIATI DEI TUTOR =====
+    // Remove student from all tutors' lists
     const tutorAggiornati = await Tutor.updateMany(
       { studentiAssociati: studenteID },
       { $pull: { studentiAssociati: studenteID } }
     );
 
-    // ===== STEP 5: ELIMINA LO STUDENTE =====
+    // Delete the student
     await Studenti.findByIdAndDelete(studenteID);
 
     res.status(200).json({
       message: "Studente eliminato con successo",
       dettagli: {
         studenteID: studenteID,
-        materieEliminate: materieEliminategni.deletedCount,
+        materieEliminate: materieEliminate.deletedCount,
         verificheEliminate: verificheEliminate.deletedCount,
         annotazioniEliminate: annotazioniEliminate.deletedCount,
         tutorAggiornati: tutorAggiornati.modifiedCount,
@@ -464,12 +464,12 @@ export const deleteStudente = async (req, res) => {
   }
 };
 
-// ===== STATISTICHE STUDENTI (ADMIN) =====
+// ===== STUDENT STATISTICS (ADMIN) =====
 export const getStatisticheStudenti = async (req, res) => {
   try {
     const totaleStudenti = await Studenti.countDocuments();
 
-    // Studenti per grado scolastico
+    // Group students by school grade
     const studentiPerGrado = await Studenti.aggregate([
       {
         $group: {

@@ -12,8 +12,6 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ===== TUTTE LE ROTTE SONO PROTETTE =====
-
 // POST /verifiche - Crea una nuova verifica
 router.post("/", verifyToken, createVerifica);
 

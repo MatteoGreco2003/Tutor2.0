@@ -11,25 +11,22 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ===== ROTTE PROTETTE STUDENTE =====
 // GET /student/data - Ottieni dati profilo studente
 router.get("/data", verifyToken, getStudentData);
 
 // DELETE /student/profile - Elimina profilo (protetta)
 router.delete("/profile", verifyToken, deleteStudentProfile);
 
+// PATCH /student/personal - Aggiorna dati personali
 router.patch("/personal", verifyToken, updateStudentPersonalData);
 
+// PATCH /student/password - Aggiorna password
 router.patch("/password", verifyToken, updateStudentPassword);
 
+// PATCH /student/family - Aggiorna dati famiglia
 router.patch("/family", verifyToken, updateStudentFamilyData);
 
+// PATCH /student/school - Aggiorna dati scuola
 router.patch("/school", verifyToken, updateStudentSchoolData);
-
-// Aggiungi altre rotte qui:
-// router.get("/verifiche", verifyToken, getStudentVerifiche);
-// router.post("/verifiche", verifyToken, createVerifica);
-// router.delete("/verifiche/:id", verifyToken, deleteVerifica);
-// ecc.
 
 export default router;

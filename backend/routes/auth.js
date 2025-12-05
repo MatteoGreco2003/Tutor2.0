@@ -9,7 +9,7 @@ import {
   resetPassword,
 } from "../controllers/authController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
-//verifyHomeTutor, nel import
+
 const router = express.Router();
 
 // POST auth/login
@@ -28,8 +28,10 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 
 // ===== ROTTE API PROTETTE PER VERIFICA ACCESSO =====
+
 // Queste controllano il token e restituiscono i dati
 router.get("/verify-home-studenti", verifyToken, verifyHomeStudenti);
+
 //router.get("/verify-home-tutor", verifyToken, verifyHomeTutor);
 router.get("/verify-home-admin", verifyToken, verifyHomeAdmin);
 

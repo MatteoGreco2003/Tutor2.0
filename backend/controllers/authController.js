@@ -1,11 +1,6 @@
-// ==========================================
-// AUTH CONTROLLER - TUTOR 2.0
-// ==========================================
-// import degli env per recupero passwd
 import dotenv from "dotenv";
 dotenv.config();
 
-// 2️⃣ ORA importa il resto
 import Studenti from "../models/Student.js";
 import Tutor from "../models/Tutor.js";
 import bcrypt from "bcrypt";
@@ -14,16 +9,13 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import sgMail from "@sendgrid/mail";
 
-// Inizializza SendGrid con API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-//===== LOGOUT =====
+// ===== LOGOUT =====
 export const logout = async (req, res) => {
   try {
-    // Con JWT salvato in localStorage, il logout è principalmente lato client
-    // Il server semplicemente conferma il logout
-    // (Opzionale: potresti aggiungere il token a una blacklist se necessario)
-
+    // JWT logout is mainly client-side (remove token from localStorage)
+    // Server just confirms logout
     res.status(200).json({
       message: "Logout avvenuto con successo",
     });
@@ -33,7 +25,7 @@ export const logout = async (req, res) => {
   }
 };
 
-//===== COMPLETA REGISTRAZIONE =====
+// ===== COMPLETE REGISTRATION =====
 export const registerComplete = async (req, res) => {
   try {
     const {
@@ -50,7 +42,7 @@ export const registerComplete = async (req, res) => {
       consentGDPRDate,
     } = req.body;
 
-    // ===== VALIDAZIONE =====
+    // Validate required fields
     if (!email || !password || !nome || !cognome) {
       return res.status(400).json({
         message: "Email, password, nome e cognome sono obbligatori",
@@ -75,7 +67,7 @@ export const registerComplete = async (req, res) => {
       });
     }
 
-    // Controlla se lo studente esiste già
+    // Check if student already exists
     const studenteEsistente = await Studenti.findOne({ email });
     if (studenteEsistente) {
       return res.status(400).json({
@@ -83,22 +75,19 @@ export const registerComplete = async (req, res) => {
       });
     }
 
-    // ===== CREA NUOVO STUDENTE =====
+    // Create new student (password auto-hashed by pre-save hook)
     const nuovoStudente = new Studenti({
-      // Dati di registrazione
       email: email.toLowerCase().trim(),
-      password, // Lo schema farà l'hash automaticamente nel pre-save hook
+      password,
       nome,
       cognome,
       consentiGDPR: consentGDPR || true,
       GDPRdata: consentGDPRDate ? new Date(consentGDPRDate) : new Date(),
 
-      // Dati personali
       telefono,
       gradoScolastico,
       indirizzoScolastico: indirizzoScolastico || null,
 
-      // Dati famiglia
       genitore1: {
         nome: famiglia.genitore1.nome,
         cognome: famiglia.genitore1.cognome,
@@ -116,10 +105,9 @@ export const registerComplete = async (req, res) => {
       emailInsegnanti: scuola?.emailProfessori || [],
     });
 
-    // Salva nel database (lo schema valida e hashizza la password)
     await nuovoStudente.save();
 
-    // ===== GENERA TOKEN =====
+    // Generate JWT token
     const token = jwt.sign(
       {
         userId: nuovoStudente._id,
@@ -143,13 +131,13 @@ export const registerComplete = async (req, res) => {
   } catch (error) {
     console.error("Errore registrazione:", error);
 
-    // Gestione errori di validazione Mongoose
+    // Handle Mongoose validation errors
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({ message: messages[0] });
     }
 
-    // Errore di email duplicata
+    // Handle duplicate email
     if (error.code === 11000) {
       return res.status(400).json({
         message: "Email già registrata",
@@ -160,7 +148,7 @@ export const registerComplete = async (req, res) => {
   }
 };
 
-//===== LOGIN =====
+// ===== LOGIN =====
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -174,9 +162,11 @@ export const login = async (req, res) => {
     const cleanEmail = email.trim();
     const cleanPassword = password.trim();
 
+    // Check if student exists
     let user = await Studenti.findOne({ email: cleanEmail });
     let userType = "studente";
 
+    // If not student, check tutor
     if (!user) {
       user = await Tutor.findOne({ email: cleanEmail });
       if (cleanEmail == "toptutor.it@gmail.com") userType = "admin";
@@ -189,6 +179,7 @@ export const login = async (req, res) => {
       });
     }
 
+    // Compare password with bcrypt hash
     const passwordMatch = await bcrypt.compare(
       cleanPassword,
       user.password.trim()
@@ -200,7 +191,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // Genera token
+    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, tipo: userType },
       process.env.JWT_SECRET,
@@ -224,10 +215,10 @@ export const login = async (req, res) => {
   }
 };
 
-// ===== VERIFICA ACCESSO HOME STUDENTI =====
+// ===== VERIFY STUDENT HOME ACCESS =====
 export const verifyHomeStudenti = async (req, res) => {
   try {
-    // req.user viene riempito dal middleware verifyToken
+    // req.user filled by verifyToken middleware
     if (req.user.tipo !== "studente") {
       return res.status(403).json({
         message: "Accesso solo per studenti",
@@ -244,7 +235,7 @@ export const verifyHomeStudenti = async (req, res) => {
   }
 };
 
-// ===== VERIFICA ACCESSO HOME TUTOR =====
+// ===== VERIFY TUTOR HOME ACCESS =====
 export const verifyHomeTutor = async (req, res) => {
   try {
     if (req.user.tipo !== "tutor") {
@@ -263,7 +254,7 @@ export const verifyHomeTutor = async (req, res) => {
   }
 };
 
-// ===== VERIFICA ACCESSO HOME ADMIN =====
+// ===== VERIFY ADMIN HOME ACCESS =====
 export const verifyHomeAdmin = async (req, res) => {
   try {
     if (req.user.tipo !== "admin") {
@@ -282,19 +273,18 @@ export const verifyHomeAdmin = async (req, res) => {
   }
 };
 
-// ===== FORGOT PASSWORD (RICHIESTA RESET) =====
+// ===== FORGOT PASSWORD (REQUEST RESET) =====
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Validazione input
     if (!email) {
       return res.status(400).json({
         message: "Email è obbligatoria",
       });
     }
 
-    // Ricerca utente (studente o tutor)
+    // Search in both Student and Tutor collections
     let user = await Studenti.findOne({ email: email.toLowerCase() });
     let userType = user ? "student" : null;
 
@@ -305,7 +295,7 @@ export const forgotPassword = async (req, res) => {
       }
     }
 
-    // Se l'email non esiste, comunque rispondi con successo (security best practice)
+    // Always return success (don't reveal if email exists)
     if (!user) {
       return res.status(200).json({
         message:
@@ -313,24 +303,24 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    // Genera token random
+    // Generate random reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Hash il token prima di salvarlo nel DB
+    // Hash token before storing (security best practice)
     const resetTokenHash = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    // Salva token hashato e expiry nel database
+    // Save hashed token and expiry (1 hour)
     user.passwordResetToken = resetTokenHash;
-    user.passwordResetExpires = Date.now() + 3600000; // 1 ora
+    user.passwordResetExpires = Date.now() + 3600000;
     await user.save();
 
-    // Costruisci URL di reset
+    // Build reset URL with unhashed token (sent to user)
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
 
-    // Invia email con SendGrid
+    // Send reset email via SendGrid
     await sendResetPasswordEmail(email, resetUrl);
 
     res.status(200).json({
@@ -345,43 +335,42 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// ===== RESET PASSWORD (PAGINA RESET) =====
+// ===== RESET PASSWORD (SET NEW PASSWORD) =====
 export const resetPassword = async (req, res) => {
   try {
     const { token, email, newPassword, confirmPassword } = req.body;
 
-    // Validazione input
     if (!token || !email || !newPassword || !confirmPassword) {
       return res.status(400).json({
         message: "Token, email e password sono obbligatori",
       });
     }
 
-    // Le password devono corrispondere
+    // Passwords must match
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         message: "Le password non corrispondono",
       });
     }
 
-    // Password deve avere min 8 caratteri
+    // Minimum length
     if (newPassword.length < 8) {
       return res.status(400).json({
         message: "Password minimo 8 caratteri",
       });
     }
 
-    // Hash il token ricevuto per confrontare con il DB
+    // Hash token to compare with DB
     const resetTokenHash = crypto
       .createHash("sha256")
       .update(token)
       .digest("hex");
 
-    // Ricerca utente con token valido
+    // Find user with valid token (not expired)
     let user = await Studenti.findOne({
       email: email.toLowerCase(),
       passwordResetToken: resetTokenHash,
-      passwordResetExpires: { $gt: Date.now() }, // Token non scaduto
+      passwordResetExpires: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -392,14 +381,14 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // Se utente non trovato o token scaduto
+    // Token invalid or expired
     if (!user) {
       return res.status(400).json({
         message: "Token non valido o scaduto",
       });
     }
 
-    // Aggiorna password (sarà hashata dal pre-save hook)
+    // Update password (auto-hashed by pre-save hook)
     user.password = newPassword;
     user.passwordResetToken = null;
     user.passwordResetExpires = null;
@@ -416,15 +405,15 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// ===== FUNZIONE HELPER: Invia email reset con SendGrid =====
+// ===== HELPER: Send reset password email via SendGrid =====
 async function sendResetPasswordEmail(email, resetUrl) {
   try {
     const msg = {
       to: email,
       from: process.env.SENDER_EMAIL,
-      replyTo: process.env.SENDER_EMAIL, // ← AGGIUNGI
+      replyTo: process.env.SENDER_EMAIL,
       subject: "🔐 Recupera la tua password - Tutor 2.0",
-      text: `Clicca il link per reimpostare la password: ${resetUrl}`, // ← AGGIUNGI (versione testo)
+      text: `Clicca il link per reimpostare la password: ${resetUrl}`,
       html: `
         <div style="font-family: Poppins, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #9e3ffd, #7e32ca); padding: 40px; border-radius: 12px 12px 0 0; text-align: center;">

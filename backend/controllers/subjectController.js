@@ -1,7 +1,7 @@
 import Materie from "../models/Subject.js";
 import Verifiche from "../models/Test.js";
 
-// ===== CREA MATERIA =====
+// ===== CREATE SUBJECT =====
 export const createMateria = async (req, res) => {
   try {
     const { nome } = req.body;
@@ -13,6 +13,7 @@ export const createMateria = async (req, res) => {
       });
     }
 
+    // Check if subject already exists for this student
     const materiaEsistente = await Materie.findOne({
       studenteId: studenteId,
       nome: nome.trim(),
@@ -43,6 +44,7 @@ export const createMateria = async (req, res) => {
   } catch (error) {
     console.error("Errore creazione materia:", error);
 
+    // Check for validation error (max 15 subjects)
     if (error.message.includes("massimo")) {
       return res.status(400).json({
         message: error.message,
@@ -55,11 +57,12 @@ export const createMateria = async (req, res) => {
   }
 };
 
-// ===== LEGGI MATERIE DELLO STUDENTE =====
+// ===== READ STUDENT SUBJECTS =====
 export const getMaterieStudente = async (req, res) => {
   try {
     const studenteId = req.user.userId;
 
+    // Get all subjects, newest first
     const materie = await Materie.find({ studenteId: studenteId }).sort({
       createdAt: -1,
     });
@@ -77,13 +80,13 @@ export const getMaterieStudente = async (req, res) => {
   }
 };
 
-// ===== ELIMINA MATERIA E LE SUE VERIFICHE =====
+// ===== DELETE SUBJECT AND CASCADE TESTS =====
 export const deleteMateria = async (req, res) => {
   try {
     const { materiaId } = req.params;
     const studenteId = req.user.userId;
 
-    // Trova la materia PRIMA di eliminarla
+    // Find subject first (security check)
     const materia = await Materie.findOne({
       _id: materiaId,
       studenteId: studenteId,
@@ -95,13 +98,13 @@ export const deleteMateria = async (req, res) => {
       });
     }
 
-    // Elimina TUTTE le verifiche collegate a questa materia
+    // Delete all tests for this subject
     const verificheEliminate = await Verifiche.deleteMany({
       materialID: materiaId,
-      studenteID: studenteId, // ← Doubla sicurezza: solo verifiche di questo studente
+      studenteID: studenteId,
     });
 
-    // Elimina la materia
+    // Delete subject
     await Materie.findByIdAndDelete(materiaId);
 
     res.status(200).json({
@@ -117,7 +120,7 @@ export const deleteMateria = async (req, res) => {
   }
 };
 
-// ===== AGGIORNA NOME MATERIA =====
+// ===== UPDATE SUBJECT NAME =====
 export const updateMateria = async (req, res) => {
   try {
     const { materiaId } = req.params;
@@ -130,6 +133,7 @@ export const updateMateria = async (req, res) => {
       });
     }
 
+    // Check if same name already exists (exclude current subject)
     const materiaEsistente = await Materie.findOne({
       studenteId: studenteId,
       nome: nome.trim(),

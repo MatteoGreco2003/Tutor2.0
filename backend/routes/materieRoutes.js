@@ -9,8 +9,6 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ===== TUTTE LE ROTTE SONO PROTETTE =====
-
 // POST /api/materie - Crea una nuova materia
 router.post("/", verifyToken, createMateria);
 

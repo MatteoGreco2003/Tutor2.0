@@ -5,7 +5,7 @@ import Verifiche from "../models/Test.js";
 import Annotazioni from "../models/Annotation.js";
 import bcrypt from "bcryptjs";
 
-// ===== LEGGI STUDENTI ASSOCIATI AL TUTOR =====
+// ===== GET ASSOCIATED STUDENTS =====
 export const getStudentiAssociati = async (req, res) => {
   try {
     const tutorID = req.user.userId;
@@ -42,13 +42,13 @@ export const getStudentiAssociati = async (req, res) => {
   }
 };
 
-// ===== LEGGI RIEPILOGO COMPLETO DELLO STUDENTE =====
+// ===== GET COMPLETE STUDENT SUMMARY =====
 export const getStudenteRiepilogo = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica che il tutor abbia questo studente associato
+    // Verify tutor has this student
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -56,7 +56,6 @@ export const getStudenteRiepilogo = async (req, res) => {
       });
     }
 
-    // Recupera dati studente
     const studente = await Studenti.findById(studenteID);
     if (!studente) {
       return res.status(404).json({
@@ -64,7 +63,7 @@ export const getStudenteRiepilogo = async (req, res) => {
       });
     }
 
-    // ===== MATERIE CON MEDIA =====
+    // Get subjects with averages
     const materie = await Materie.find({ studenteId: studenteID });
     const materieConMedia = await Promise.all(
       materie.map(async (materia) => {
@@ -92,12 +91,12 @@ export const getStudenteRiepilogo = async (req, res) => {
       })
     );
 
-    // ===== CONTROLLA SE HA MATERIE INSUFFICIENTI =====
+    // Check if has insufficient subjects
     const meterieInsufficenti = materieConMedia.some(
       (m) => m.sufficienza === "Insufficiente"
     );
 
-    // ===== VERIFICHE CON VOTO (STORICO) =====
+    // Get graded tests (history)
     const verificheConVoto = await Verifiche.find({
       studenteID: studenteID,
       voto: { $ne: null },
@@ -105,7 +104,7 @@ export const getStudenteRiepilogo = async (req, res) => {
       .populate("materialID", "nome")
       .sort({ data: -1 });
 
-    // ===== VERIFICHE SENZA VOTO (FUTURE) =====
+    // Get ungraded tests (future)
     const verificheFuture = await Verifiche.find({
       studenteID: studenteID,
       voto: null,
@@ -152,13 +151,13 @@ export const getStudenteRiepilogo = async (req, res) => {
   }
 };
 
-// ===== LEGGI VERIFICHE STORICO (CON VOTO E DATA PASSATA) =====
+// ===== GET TEST HISTORY (GRADED TESTS) =====
 export const getVerificheStorico = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica accesso
+    // Verify access
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -166,11 +165,11 @@ export const getVerificheStorico = async (req, res) => {
       });
     }
 
-    // OGGI: fine giornata
+    // End of today
     const oggiFine = new Date();
     oggiFine.setHours(23, 59, 59, 999);
 
-    // Recupera verifiche fino a fine oggi
+    // Get graded tests up to today
     const verifiche = await Verifiche.find({
       studenteID: studenteID,
       data: { $lte: oggiFine },
@@ -192,13 +191,13 @@ export const getVerificheStorico = async (req, res) => {
   }
 };
 
-// ===== LEGGI VERIFICHE FUTURE (SENZA VOTO) =====
+// ===== GET FUTURE TESTS (UNGRADED) =====
 export const getVerificheFuture = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica accesso
+    // Verify access
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -226,13 +225,13 @@ export const getVerificheFuture = async (req, res) => {
   }
 };
 
-// ===== LEGGI MATERIE CON MEDIA =====
+// ===== GET STUDENT SUBJECTS WITH AVERAGES =====
 export const getMaterieStudente = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica accesso
+    // Verify access
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -281,13 +280,13 @@ export const getMaterieStudente = async (req, res) => {
   }
 };
 
-// ===== CONTROLLA MATERIE INSUFFICIENTI =====
+// ===== CHECK INSUFFICIENT SUBJECTS =====
 export const checkMaterie = async (req, res) => {
   try {
     const { studenteID } = req.params;
     const tutorID = req.user.userId;
 
-    // Verifica accesso
+    // Verify access
     const tutor = await Tutor.findById(tutorID);
     if (!tutor.studentiAssociati.includes(studenteID)) {
       return res.status(403).json({
@@ -334,7 +333,7 @@ export const checkMaterie = async (req, res) => {
   }
 };
 
-// ===== LEGGI DATI DEL TUTOR LOGGATO =====
+// ===== GET TUTOR DATA =====
 export const getTutorData = async (req, res) => {
   try {
     const tutorID = req.user.userId;
@@ -359,12 +358,11 @@ export const getTutorData = async (req, res) => {
   }
 };
 
-// ===== ELIMINA IL PROFILO DEL TUTOR LOGGATO E TUTTI I DATI ASSOCIATI =====
+// ===== DELETE TUTOR PROFILE - CASCADE DELETE =====
 export const deleteTutorProfile = async (req, res) => {
   try {
     const tutorID = req.user.userId;
 
-    // Cerca il tutor
     const tutor = await Tutor.findById(tutorID);
 
     if (!tutor) {
@@ -373,12 +371,12 @@ export const deleteTutorProfile = async (req, res) => {
       });
     }
 
-    // ===== STEP 1: ELIMINA TUTTE LE ANNOTAZIONI DEL TUTOR =====
+    // Delete all tutor's annotations
     const annotazioniEliminate = await Annotazioni.deleteMany({
       tutorID: tutorID,
     });
 
-    // ===== STEP 2: ELIMINA IL TUTOR =====
+    // Delete tutor
     await Tutor.findByIdAndDelete(tutorID);
 
     res.status(200).json({
@@ -397,7 +395,7 @@ export const deleteTutorProfile = async (req, res) => {
   }
 };
 
-// ===== AGGIUNGI STUDENTE ASSOCIATO =====
+// ===== ASSOCIATE STUDENT =====
 export const associaStudente = async (req, res) => {
   try {
     const tutorID = req.user.userId;
@@ -409,7 +407,6 @@ export const associaStudente = async (req, res) => {
       });
     }
 
-    // Verifica che il tutor esista
     const tutor = await Tutor.findById(tutorID);
     if (!tutor) {
       return res.status(404).json({
@@ -417,14 +414,13 @@ export const associaStudente = async (req, res) => {
       });
     }
 
-    // Verifica che lo studente non sia già associato
+    // Check if already associated
     if (tutor.studentiAssociati.includes(studenteID)) {
       return res.status(400).json({
         message: "Lo studente è già associato a questo tutor",
       });
     }
 
-    // Aggiungi lo studente
     tutor.studentiAssociati.push(studenteID);
     await tutor.save();
 
@@ -440,7 +436,8 @@ export const associaStudente = async (req, res) => {
     });
   }
 };
-// ===== RIMUOVI STUDENTE ASSOCIATO =====
+
+// ===== REMOVE ASSOCIATED STUDENT =====
 export const rimuoviStudente = async (req, res) => {
   try {
     const tutorID = req.user.userId;
@@ -452,7 +449,6 @@ export const rimuoviStudente = async (req, res) => {
       });
     }
 
-    // Verifica che il tutor esista
     const tutor = await Tutor.findById(tutorID);
     if (!tutor) {
       return res.status(404).json({
@@ -460,7 +456,7 @@ export const rimuoviStudente = async (req, res) => {
       });
     }
 
-    // Rimuovi lo studente
+    // Remove student from array
     tutor.studentiAssociati = tutor.studentiAssociati.filter(
       (id) => id.toString() !== studenteID
     );
@@ -479,7 +475,7 @@ export const rimuoviStudente = async (req, res) => {
   }
 };
 
-// ===== MODIFICA PASSWORD TUTOR =====
+// ===== UPDATE TUTOR PASSWORD =====
 export const updateTutorPassword = async (req, res) => {
   try {
     const tutorId = req.user.userId;
@@ -496,13 +492,13 @@ export const updateTutorPassword = async (req, res) => {
       return res.status(404).json({ message: "Tutor non trovato" });
     }
 
-    // Controlla password attuale
+    // Verify old password
     const match = await bcrypt.compare(oldPassword, tutor.password);
     if (!match) {
       return res.status(401).json({ message: "Password vecchia non corretta" });
     }
 
-    // Validazione nuova password
+    // Validate new password: min 8 chars, uppercase, lowercase, number
     const hasMinLength = newPassword.length >= 8;
     const hasUpperCase = /[A-Z]/.test(newPassword);
     const hasLowerCase = /[a-z]/.test(newPassword);
@@ -515,7 +511,7 @@ export const updateTutorPassword = async (req, res) => {
       });
     }
 
-    // Aggiorna password (usa il pre-save per hash)
+    // Update password (pre-save hook auto-hashes)
     tutor.password = newPassword;
     await tutor.save();
 
@@ -529,7 +525,7 @@ export const updateTutorPassword = async (req, res) => {
   }
 };
 
-// ===== MODIFICA DATI PERSONALI TUTOR =====
+// ===== UPDATE TUTOR PERSONAL DATA =====
 export const updateTutorPersonalData = async (req, res) => {
   try {
     const tutorId = req.user.userId;
@@ -541,7 +537,7 @@ export const updateTutorPersonalData = async (req, res) => {
       });
     }
 
-    // Validazione lunghezza
+    // Validate minimum length
     if (nome.trim().length < 2 || cognome.trim().length < 2) {
       return res.status(400).json({
         message: "Nome e cognome devono contenere almeno 2 caratteri",
@@ -553,7 +549,6 @@ export const updateTutorPersonalData = async (req, res) => {
       return res.status(404).json({ message: "Tutor non trovato" });
     }
 
-    // Aggiorna nome e cognome
     tutor.nome = nome.trim();
     tutor.cognome = cognome.trim();
     await tutor.save();

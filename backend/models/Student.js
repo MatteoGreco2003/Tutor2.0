@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
+// Student account schema - includes authentication, GDPR consent, family contacts
 const studentiSchema = mongoose.Schema(
   {
+    // Student personal info
     nome: {
       type: String,
       required: [true, "Nome obbligatorio"],
@@ -13,6 +15,8 @@ const studentiSchema = mongoose.Schema(
       required: [true, "Cognome obbligatorio"],
       trim: true,
     },
+
+    // Primary login credential - unique and case-insensitive
     email: {
       type: String,
       required: [true, "Email è obbligatoria"],
@@ -24,11 +28,15 @@ const studentiSchema = mongoose.Schema(
         "Inserisci un indirizzo email valido",
       ],
     },
+
+    // Hashed with bcrypt in pre-save hook
     password: {
       type: String,
       required: [true, "Password obbligatoria"],
       minlength: [8, "Minimo 8 caratteri"],
     },
+
+    // GDPR consent tracking
     consentiGDPR: {
       type: Boolean,
       required: [true, "Consenso GDPR obbligatorio"],
@@ -38,6 +46,7 @@ const studentiSchema = mongoose.Schema(
       default: Date.now,
     },
 
+    // Contact info - 10-digit Italian format
     telefono: {
       type: String,
       required: [true, "Telefono obbligatorio"],
@@ -47,17 +56,21 @@ const studentiSchema = mongoose.Schema(
         "Inserisci un numero di telefono valido (10 cifre)",
       ],
     },
+
+    // School grade level (required)
     gradoScolastico: {
       type: String,
       enum: ["Elementari", "Medie", "Superiori"],
       required: [true, "Grado scolastico obbligatorio"],
     },
+
+    // School type (only for Superiori)
     indirizzoScolastico: {
       type: String,
       enum: [null, "Liceo", "Tecnico", "Professionale"],
     },
 
-    // ===== GENITORE 1 (con default vuoto) =====
+    // Parent 1 (required) - default: empty object
     genitore1: {
       type: {
         nome: {
@@ -80,7 +93,7 @@ const studentiSchema = mongoose.Schema(
       default: {},
     },
 
-    // ===== GENITORE 2 (con default undefined) =====
+    // Parent 2 (optional) - default: undefined
     genitore2: {
       type: {
         nome: { type: String, trim: true },
@@ -94,6 +107,7 @@ const studentiSchema = mongoose.Schema(
       default: undefined,
     },
 
+    // Family email - main communication channel
     emailFamiglia: {
       type: String,
       required: [true, "Email famiglia obbligatoria"],
@@ -102,6 +116,7 @@ const studentiSchema = mongoose.Schema(
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email famiglia non valida"],
     },
 
+    // Teacher emails (max 5) - validated in pre-save hook
     emailInsegnanti: [
       {
         type: String,
@@ -111,13 +126,14 @@ const studentiSchema = mongoose.Schema(
       },
     ],
 
+    // Password reset fields
     passwordResetToken: { type: String, default: null },
     passwordResetExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
-// Hash password
+// Auto-hash password before saving (only if modified)
 studentiSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   try {
@@ -129,7 +145,7 @@ studentiSchema.pre("save", async function (next) {
   }
 });
 
-// Validazione: max 5 email insegnanti per studente
+// Validation: max 5 teacher emails per student
 studentiSchema.pre("save", function (next) {
   if (Array.isArray(this.emailInsegnanti) && this.emailInsegnanti.length > 5) {
     return next(new Error("Puoi associare massimo 5 email insegnanti"));

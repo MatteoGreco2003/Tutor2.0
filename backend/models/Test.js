@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
+// Test/assessment schema - tracks student tests and grades
 const verificheSchema = mongoose.Schema(
   {
-    // L'_id viene generato automaticamente da MongoDB
-
+    // References to Student and Subject collections
     studenteID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
@@ -16,17 +16,20 @@ const verificheSchema = mongoose.Schema(
       required: [true, "ID materia obbligatorio"],
     },
 
+    // Test date (scheduled or completed)
     data: {
       type: Date,
       required: [true, "Data verifica obbligatoria"],
     },
 
+    // Test topic/subject matter
     argomento: {
       type: String,
       required: [true, "Argomento verifica obbligatorio"],
       trim: true,
     },
 
+    // Grade on Italian scale (0-10), null if not yet graded
     voto: {
       type: Number,
       min: [0, "Voto minimo è 0"],
@@ -34,6 +37,7 @@ const verificheSchema = mongoose.Schema(
       default: null,
     },
 
+    // true = test not yet taken, false = completed with grade
     votoFuturo: {
       type: Boolean,
       default: true,
@@ -42,7 +46,7 @@ const verificheSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-// Validazione: se votoFuturo è false, voto deve essere compilato
+// Validation: if test marked complete (votoFuturo=false), grade must be set
 verificheSchema.pre("save", function (next) {
   if (!this.votoFuturo && this.voto === null) {
     return next(

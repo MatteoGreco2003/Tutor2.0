@@ -5,15 +5,11 @@ import Verifiche from "../models/Test.js";
 import Tutor from "../models/Tutor.js";
 import Annotazioni from "../models/Annotation.js";
 
-/**
- * Ottiene i dati dello studente loggato
- * GET /student/data
- */
+// ===== GET STUDENT DATA =====
 export const getStudentData = async (req, res) => {
   try {
     const studentId = req.user.userId;
 
-    // Cerca lo studente per ID - prende TUTTI i campi
     const student = await Studenti.findById(studentId);
 
     if (!student) {
@@ -32,22 +28,12 @@ export const getStudentData = async (req, res) => {
   }
 };
 
-/**
- * Elimina il profilo dello studente e TUTTI i dati associati (CASCATA)
- * DELETE /student/profile
- *
- * Elimina:
- * 1. Tutte le materie dello studente
- * 2. Tutte le verifiche dello studente
- * 3. Tutte le annotazioni fatte dai tutor su questo studente
- * 4. Lo studente dall'array studentiAssociati dei tutor
- * 5. Lo studente dalla collezione Student
- */
+// ===== DELETE STUDENT PROFILE - CASCADE DELETE =====
+// Deletes: subjects, tests, annotations, tutor associations, student record
 export const deleteStudentProfile = async (req, res) => {
   try {
     const studentId = req.user.userId;
 
-    // Cerca lo studente
     const student = await Studenti.findById(studentId);
 
     if (!student) {
@@ -56,35 +42,35 @@ export const deleteStudentProfile = async (req, res) => {
       });
     }
 
-    // ===== STEP 1: ELIMINA TUTTE LE MATERIE DELLO STUDENTE =====
-    const materieEliminategni = await Materie.deleteMany({
+    // Delete all subjects
+    const materieEliminate = await Materie.deleteMany({
       studenteId: studentId,
     });
 
-    // ===== STEP 2: ELIMINA TUTTE LE VERIFICHE DELLO STUDENTE =====
+    // Delete all tests
     const verificheEliminate = await Verifiche.deleteMany({
       studenteID: studentId,
     });
 
-    // ===== STEP 3: ELIMINA TUTTE LE ANNOTAZIONI DELLO STUDENTE =====
+    // Delete all annotations about this student
     const annotazioniEliminate = await Annotazioni.deleteMany({
       studenteID: studentId,
     });
 
-    // ===== STEP 4: RIMUOVI LO STUDENTE DALL'ARRAY STUDENTI ASSOCIATI DEI TUTOR =====
+    // Remove student from all tutors' lists
     const tutorAggiornati = await Tutor.updateMany(
       { studentiAssociati: studentId },
       { $pull: { studentiAssociati: studentId } }
     );
 
-    // ===== STEP 5: ELIMINA LO STUDENTE =====
+    // Delete student
     await Studenti.findByIdAndDelete(studentId);
 
     res.status(200).json({
       success: true,
       message: "Profilo eliminato con successo",
       dettagli: {
-        materieEliminate: materieEliminategni.deletedCount,
+        materieEliminate: materieEliminate.deletedCount,
         verificheEliminate: verificheEliminate.deletedCount,
         annotazioniEliminate: annotazioniEliminate.deletedCount,
         tutorAggiornati: tutorAggiornati.modifiedCount,
@@ -99,19 +85,19 @@ export const deleteStudentProfile = async (req, res) => {
   }
 };
 
-// PATCH /student/personal
+// ===== UPDATE PERSONAL DATA =====
 export const updateStudentPersonalData = async (req, res) => {
   try {
     const studentId = req.user.userId;
     const { nome, cognome, telefono, gradoScolastico, indirizzoScolastico } =
       req.body;
 
-    // validazioni base lato server
+    // Validate required fields
     if (!nome || !cognome || !telefono || !gradoScolastico) {
       return res.status(400).json({ message: "Dati incompleti" });
     }
 
-    // se non è Superiori, indirizzo deve diventare null
+    // Set indirizzoScolastico to null if not Superiori
     const indirizzo =
       gradoScolastico === "Superiori" && indirizzoScolastico
         ? indirizzoScolastico
@@ -143,7 +129,7 @@ export const updateStudentPersonalData = async (req, res) => {
   }
 };
 
-// PATCH /student/password
+// ===== UPDATE PASSWORD =====
 export const updateStudentPassword = async (req, res) => {
   try {
     const studentId = req.user.userId;
@@ -160,13 +146,13 @@ export const updateStudentPassword = async (req, res) => {
       return res.status(404).json({ message: "Studente non trovato" });
     }
 
-    // controlla password attuale
+    // Verify old password
     const match = await bcrypt.compare(oldPassword, student.password);
     if (!match) {
       return res.status(401).json({ message: "Password vecchia non corretta" });
     }
 
-    // validazione nuova password (stessa logica del login)
+    // Validate new password: min 8 chars, uppercase, lowercase, number
     const hasMinLength = newPassword.length >= 8;
     const hasUpperCase = /[A-Z]/.test(newPassword);
     const hasLowerCase = /[a-z]/.test(newPassword);
@@ -179,7 +165,7 @@ export const updateStudentPassword = async (req, res) => {
       });
     }
 
-    // aggiorna password (usa il pre-save per hash)
+    // Update password (pre-save hook auto-hashes)
     student.password = newPassword;
     await student.save();
 
@@ -193,10 +179,7 @@ export const updateStudentPassword = async (req, res) => {
   }
 };
 
-/**
- * PATCH /student/family
- * Aggiorna i dati della famiglia
- */
+// ===== UPDATE FAMILY DATA =====
 export const updateStudentFamilyData = async (req, res) => {
   try {
     const studentId = req.user.userId;
@@ -210,7 +193,7 @@ export const updateStudentFamilyData = async (req, res) => {
       emailFamiglia,
     } = req.body;
 
-    // Validazioni base
+    // Validate parent 1 required, email required
     if (
       !genitore1Nome ||
       !genitore1Cognome ||
@@ -222,7 +205,7 @@ export const updateStudentFamilyData = async (req, res) => {
       });
     }
 
-    // Prepara oggetto genitore 2
+    // Parent 2 is optional
     let genitore2 = undefined;
     if (genitore2Nome || genitore2Cognome || genitore2Telefono) {
       genitore2 = {
@@ -264,29 +247,27 @@ export const updateStudentFamilyData = async (req, res) => {
   }
 };
 
-/**
- * Aggiorna email insegnanti dello studente
- * PATCH /student/school
- */
+// ===== UPDATE TEACHER EMAILS =====
 export const updateStudentSchoolData = async (req, res) => {
   try {
     const studentId = req.user.userId;
     const { emailInsegnanti } = req.body;
 
-    // Validazioni
+    // Must be array
     if (!Array.isArray(emailInsegnanti)) {
       return res.status(400).json({
         message: "emailInsegnanti deve essere un array",
       });
     }
 
+    // Max 5 emails
     if (emailInsegnanti.length > 5) {
       return res.status(400).json({
         message: "Massimo 5 email di insegnanti",
       });
     }
 
-    // Valida ogni email
+    // Validate each email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     for (let email of emailInsegnanti) {
       if (!emailRegex.test(email)) {
